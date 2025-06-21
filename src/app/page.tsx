@@ -1,7 +1,17 @@
+import Hero from "@/components/sections/Hero";
+
 export default function Home() {
   return (
-    <div>
-      <h1 className="text-primary">Hello World</h1>
-    </div>
+    <main>
+      <Hero
+        title="Welcome to"
+        subtitle="Soundschool"
+        description="Check out our biggest pack yet!"
+        productImage="/images/Midipack.png"
+        backgroundImage="/images/Hero.png"
+        primaryButtonText="Read more"
+        secondaryButtonText="Other products"
+      />
+    </main>
   );
 }

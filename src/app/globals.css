@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
+body {
+  background-color: #0D0D0D;
+}
+
 @theme {
   /* Custom tailwind colors for SoundSchool */
   --color-primary: #0078FF; /* Blue */
   --color-secondary: #FFD11D; /* Yellow */
   
   /* Default font family */
-  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
