@@ -4,4 +4,7 @@
   /* Custom tailwind colors for SoundSchool */
   --color-primary: #0078FF; /* Blue */
   --color-secondary: #FFD11D; /* Yellow */
+  
+  /* Default font family */
+  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
