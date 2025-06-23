@@ -21,7 +21,7 @@ function Card({ title, date, scale, bpm }: CardProps) {
   const [isAdded, setIsAdded] = useState(false);
 
   return (
-    <div className="bg-[#1A1D23] rounded-2xl w-[90%] h-[100px] text-white p-2 flex flex-row items-center gap-2 md:w-1/2">
+    <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit">
       {/* Play/Pause Button */}
       <div className="flex-shrink-0">
         <button
@@ -74,9 +74,9 @@ function Card({ title, date, scale, bpm }: CardProps) {
       </div>
 
       {/* Text section */}
-      <div className="flex flex-col gap-1 w-2/3">
-        <h1 className="font-semibold text-md sm:text-lg">{title}</h1>
-        <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400">
+      <div className="flex flex-col gap-1 w-2/3 min-w-fit">
+        <h1 className="font-semibold text-sm sm:text-lg">{title}</h1>
+        <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
           <span>{date}</span>
           <span>·</span>
           <span>{scale}</span>
