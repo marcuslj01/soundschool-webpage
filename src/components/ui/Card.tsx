@@ -30,8 +30,11 @@ function Card({ title, date, scale, bpm }: CardProps) {
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (
-            <div className="relative w-full h-full flex items-center justify-center">
-              <svg className="absolute w-full h-full" viewBox="0 0 100 100">
+            <div className="relative w-full h-full flex items-center justify-center ">
+              <svg
+                className="absolute w-full h-full hover:cursor-pointer"
+                viewBox="0 0 100 100"
+              >
                 <circle
                   cx="50"
                   cy="50"
@@ -54,7 +57,7 @@ function Card({ title, date, scale, bpm }: CardProps) {
               </svg>
             </div>
           ) : (
-            <div className="w-full h-full rounded-full bg-[#292E35] flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-[#292E35] flex items-center justify-center hover:cursor-pointer">
               {/* Play Icon */}
               <svg
                 width="24"
@@ -90,13 +93,13 @@ function Card({ title, date, scale, bpm }: CardProps) {
             NEW!
           </Button>
           <Button
-            className="h-5 w-5 text-xs flex items-center justify-center"
+            className="h-5 w-5 flex items-center justify-center hover:cursor-pointer"
             onClick={() => setIsLiked(!isLiked)}
           >
             {isLiked ? (
-              <HeartIcon className="w-4 h-4 text-red-500" />
+              <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
             ) : (
-              <HeartIcon className="w-4 h-4 text-white" />
+              <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             )}
           </Button>
         </div>
