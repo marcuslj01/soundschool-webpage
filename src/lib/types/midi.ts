@@ -1,19 +1,20 @@
 // For adding to firestore
 export interface MidiInput {
+    file_url: string;
+    preview_url: string;
     name: string;
     price: number;
     key: string;
+    scale: string;
     bpm: number;
     genre: string;
-    scale?: string;
     vst: string;
     preset: string;
-    file_url: string;
-    preview_url: string;
     tags?: string[];
     hidden: boolean;
-    discount_price?: number;
     is_featured?: boolean;
+    is_discounted?: boolean;
+    discount_price?: number;
 };
 
 // For fetching from firestore (created_at is added in the addMidi function)
