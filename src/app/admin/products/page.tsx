@@ -11,12 +11,10 @@ function Products() {
     <div className="h-screen text-white flex items-center justify-center">
       <Button
         text="Add Product +"
-        type="primary"
+        style="primary"
         onClick={() => setIsOpen(true)}
       />
-      {isOpen && (
-        <UploadModal onClose={() => setIsOpen(false)} onSubmit={() => {}} />
-      )}
+      {isOpen && <UploadModal onClose={() => setIsOpen(false)} />}
     </div>
   );
 }

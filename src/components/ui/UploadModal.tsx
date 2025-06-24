@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import Button from "./Button";
 import { addMidi } from "@/lib/firestore/midifiles";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { app } from "@/lib/firebase";
-const storage = getStorage(app);
+import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+
+const storage = getStorage();
 
 interface UploadModalProps {
   onClose: () => void;
-  onSubmit: (data: FormData) => void;
 }
 
 function UploadModal({ onClose }: UploadModalProps) {
@@ -19,99 +20,20 @@ function UploadModal({ onClose }: UploadModalProps) {
     genre: "",
     vst: "",
     preset: "",
+    discount_price: "",
     tags: "",
     hidden: false,
-    discount_price: "",
     is_featured: false,
+    is_discounted: false,
   });
+
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<File | null>(null);
-  const [fileDragActive, setFileDragActive] = useState(false);
-  const [previewDragActive, setPreviewDragActive] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [uploadType, setUploadType] = useState<"single" | "pack" | null>(null);
-  const [packFiles, setPackFiles] = useState<File[]>([]);
 
-  const musicalKeys = [
-    "C",
-    "C#",
-    "D",
-    "D#",
-    "E",
-    "F",
-    "F#",
-    "G",
-    "G#",
-    "A",
-    "A#",
-    "B",
-  ];
-
-  const scaleTypes = ["Major", "Minor"];
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    const checked = (e.target as HTMLInputElement).checked;
-    if (name === "tags") {
-      setTagInput(value);
-    } else {
-      setForm((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }));
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const handlePreviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setPreview(e.target.files[0]);
-    }
-  };
-
-  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setFileDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handlePreviewDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setPreviewDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setPreview(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFileDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setFileDragActive(true);
-  };
-
-  const handleFileDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setFileDragActive(false);
-  };
-
-  const handlePreviewDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setPreviewDragActive(true);
-  };
-
-  const handlePreviewDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setPreviewDragActive(false);
-  };
+  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setTagInput(e.target.value);
 
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === "Enter" || e.key === ",") && tagInput.trim()) {
@@ -123,194 +45,298 @@ function UploadModal({ onClose }: UploadModalProps) {
     }
   };
 
-  const handleRemoveTag = (removeIdx: number) => {
-    setTags(tags.filter((_, idx) => idx !== removeIdx));
+  const handleRemoveTag = (idx: number) => {
+    setTags(tags.filter((_, i) => i !== idx));
   };
 
-  const handlePackFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setPackFiles(Array.from(e.target.files));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+    let newValue: string | boolean = value;
+
+    if (type === "checkbox" && "checked" in e.target) {
+      newValue = (e.target as HTMLInputElement).checked;
     }
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (uploadType === "single") {
-      if (!file) {
-        alert("Please select a MIDI file.");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      const validTypes = [
+        "audio/midi",
+        "audio/x-midi",
+        "application/x-midi",
+        "application/x-midi-file",
+      ];
+      const validExtensions = [".mid", ".midi"];
+
+      // Sjekk mimetype
+      const isValidType = validTypes.includes(selectedFile.type);
+
+      // Sjekk filendelse (for sikkerhets skyld)
+      const isValidExtension = validExtensions.some((ext) =>
+        selectedFile.name.toLowerCase().endsWith(ext)
+      );
+
+      if (!isValidType && !isValidExtension) {
+        alert("Please select a valid MIDI file (.mid or .midi)");
         return;
       }
-      try {
-        // 1. Upload MIDI file
-        const fileRef = ref(storage, `midifiles/${file.name}`);
-        await uploadBytes(fileRef, file);
-        const file_url = await getDownloadURL(fileRef);
 
-        // 2. Upload preview if present
-        let preview_url = "";
-        if (preview) {
-          const previewRef = ref(storage, `previews/${preview.name}`);
-          await uploadBytes(previewRef, preview);
-          preview_url = await getDownloadURL(previewRef);
-        }
-
-        // 3. Call addMidi with all fields
-        await addMidi({
-          name: form.name,
-          price: Number(form.price),
-          key: form.key,
-          bpm: Number(form.bpm),
-          genre: form.genre,
-          scale: form.scale,
-          vst: form.vst,
-          preset: form.preset,
-          file_url,
-          preview_url,
-          tags,
-          hidden: form.hidden,
-          discount_price: form.discount_price
-            ? Number(form.discount_price)
-            : undefined,
-          is_featured: form.is_featured,
-        });
-        alert("MIDI product uploaded!");
-        onClose();
-      } catch (err) {
-        alert("Upload failed: " + (err as Error).message);
-      }
+      setFile(selectedFile);
     }
-    // TODO: Handle pack upload
+  };
+
+  const handlePreviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setPreview(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!file) {
+      alert("Please upload a file");
+      return;
+    }
+
+    if (!preview) {
+      alert("Please upload a preview");
+      return;
+    }
+
+    try {
+      const fileRef = ref(storage, `midifiles/${file.name}`);
+      await uploadBytes(fileRef, file);
+      const file_url = await getDownloadURL(fileRef);
+
+      let preview_url = "";
+      if (preview) {
+        const previewRef = ref(storage, `midifiles/${preview.name}`);
+        await uploadBytes(previewRef, preview);
+        preview_url = await getDownloadURL(previewRef);
+      }
+
+      await addMidi({
+        name: form.name,
+        price: Number(form.price),
+        key: form.key,
+        scale: form.scale,
+        bpm: Number(form.bpm),
+        genre: form.genre,
+        vst: form.vst,
+        preset: form.preset,
+        discount_price: form.discount_price
+          ? Number(form.discount_price)
+          : undefined,
+        file_url,
+        preview_url,
+        tags,
+        hidden: form.hidden,
+        is_featured: form.is_featured,
+        is_discounted: form.is_discounted,
+      });
+
+      alert("Midi file uploaded successfully");
+      onClose();
+    } catch (error) {
+      console.error("Error uploading midi file:", error);
+      alert("Failed to upload midi file");
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative text-black">
-        <button
-          className="absolute top-4 right-4 text-2xl font-bold text-gray-500 hover:text-black"
-          onClick={onClose}
-        >
-          ×
-        </button>
-        <h1 className="text-2xl font-bold mb-4">Add MIDI Product</h1>
-        {uploadType === null && (
-          <div className="flex flex-col items-center space-y-4">
-            <p className="mb-2 text-lg font-medium">
-              What do you want to upload?
-            </p>
-            <button
-              className="w-full bg-primary text-white py-2 rounded hover:bg-primary/80 hover:cursor-pointer"
-              onClick={() => setUploadType("single")}
+    <dialog
+      open
+      className="w-full h-full fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+    >
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-8 relative">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Upload Midifile</h1>
+          <button onClick={onClose}>
+            <XMarkIcon className="w-6 h-6 hover:cursor-pointer" />
+          </button>
+        </div>
+
+        {/* Midifile form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="file-upload"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Single MIDI file
-            </button>
-            <button
-              className="w-full bg-primary text-white py-2 rounded hover:bg-primary/80 hover:cursor-pointer"
-              onClick={() => setUploadType("pack")}
-            >
-              MIDI pack
-            </button>
+              Midi File
+            </label>
+            <input
+              id="file-upload"
+              type="file"
+              name="file"
+              onChange={handleFileChange}
+              accept=".mid,.midi,audio/midi"
+              required
+              className="block w-full text-sm text-gray-700
+             file:mr-4 file:py-2 file:px-4
+             file:rounded-md file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-50 file:text-blue-700
+             hover:file:bg-blue-100
+             cursor-pointer border border-gray-300 rounded-md bg-gray-50"
+            />
           </div>
-        )}
-        {uploadType === "single" && (
-          <form className="space-y-3" onSubmit={handleSubmit}>
+
+          <div>
+            <label
+              htmlFor="preview-upload"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Preview File
+            </label>
             <input
+              id="preview-upload"
+              type="file"
+              name="preview"
+              accept=".mp3,.wav,.ogg,.m4a"
+              required
+              onChange={handlePreviewChange}
+              className="block w-full text-sm text-gray-700
+             file:mr-4 file:py-2 file:px-4
+             file:rounded-md file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-50 file:text-blue-700
+             hover:file:bg-blue-100
+             cursor-pointer border border-gray-300 rounded-md bg-gray-50"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input
+              type="text"
               name="name"
+              required
               placeholder="Name"
-              className="input"
-              value={form.name}
               onChange={handleChange}
-              required
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
+              type="number"
               name="price"
-              type="number"
+              required
               placeholder="Price"
-              className="input"
-              value={form.price}
               onChange={handleChange}
-              required
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <div className="flex space-x-2">
-              <select
-                name="key"
-                className="input flex-1"
-                value={form.key}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Key</option>
-                {musicalKeys.map((key) => (
-                  <option key={key} value={key}>
-                    {key}
-                  </option>
-                ))}
-              </select>
-              <select
-                name="scale"
-                className="input flex-1"
-                value={form.scale}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Scale</option>
-                {scaleTypes.map((scale) => (
-                  <option key={scale} value={scale}>
-                    {scale}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <input
-              name="bpm"
-              type="number"
-              placeholder="BPM"
-              className="input"
-              value={form.bpm}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <select
+              name="key"
+              required
               onChange={handleChange}
-              required
-            />
-            <input
-              name="genre"
-              placeholder="Genre"
-              className="input"
-              value={form.genre}
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {[
+                "C",
+                "C#",
+                "D",
+                "D#",
+                "E",
+                "F",
+                "F#",
+                "G",
+                "G#",
+                "A",
+                "A#",
+                "B",
+              ].map((note) => (
+                <option key={note} value={note}>
+                  {note}
+                </option>
+              ))}
+            </select>
+            <select
+              name="scale"
               onChange={handleChange}
-              required
-            />
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Major">Major</option>
+              <option value="Minor">Minor</option>
+            </select>
+          </div>
+
+          <input
+            type="number"
+            name="bpm"
+            required
+            placeholder="BPM"
+            onChange={handleChange}
+            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <input
+            type="text"
+            name="genre"
+            placeholder="Genre"
+            onChange={handleChange}
+            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <div className="grid grid-cols-2 gap-4">
             <input
+              type="text"
               name="vst"
+              required
               placeholder="VST"
-              className="input"
-              value={form.vst}
               onChange={handleChange}
-              required
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
+              type="text"
               name="preset"
-              placeholder="Preset"
-              className="input"
-              value={form.preset}
-              onChange={handleChange}
               required
+              placeholder="Preset"
+              onChange={handleChange}
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          <input
+            type="number"
+            name="discount_price"
+            placeholder="Discount Price"
+            onChange={handleChange}
+            className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          {/* Tags */}
+          <div>
             <input
-              name="tags"
+              type="text"
+              value={tagInput}
+              onChange={handleTagInputChange}
+              onKeyDown={handleTagKeyDown}
               placeholder={
                 tags.length >= 3 ? "Max 3 tags" : "Tags (press Enter or comma)"
               }
-              className="input"
-              value={tagInput}
-              onChange={handleChange}
-              onKeyDown={handleTagKeyDown}
               disabled={tags.length >= 3}
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <div className="flex flex-wrap gap-2 mb-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {tags.map((tag, idx) => (
-                <span key={tag} className="tag-badge">
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
+                >
                   {tag}
                   <button
                     type="button"
-                    className="tag-remove"
+                    className="ml-2 text-sm hover:text-red-600 hover:cursor-pointer"
                     onClick={() => handleRemoveTag(idx)}
                   >
                     ×
@@ -318,187 +344,38 @@ function UploadModal({ onClose }: UploadModalProps) {
                 </span>
               ))}
             </div>
-            <div className="flex items-center space-x-2">
-              <label>
-                <input
-                  type="checkbox"
-                  name="hidden"
-                  checked={form.hidden}
-                  onChange={handleChange}
-                />{" "}
-                Hidden
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="is_featured"
-                  checked={form.is_featured}
-                  onChange={handleChange}
-                />{" "}
-                Featured
-              </label>
-            </div>
-            <input
-              name="discount_price"
-              type="number"
-              placeholder="Discount Price (optional)"
-              className="input"
-              value={form.discount_price}
-              onChange={handleChange}
-            />
-            <div>
-              <label className="block mb-1 font-medium">MIDI File:</label>
-              <div
-                className={`dropzone ${
-                  fileDragActive ? "dropzone-active" : ""
-                }`}
-                onDragOver={handleFileDragOver}
-                onDragLeave={handleFileDragLeave}
-                onDrop={handleFileDrop}
-                onClick={() =>
-                  document.getElementById("midi-file-input")?.click()
-                }
-                tabIndex={0}
-                role="button"
-                style={{ cursor: "pointer" }}
-              >
-                {file ? (
-                  <span>{file.name}</span>
-                ) : (
-                  <span>
-                    Drag & drop your MIDI file here, or{" "}
-                    <span className="underline">click to choose</span>
-                  </span>
-                )}
-                <input
-                  id="midi-file-input"
-                  type="file"
-                  accept=".mid,.midi"
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block mb-1 font-medium">
-                Preview File (optional):
-              </label>
-              <div
-                className={`dropzone ${
-                  previewDragActive ? "dropzone-active" : ""
-                }`}
-                onDragOver={handlePreviewDragOver}
-                onDragLeave={handlePreviewDragLeave}
-                onDrop={handlePreviewDrop}
-                onClick={() =>
-                  document.getElementById("preview-file-input")?.click()
-                }
-                tabIndex={0}
-                role="button"
-                style={{ cursor: "pointer" }}
-              >
-                {preview ? (
-                  <span>{preview.name}</span>
-                ) : (
-                  <span>
-                    Drag & drop your preview file here, or{" "}
-                    <span className="underline">click to choose</span>
-                  </span>
-                )}
-                <input
-                  id="preview-file-input"
-                  type="file"
-                  accept="audio/*"
-                  onChange={handlePreviewChange}
-                  style={{ display: "none" }}
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-primary text-white py-2 rounded hover:bg-primary/80 mt-2 hover:cursor-pointer"
-            >
-              Upload
-            </button>
-          </form>
-        )}
-        {uploadType === "pack" && (
-          <form className="space-y-3" onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block mb-1 font-medium">MIDI Pack Files:</label>
+          </div>
+
+          {/* Checkboxes */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm text-gray-700">
+            <label className="inline-flex items-center gap-2">
+              <input type="checkbox" name="hidden" onChange={handleChange} />
+              Hidden
+            </label>
+            <label className="inline-flex items-center gap-2">
               <input
-                type="file"
-                accept=".mid,.midi"
-                multiple
-                onChange={handlePackFilesChange}
-                required
+                type="checkbox"
+                name="is_featured"
+                onChange={handleChange}
               />
-              <div className="mt-2 flex flex-wrap gap-2">
-                {packFiles.map((f) => (
-                  <span key={f.name} className="tag-badge">
-                    {f.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-            {/* TODO: Add more fields for pack metadata */}
-            <button
-              type="submit"
-              className="w-full bg-primary text-white py-2 rounded hover:bg-primary/80 mt-2"
-            >
-              Upload Pack
-            </button>
-          </form>
-        )}
+              Featured
+            </label>
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="is_discounted"
+                onChange={handleChange}
+              />
+              Discounted
+            </label>
+          </div>
+
+          <div className="pt-4">
+            <Button text="Upload" style="primary" type="submit" />
+          </div>
+        </form>
       </div>
-      <style jsx>{`
-        .input {
-          width: 100%;
-          padding: 0.5rem;
-          border-radius: 0.375rem;
-          border: 1px solid #d1d5db;
-        }
-        .dropzone {
-          width: 100%;
-          min-height: 48px;
-          border: 2px dashed #d1d5db;
-          border-radius: 0.375rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0.75rem;
-          margin-bottom: 0.5rem;
-          background: #f9fafb;
-          color: #6b7280;
-          transition: border-color 0.2s, background 0.2s;
-        }
-        .dropzone-active {
-          border-color: #2563eb;
-          background: #e0e7ff;
-        }
-        .tag-badge {
-          display: inline-flex;
-          align-items: center;
-          background: #e0e7ff;
-          color: #1e293b;
-          border-radius: 9999px;
-          padding: 0.25rem 0.75rem 0.25rem 0.75rem;
-          font-size: 0.875rem;
-          margin-right: 0.25rem;
-          margin-bottom: 0.25rem;
-          gap: 0.5rem;
-        }
-        .tag-remove {
-          background: none;
-          border: none;
-          color: #64748b;
-          font-size: 1rem;
-          margin-left: 0.5rem;
-          cursor: pointer;
-          line-height: 1;
-        }
-      `}</style>
-    </div>
+    </dialog>
   );
 }
 
