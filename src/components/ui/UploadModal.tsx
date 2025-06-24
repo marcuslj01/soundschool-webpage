@@ -9,7 +9,7 @@ interface UploadModalProps {
   onSubmit: (data: FormData) => void;
 }
 
-function UploadModal({ onClose, onSubmit }: UploadModalProps) {
+function UploadModal({ onClose }: UploadModalProps) {
   const [form, setForm] = useState({
     name: "",
     price: "",
