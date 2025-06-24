@@ -41,8 +41,8 @@ function Hero(props: HeroProps) {
               {props.description}
             </h3>
             <div className="flex flex-row gap-4 mt-8">
-              <Button type="primary" text={props.primaryButtonText} />
-              <Button type="secondary" text={props.secondaryButtonText} />
+              <Button style="primary" text={props.primaryButtonText} />
+              <Button style="secondary" text={props.secondaryButtonText} />
             </div>
           </div>
         </div>
@@ -69,8 +69,8 @@ function Hero(props: HeroProps) {
             className="w-full h-full object-contain"
           />
           <div className="flex flex-row items-center justify-center gap-4 mt-8">
-            <Button type="primary" text={props.primaryButtonText} />
-            <Button type="secondary" text={props.secondaryButtonText} />
+            <Button style="primary" text={props.primaryButtonText} />
+            <Button style="secondary" text={props.secondaryButtonText} />
           </div>
         </div>
       </div>
