@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "test": "jest --forceExit",
+    "test:watch": "jest --watch",
     "start": "next start",
     "lint": "next lint"
   },
