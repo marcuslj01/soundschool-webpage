@@ -1,3 +1,5 @@
+export const fetchCache = "force-no-store";
+
 import Hero from "@/components/sections/Hero";
 import { getMidi } from "@/lib/firestore/midifiles";
 import Midigrid from "@/components/ui/Midigrid";
