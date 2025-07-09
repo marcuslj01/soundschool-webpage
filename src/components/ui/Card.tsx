@@ -11,14 +11,25 @@ import React, { useState } from "react";
 interface CardProps {
   title: string;
   date: string;
+  root: string;
   scale: string;
   bpm: number;
 }
 
-function Card({ title, date, scale, bpm }: CardProps) {
+function Card({ title, date, root, scale, bpm }: CardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
+
+  function checkIsNew(date: string) {
+    const today = new Date();
+    const dateObj = new Date(date);
+    const diffTime = Math.abs(today.getTime() - dateObj.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays < 7; // If midi is less than 7 days old, it's new
+  }
+
+  const isNew = checkIsNew(date);
 
   return (
     <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit">
@@ -79,6 +90,7 @@ function Card({ title, date, scale, bpm }: CardProps) {
         <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
           <span>{date}</span>
           <span>·</span>
+          <span>{root}</span>
           <span>{scale}</span>
           <span>·</span>
           <span>{bpm} BPM</span>
@@ -89,9 +101,11 @@ function Card({ title, date, scale, bpm }: CardProps) {
       <div className="flex-1 flex flex-col justify-end w-1/4 gap-2">
         {/* New and Heart button */}
         <div className="flex flex-row gap-2 justify-end">
-          <Button className="bg-secondary text-black rounded-md px-1 font-bold text-xs sm:text-sm h-5">
-            NEW!
-          </Button>
+          {isNew && (
+            <Button className="bg-secondary text-black rounded-md px-1 font-bold text-xs sm:text-sm h-5">
+              NEW!
+            </Button>
+          )}
           <Button
             className="h-5 w-5 flex items-center justify-center hover:cursor-pointer"
             onClick={() => setIsLiked(!isLiked)}
