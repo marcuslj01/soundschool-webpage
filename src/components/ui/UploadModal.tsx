@@ -14,7 +14,7 @@ function UploadModal({ onClose }: UploadModalProps) {
   const [form, setForm] = useState({
     name: "",
     price: "",
-    key: "",
+    root: "",
     scale: "",
     bpm: "",
     genre: "",
@@ -112,6 +112,11 @@ function UploadModal({ onClose }: UploadModalProps) {
       return;
     }
 
+    if (!form.root || !form.scale) {
+      alert("You must choose both root and scale");
+      return;
+    }
+
     try {
       const fileRef = ref(storage, `midifiles/${file.name}`);
       await uploadBytes(fileRef, file);
@@ -127,7 +132,7 @@ function UploadModal({ onClose }: UploadModalProps) {
       await addMidi({
         name: form.name,
         price: Number(form.price),
-        key: form.key,
+        root: form.root,
         scale: form.scale,
         bpm: Number(form.bpm),
         genre: form.genre,
@@ -236,11 +241,15 @@ function UploadModal({ onClose }: UploadModalProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <select
-              name="key"
+              name="root"
               required
+              value={form.root}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+              <option value="" disabled>
+                Choose root
+              </option>
               {[
                 "C",
                 "C#",
@@ -262,9 +271,14 @@ function UploadModal({ onClose }: UploadModalProps) {
             </select>
             <select
               name="scale"
+              required
+              value={form.scale}
               onChange={handleChange}
               className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+              <option value="" disabled>
+                Choose scale
+              </option>
               <option value="Major">Major</option>
               <option value="Minor">Minor</option>
             </select>
