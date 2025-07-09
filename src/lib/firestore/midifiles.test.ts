@@ -8,7 +8,8 @@ describe("Firestore midi-funksjoner", () => {
     const testMidi: MidiInput = {
       name: "Test MIDI",
       price: 100,
-      key: "C",
+      root: "C",
+      scale: "Major",
       bpm: 120,
       genre: "Pop",
       vst: "Serum",

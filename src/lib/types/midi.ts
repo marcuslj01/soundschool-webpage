@@ -4,7 +4,7 @@ export interface MidiInput {
     preview_url: string;
     name: string;
     price: number;
-    key: string;
+    root: string;
     scale: string;
     bpm: number;
     genre: string;
