@@ -119,7 +119,7 @@ function UploadModal({ onClose }: UploadModalProps) {
 
       let preview_url = "";
       if (preview) {
-        const previewRef = ref(storage, `midifiles/${preview.name}`);
+        const previewRef = ref(storage, `previews/${preview.name}`);
         await uploadBytes(previewRef, preview);
         preview_url = await getDownloadURL(previewRef);
       }
