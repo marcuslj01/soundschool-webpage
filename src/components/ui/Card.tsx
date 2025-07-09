@@ -6,7 +6,7 @@ import {
   HeartIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface CardProps {
   title: string;
@@ -14,10 +14,23 @@ interface CardProps {
   root: string;
   scale: string;
   bpm: number;
+  previewUrl: string;
+  isPlaying: boolean;
+  onPlay: () => void;
+  onPause: () => void;
 }
 
-function Card({ title, date, root, scale, bpm }: CardProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+function Card({
+  title,
+  date,
+  root,
+  scale,
+  bpm,
+  previewUrl,
+  isPlaying,
+  onPlay,
+  onPause,
+}: CardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
 
@@ -31,12 +44,40 @@ function Card({ title, date, root, scale, bpm }: CardProps) {
 
   const isNew = checkIsNew(date);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const handleEnded = () => onPause();
+    audio.addEventListener("ended", handleEnded);
+    return () => audio.removeEventListener("ended", handleEnded);
+  }, [onPause]);
+
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      onPause();
+    } else {
+      onPlay();
+    }
+  };
+
   return (
     <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit">
       {/* Play/Pause Button */}
       <div className="flex-shrink-0">
         <button
-          onClick={() => setIsPlaying(!isPlaying)}
+          onClick={handlePlayPause}
           className="w-14 h-14 flex items-center justify-center rounded-full focus:outline-none"
           aria-label={isPlaying ? "Pause" : "Play"}
         >
@@ -135,6 +176,7 @@ function Card({ title, date, root, scale, bpm }: CardProps) {
           )}
         </div>
       </div>
+      <audio ref={audioRef} src={previewUrl} />
     </div>
   );
 }
