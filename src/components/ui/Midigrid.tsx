@@ -16,12 +16,14 @@ function Midigrid({ midiFiles }: MidigridProps) {
       {midiFiles.map((file) => (
         <Card
           key={file.id}
+          id={file.id}
           title={file.name}
           date={file.created_at.toLocaleDateString()}
           root={file.root}
           scale={file.scale}
           bpm={file.bpm}
           previewUrl={file.preview_url}
+          price={file.price}
           isPlaying={currentlyPlaying === file.id}
           onPlay={() => setCurrentlyPlaying(file.id)}
           onPause={() => setCurrentlyPlaying(null)}
