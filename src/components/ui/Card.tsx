@@ -7,25 +7,31 @@ import {
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
+import { addToCart, removeFromCart } from "@/lib/cart";
+import { CartItem } from "@/lib/types/cartItem";
 
 interface CardProps {
+  id: string;
   title: string;
   date: string;
   root: string;
   scale: string;
   bpm: number;
   previewUrl: string;
+  price: number;
   isPlaying: boolean;
   onPlay: () => void;
   onPause: () => void;
 }
 
 function Card({
+  id,
   title,
   date,
   root,
   scale,
   bpm,
+  price,
   previewUrl,
   isPlaying,
   onPlay,
@@ -40,11 +46,27 @@ function Card({
     const dateObj = new Date(date);
     const diffTime = Math.abs(today.getTime() - dateObj.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays < 7; // If midi is less than 7 days old, it's new
+    return diffDays < 3; // If midi is less than 3 days old, it's new
   }
 
   const isNew = checkIsNew(date);
 
+  // Cart stuff
+  const handleAddToCart = (item: CartItem) => {
+    if (isAdded) {
+      // Remove item from cart
+      removeFromCart(id);
+      console.log("Removing item from cart", item);
+      setIsAdded(false);
+    } else if (!isAdded) {
+      // Add item to cart
+      console.log("Adding item to cart", item);
+      addToCart(item);
+      setIsAdded(true);
+    }
+  };
+
+  // Audio stuff
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -183,14 +205,28 @@ function Card({
           {isAdded ? (
             <Button
               className="bg-primary/20 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer"
-              onClick={() => setIsAdded(!isAdded)}
+              onClick={() =>
+                handleAddToCart({
+                  id: id,
+                  type: "midi",
+                  title: title,
+                  price: price,
+                })
+              }
             >
               <p>In cart</p> <CheckCircleIcon className="w-4 h-4" />
             </Button>
           ) : (
             <Button
               className="bg-primary text-white text-xs sm:text-sm rounded-md w-full h-8 px-1 flex items-center justify-center flex-row gap-1 hover:bg-primary/70 hover:cursor-pointer"
-              onClick={() => setIsAdded(!isAdded)}
+              onClick={() =>
+                handleAddToCart({
+                  id: id,
+                  type: "midi",
+                  title: title,
+                  price: price,
+                })
+              }
             >
               <p>Add</p> <ShoppingCartIcon className="w-4 h-4" />
             </Button>
