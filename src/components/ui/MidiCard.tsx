@@ -7,7 +7,7 @@ import {
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
-import { addToCart, removeFromCart } from "@/lib/cart";
+import { addToCart, removeFromCart, isInCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
 
 interface CardProps {
@@ -24,7 +24,7 @@ interface CardProps {
   onPause: () => void;
 }
 
-function Card({
+function MidiCard({
   id,
   title,
   date,
@@ -50,6 +50,14 @@ function Card({
   }
 
   const isNew = checkIsNew(date);
+
+  // Check localStorage for initial isAdded
+  useEffect(() => {
+    setIsAdded(isInCart(id, "midi"));
+    const update = () => setIsAdded(isInCart(id, "midi"));
+    window.addEventListener("cart-updated", update);
+    return () => window.removeEventListener("cart-updated", update);
+  }, [id]);
 
   // Cart stuff
   const handleAddToCart = (item: CartItem) => {
@@ -238,4 +246,4 @@ function Card({
   );
 }
 
-export default Card;
+export default MidiCard;
