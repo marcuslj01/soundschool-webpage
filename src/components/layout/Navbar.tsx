@@ -67,14 +67,6 @@ export default function Navbar() {
     setAutoOpened(false);
   };
 
-  // Open dropdown when cart changes (e.g. add)
-  useEffect(() => {
-    if (isMounted && cartCount > 0) {
-      setShowCartDropdown(true);
-      setAutoOpened(true);
-    }
-  }, [cartCount, isMounted]);
-
   return (
     <Disclosure as="nav" className="bg-black/80 fixed top-0 w-full z-50">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -183,10 +175,10 @@ export default function Navbar() {
                         </span>
                       </div>
                       <Link
-                        href="/checkout"
-                        className="w-full h-10 rounded-md truncate bg-primary px-1 sm:px-2 py-1 text-md sm:text-lg font-semibold text-white shadow-xs hover:bg-primary/80 hover:scale-102 focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer mt-4 flex items-center justify-center"
+                        href="/cart"
+                        className="w-full h-10 rounded-md truncate bg-primary px-1 sm:px-2 py-1 text-sm sm:text-md text-white shadow-xs hover:bg-primary/80 hover:scale-102 focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer mt-4 flex items-center justify-center"
                       >
-                        Checkout
+                        Go to cart
                       </Link>
                     </>
                   )}
