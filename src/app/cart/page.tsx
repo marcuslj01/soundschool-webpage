@@ -33,6 +33,24 @@ export default function Cart() {
     0
   );
 
+  const handleCheckout = async (e: React.FormEvent) => {
+    e.preventDefault(); // Hindrer form fra å refreshe siden
+    const response = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cartItems,
+        // email: "test@example.com", // legg til hvis du har e-postfelt
+      }),
+    });
+    const data = await response.json();
+    if (data.url) {
+      window.location.href = data.url; // Send bruker til Stripe Checkout
+    } else {
+      alert("Noe gikk galt med betaling. Prøv igjen!");
+    }
+  };
+
   // TODO: tax not included for now
   //   const tax = subtotalPrice * 0.25; // 25% tax (MVA)
   const totalPrice = subtotalPrice; // + tax;
@@ -44,7 +62,10 @@ export default function Cart() {
           Shopping Cart
         </h1>
 
-        <form className="mt-4 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
+        <form
+          className="mt-4 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16"
+          onSubmit={handleCheckout}
+        >
           <section aria-labelledby="cart-heading" className="lg:col-span-7">
             <h2 id="cart-heading" className="sr-only">
               Items in your shopping cart
@@ -145,6 +166,7 @@ export default function Cart() {
               <button
                 type="submit"
                 className="w-full rounded-md border border-transparent bg-primary px-4 py-3 text-base font-medium text-white shadow-xs hover:bg-primary/80 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden hover:scale-102 cursor-pointer"
+                onClick={handleCheckout}
               >
                 Checkout
               </button>
