@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Card from "./Card";
+import MidiCard from "./MidiCard";
 import { Midi } from "@/lib/types/midi";
 
 interface MidigridProps {
@@ -14,7 +14,7 @@ function Midigrid({ midiFiles }: MidigridProps) {
   return (
     <div className="flex flex-col gap-2 w-fit md:w-md lg:w-lg mb-8">
       {midiFiles.map((file) => (
-        <Card
+        <MidiCard
           key={file.id}
           id={file.id}
           title={file.name}
