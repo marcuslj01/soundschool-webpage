@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, Timestamp, doc, getDoc } from "firebase/firestore";
+import { collection, addDoc, Timestamp, doc, getDoc, runTransaction } from "firebase/firestore";
 import { OrderItem } from "@/lib/types/orderItem";
 import { CartItem } from "@/lib/types/cartItem";
 import { Resend } from "resend";
@@ -65,6 +65,22 @@ export async function POST(req: NextRequest) {
     };
 
     await addDoc(collection(db, "orders"), orderData);
+
+    // Increment sales for each purchased midi file
+    for (const item of orderItems) {
+      if (item.type === "midi") {
+        const midiRef = doc(db, "midifiles", item.id);
+        try {
+          await runTransaction(db, async (transaction) => {
+            const midiDoc = await transaction.get(midiRef);
+            const currentSales = midiDoc.exists() && midiDoc.data().sales ? midiDoc.data().sales : 0;
+            transaction.update(midiRef, { sales: currentSales + 1 });
+          });
+        } catch (err) {
+          console.error(`Error updating sales for midi file ${item.id}:`, err);
+        }
+      }
+    }
 
     // Send email with Resend
     if (email) {
