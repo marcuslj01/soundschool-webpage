@@ -4,6 +4,7 @@ import { OrderItem } from "./orderItem";
 export interface Order {
   id: string;
   customer_email: string;
+  customer_name: string;
   created_at: Timestamp;
   total_price: number;
   orderItems: OrderItem[];
