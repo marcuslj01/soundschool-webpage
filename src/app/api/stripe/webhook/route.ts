@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
 
     const orderData = {
       customer_email: email,
+      customer_name: session.customer_details?.name || "",
       total_price: session.amount_total ? session.amount_total / 100 : 0,
       status: "paid",
       created_at: Timestamp.now(),
@@ -103,15 +104,15 @@ export async function POST(req: NextRequest) {
           subject: "Thanks for your order! Here are your download links",
           html: `
             <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 24px; border-radius: 8px; max-width: 600px; margin: auto;">
-              <h2 style="color: #6366f1;">Thanks for your order!</h2>
+              <h2 style="color: #6366f1;">Thanks for your order, ${orderData.customer_name}!</h2>
               <p style="color: #222;">Here are the details of your order:</p>
               <ul style="list-style: none; padding: 0; margin: 0 0 24px 0;">
-                <li><strong>Order ID:</strong> ${orderData.payment_id}</li>
-                <li><strong>Status:</strong> ${orderData.status}</li>
-                <li><strong>Email:</strong> ${orderData.customer_email}</li>
-                <li><strong>Total:</strong> $${orderData.total_price}</li>
+              <li><strong>Email:</strong> ${orderData.customer_email}</li>
+              <li><strong>Total:</strong> $${orderData.total_price}</li>
+              <li><strong>Status:</strong> ${orderData.status}</li>
+              <li><strong>Order ID:</strong> ${orderData.payment_id}</li>
               </ul>
-              <h3 style="color: #222; margin-bottom: 12px;">Your products:</h3>
+              <h3 style="color: #222; margin-bottom: 12px;">Your products</h3>
               <ul style="list-style: none; padding: 0;">
                 ${downloadLinks}
               </ul>
@@ -135,7 +136,8 @@ export async function POST(req: NextRequest) {
               <h2 style="color: #6366f1;">You have a new sale!</h2>
               <p style="color: #222;">Here are the details of the order:</p>
               <ul style="list-style: none; padding: 0; margin: 0 0 24px 0;">
-              <li><strong>Customer email:</strong> ${orderData.customer_email}</li>
+                <li><strong>Customer name:</strong> ${orderData.customer_name}</li>
+                <li><strong>Customer email:</strong> ${orderData.customer_email}</li>
                 <li><strong>Order ID:</strong> ${orderData.payment_id}</li>
                 <li><strong>Status:</strong> ${orderData.status}</li>
                 <li><strong>Total:</strong> $${orderData.total_price}</li>
