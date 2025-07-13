@@ -5,4 +5,5 @@ export interface OrderItem {
     price: number;
     previewUrl: string;
     downloadUrl: string;
+    // TODO: Add discounted boolean?
 }

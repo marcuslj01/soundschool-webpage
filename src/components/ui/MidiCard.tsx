@@ -64,11 +64,9 @@ function MidiCard({
     if (isAdded) {
       // Remove item from cart
       removeFromCart(id);
-      console.log("Removing item from cart", item);
       setIsAdded(false);
     } else if (!isAdded) {
       // Add item to cart
-      console.log("Adding item to cart", item);
       addToCart(item);
       setIsAdded(true);
     }
