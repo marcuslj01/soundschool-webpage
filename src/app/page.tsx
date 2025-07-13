@@ -1,4 +1,4 @@
-export const fetchCache = "force-no-store";
+export const dynamic = "force-dynamic";
 
 import Hero from "@/components/sections/Hero";
 import { getMidi } from "@/lib/firestore/midifiles";

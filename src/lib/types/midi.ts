@@ -15,6 +15,7 @@ export interface MidiInput {
     is_featured?: boolean;
     is_discounted?: boolean;
     discount_price?: number;
+    sales?: number;
 };
 
 // For fetching from firestore (created_at is added in the addMidi function)
