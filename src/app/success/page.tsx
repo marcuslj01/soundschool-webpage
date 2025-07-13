@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { getOrder } from "@/lib/firestore/order";
 import OrderDetails from "@/components/sections/OrderDetails";
 import Link from "next/link";
+import ClearCartOnSuccess from "@/components/ClearCartOnSuccess";
 
 export default async function SuccessPage({
   searchParams,
@@ -14,8 +15,7 @@ export default async function SuccessPage({
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-white">
         <p className="text-gray-400 text-2xl">
-          Oops! Something went wrong. Please contact support if you have any
-          questions.
+          Oops! Something went wrong. Please try again or contact support.
         </p>
         <Link
           href="/"
@@ -39,8 +39,7 @@ export default async function SuccessPage({
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-white">
         <p className="text-gray-400 text-2xl">
-          We couldn&apos;t find your order. Please contact support if you have
-          any questions.
+          We couldn&apos;t find your order. Please try again or contact support.
         </p>
         <Link
           href="/"
@@ -56,6 +55,7 @@ export default async function SuccessPage({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-white">
+      <ClearCartOnSuccess />
       {order && <OrderDetails order={order} />}
     </div>
   );
