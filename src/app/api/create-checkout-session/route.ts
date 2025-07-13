@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     })),
     mode: "payment",
     customer_email: email,
-    success_url: `${process.env.BASE_URL}/success`,
+    success_url: `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.BASE_URL}/cart`,
     metadata: {
       cart: JSON.stringify(cartItems),
