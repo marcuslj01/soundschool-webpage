@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
     })),
     mode: "payment",
     customer_email: email,
-    success_url: "http://soundschool.vercel.app/success", //TODO: change to production URL
-    cancel_url: "http://soundschool.vercel.app/cart", //TODO: change to production URL
+    success_url: `${process.env.BASE_URL}/success`,
+    cancel_url: `${process.env.BASE_URL}/cart`,
     metadata: {
       cart: JSON.stringify(cartItems),
     },
