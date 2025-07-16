@@ -210,7 +210,7 @@ function MidiCard({
         <div className="flex flex-row justify-end">
           {isAdded ? (
             <Button
-              className="bg-primary/20 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer"
+              className="bg-primary/20 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
               onClick={() =>
                 handleAddToCart({
                   id: id,
@@ -224,7 +224,7 @@ function MidiCard({
             </Button>
           ) : (
             <Button
-              className="bg-primary text-white text-xs sm:text-sm rounded-md w-full h-8 px-1 flex items-center justify-center flex-row gap-1 hover:bg-primary/70 hover:cursor-pointer"
+              className="bg-primary text-white text-xs sm:text-sm rounded-md w-full h-8 px-1 flex items-center justify-center flex-row gap-1 hover:bg-primary/70 hover:cursor-pointer transition-all duration-300"
               onClick={() =>
                 handleAddToCart({
                   id: id,

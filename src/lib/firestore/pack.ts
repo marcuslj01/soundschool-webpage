@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, Timestamp } from "firebase/firestore";
 import { Pack, PackInput } from "../types/pack";
 import { db } from "../firebase";
 
@@ -21,4 +21,19 @@ export async function getPacks() {
             created_at: data.created_at.toDate(),
         } as Pack;
     });
+}
+
+export async function getPack(id: string): Promise<Pack | null> {
+    const packDoc = doc(db, "packs", id);
+    const packSnapshot = await getDoc(packDoc);
+    
+    if (!packSnapshot.exists()) {
+        return null;
+    }
+    
+    const data = packSnapshot.data();
+    return {
+        ...data,
+        id: packSnapshot.id,
+    } as Pack;
 }

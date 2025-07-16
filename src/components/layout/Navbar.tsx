@@ -145,11 +145,15 @@ export default function Navbar() {
                         {cartItems.map((item) => (
                           <li
                             key={item.id + item.type}
-                            className="flex items-center text-white py-2 px-1 bg-[#23272f] rounded hover:bg-[#2c313a] transition-colors gap-2"
+                            className="flex items-center text-white py-2 px-1 bg-[#23272f] rounded gap-2"
                           >
-                            <span className="flex-1 truncate max-w-[200px] text-left text-sm">
-                              {item.title}
-                            </span>
+                            <Link
+                              className="flex-1 truncate max-w-[200px] text-left text-sm w-full hover:bg-[#353B47FF] hover:cursor-pointer rounded-md p-2"
+                              href={`/packs?id=${item.id}`}
+                              key={item.id + item.type}
+                            >
+                              <span>{item.title}</span>
+                            </Link>
                             <span className="min-w-[60px] text-right font-mono font-medium">
                               ${item.price}
                             </span>
