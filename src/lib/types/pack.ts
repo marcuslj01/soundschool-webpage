@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-
 // Interface for a pack of midi files or samples
 export interface PackInput {
     name: string;
@@ -21,5 +19,5 @@ export interface PackInput {
 
 export interface Pack extends PackInput {
     id: string;
-    created_at: Timestamp;
+    created_at: Date;
 }

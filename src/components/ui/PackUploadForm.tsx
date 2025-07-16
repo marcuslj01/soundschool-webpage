@@ -140,7 +140,7 @@ function PackUploadForm({ onClose, onBack }: PackUploadFormProps) {
         image_url,
         tags,
       });
-      alert(form.type + " Pack uploaded successfully");
+      alert("Pack uploaded successfully");
       onClose();
     } catch (error) {
       console.error("Error uploading midi file:", error);
