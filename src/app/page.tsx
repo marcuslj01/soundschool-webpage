@@ -9,11 +9,9 @@ import { getPacks } from "@/lib/firestore/pack";
 export default async function Home() {
   const midiFiles = await getMidi();
   const packs = await getPacks();
-  const featuredPacks = packs.filter(
-    (pack) => pack.is_featured && !pack.hidden
-  );
-  const midiPacks = featuredPacks.filter((pack) => pack.type === "midi");
-  const samplePacks = featuredPacks.filter((pack) => pack.type === "sample");
+  const midiPacks = packs.filter((pack) => pack.type === "midi");
+  const samplePacks = packs.filter((pack) => pack.type === "sample");
+  console.log(midiPacks);
 
   return (
     <main className="flex flex-col gap-4 w-full items-center">

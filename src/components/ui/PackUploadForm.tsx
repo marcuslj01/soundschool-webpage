@@ -16,7 +16,7 @@ interface PackUploadFormProps {
 function PackUploadForm({ onClose, onBack }: PackUploadFormProps) {
   const [form, setForm] = useState<PackInput>({
     name: "",
-    type: null,
+    type: "midi",
     description: "",
     price: 0,
     discount_price: 0,
