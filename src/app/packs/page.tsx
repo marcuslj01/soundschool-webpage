@@ -42,7 +42,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
           </div>
 
           {/* pack details */}
-          <div className="mx-auto mt-14 w-md sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
+          <div className="mx-auto mt-14 max-w-xs lg:w-md sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
             <div className="flex flex-col-reverse">
               <div className="mt-4">
                 <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
