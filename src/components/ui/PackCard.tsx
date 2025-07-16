@@ -25,7 +25,7 @@ export default function PackCard({ product }: PackCardProps) {
       key={product.id}
       className="group relative overflow-hidden rounded-lg  bg-black/10 w-80 sm:w-96 md:w-[500px] border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300"
     >
-      <Link href={`/packs/${product.id}`}>
+      <Link href={`/packs?id=${product.id}`}>
         <div className="relative">
           <Image
             alt={product.name}
