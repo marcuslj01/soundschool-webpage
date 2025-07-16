@@ -72,8 +72,11 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 </div>
               </div>
             </div>
+            <p className="text-white text-lg font-bold mt-4">
+              Price: ${pack.price}
+            </p>
 
-            <div className="mt-10 gap-x-6 gap-y-4 sm:grid-cols-2">
+            <div className="mt-4 gap-x-6 gap-y-4 sm:grid-cols-2">
               <PacksButtons
                 pack={{
                   id: pack.id,
