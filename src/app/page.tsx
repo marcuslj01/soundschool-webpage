@@ -11,7 +11,6 @@ export default async function Home() {
   const packs = await getPacks();
   const midiPacks = packs.filter((pack) => pack.type === "midi");
   const samplePacks = packs.filter((pack) => pack.type === "sample");
-  console.log(midiPacks);
 
   return (
     <main className="flex flex-col gap-4 w-full items-center">
