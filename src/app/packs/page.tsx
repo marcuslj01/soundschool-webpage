@@ -57,13 +57,15 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                     remarkPlugins={[remarkGfm]}
                     components={{
                       ul: ({ children }) => (
-                        <ul className="list-disc list-inside">{children}</ul>
+                        <ul className="space-y-1">{children}</ul>
                       ),
                       ol: ({ children }) => (
-                        <ol className="list-decimal list-inside">{children}</ol>
+                        <ol className="space-y-1">{children}</ol>
                       ),
                       li: ({ children }) => (
-                        <li className="ml-2">{children}</li>
+                        <li className="relative pl-6 before:absolute before:left-0 before:top-0 before:content-['•'] before:text-gray-300">
+                          {children}
+                        </li>
                       ),
                     }}
                   >
