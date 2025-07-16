@@ -24,9 +24,9 @@ import { CartItem } from "@/lib/types/cartItem";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
-  { name: "All midifiles", href: "#", current: false },
-  { name: "Free files", href: "#", current: false },
-  { name: "My files", href: "/files", current: false },
+  // { name: "All midifiles", href: "#", current: false },
+  // { name: "Free files", href: "#", current: false },
+  // { name: "My files", href: "/files", current: false },
 ];
 
 function classNames(...classes: string[]) {
