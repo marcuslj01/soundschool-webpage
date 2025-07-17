@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { addToCart, removeFromCart, isInCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
+import Badge from "./Badge";
 
 interface CardProps {
   id: string;
@@ -49,7 +50,14 @@ function MidiCard({
     return diffDays < 3; // If midi is less than 3 days old, it's new
   }
 
+  // Format date for display
+  function formatDateForDisplay(dateString: string) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  }
+
   const isNew = checkIsNew(date);
+  const displayDate = formatDateForDisplay(date);
 
   // Check localStorage for initial isAdded
   useEffect(() => {
@@ -178,12 +186,9 @@ function MidiCard({
       <div className="flex flex-col gap-1 w-2/3 min-w-fit">
         <h1 className="font-semibold text-sm sm:text-lg">{title}</h1>
         <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
-          <span>{date}</span>
-          <span>·</span>
-          <span>{root}</span>
-          <span>{scale}</span>
-          <span>·</span>
-          <span>{bpm} BPM</span>
+          <Badge text={displayDate} style="gray" />
+          <Badge text={root + " " + scale} style="gray" />
+          <Badge text={bpm + " BPM"} style="gray" />
         </div>
       </div>
 
@@ -191,11 +196,7 @@ function MidiCard({
       <div className="flex-1 flex flex-col justify-end w-1/4 gap-2">
         {/* New and Heart button */}
         <div className="flex flex-row gap-2 justify-end">
-          {isNew && (
-            <Button className="bg-secondary text-black rounded-md px-1 font-bold text-xs sm:text-sm h-5">
-              NEW!
-            </Button>
-          )}
+          {isNew && <Badge text="NEW!" style="yellow" />}
           <Button
             className="h-5 w-5 flex items-center justify-center hover:cursor-pointer"
             onClick={() => setIsLiked(!isLiked)}

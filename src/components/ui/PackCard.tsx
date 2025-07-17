@@ -41,7 +41,7 @@ export default function PackCard({ product }: PackCardProps) {
               <span aria-hidden="true" className="absolute inset-0" />
               {product.name}
             </h3>
-            {isNew && <Badge text="New!" style="yellow" />}
+            {isNew && <Badge text="NEW!" style="yellow" />}
           </div>
           <p className="text-sm text-gray-500 font-bold">
             {product.file_count} high quality {product.type}s
