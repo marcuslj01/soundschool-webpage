@@ -34,16 +34,17 @@ export default function Cart() {
   );
 
   const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault(); // Hindrer form fra å refreshe siden
+    e.preventDefault();
+
     const response = await fetch("/api/create-checkout-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         cartItems,
-        // email: "test@example.com", // legg til hvis du har e-postfelt
       }),
     });
     const data = await response.json();
+
     if (data.url) {
       window.location.href = data.url; // Send bruker til Stripe Checkout
     } else {
