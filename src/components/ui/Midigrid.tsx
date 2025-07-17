@@ -18,7 +18,7 @@ function Midigrid({ midiFiles }: MidigridProps) {
           key={file.id}
           id={file.id}
           title={file.name}
-          date={file.created_at.toLocaleDateString()}
+          date={file.created_at.toISOString()}
           root={file.root}
           scale={file.scale}
           bpm={file.bpm}
