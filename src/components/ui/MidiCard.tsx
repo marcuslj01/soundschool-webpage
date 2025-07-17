@@ -179,9 +179,9 @@ function MidiCard({
       <div className="flex flex-col gap-1 w-2/3 min-w-fit">
         <h1 className="font-semibold text-sm sm:text-lg">{title}</h1>
         <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
-          <Badge text={date} />
-          <Badge text={root + " " + scale} />
-          <Badge text={bpm + " BPM"} />
+          <Badge text={date} style="gray" />
+          <Badge text={root + " " + scale} style="gray" />
+          <Badge text={bpm + " BPM"} style="gray" />
         </div>
       </div>
 
