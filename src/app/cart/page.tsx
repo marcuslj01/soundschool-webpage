@@ -5,6 +5,7 @@ import {} from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { getCartItems, removeFromCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
+import BackButton from "@/components/ui/BackButton";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -57,9 +58,10 @@ export default function Cart() {
   const totalPrice = subtotalPrice; // + tax;
 
   return (
-    <div className="bg-white min-h-screen">
-      <main className="mx-auto max-w-2xl px-4 pt-16 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mt-4">
+    <div className="min-h-screen">
+      <main className="mx-auto max-w-2xl px-4 pt-24 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
+        <BackButton />
+        <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mt-4">
           Shopping Cart
         </h1>
 
@@ -85,14 +87,14 @@ export default function Cart() {
                           <h3 className="text-sm">
                             <a
                               href={`/packs?id=${cartItems.id}`}
-                              className="font-medium text-gray-700 hover:text-gray-800"
+                              className="text-xl text-gray-200 hover:text-gray-300"
                             >
                               {cartItems.title}
                             </a>
                           </h3>
                         </div>
 
-                        <p className="mt-1 text-sm font-medium text-gray-900">
+                        <p className="mt-1 text-sm font-medium text-gray-300">
                           ${cartItems.price}
                         </p>
                       </div>
