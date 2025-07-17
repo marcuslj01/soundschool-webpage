@@ -13,7 +13,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
-  console.log("Stripe webhook endpoint called");
   const sig = req.headers.get("stripe-signature")!;
   const body = await req.text();
 
@@ -27,6 +26,7 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
+    
     const email =
       session.customer_email ||
       (session.customer_details && session.customer_details.email) ||
@@ -35,7 +35,9 @@ export async function POST(req: NextRequest) {
 
     // Get full product data for each item
     const orderItems: OrderItem[] = [];
+    
     for (const cartItem of cartItems) {
+      
       if (cartItem.type === "midi") {
         // Get product data from midifiles collection
         const productDoc = await getDoc(doc(db, "midifiles", cartItem.id));
@@ -51,10 +53,27 @@ export async function POST(req: NextRequest) {
             downloadUrl: productData.file_url,
           });
         }
+      } else if (cartItem.type === "pack") {
+        // Get product data from packs collection
+        const productDoc = await getDoc(doc(db, "packs", cartItem.id));
+        const productData = productDoc.data();
+        
+        if (productData) {
+          const orderItem = {
+            id: cartItem.id,
+            type: cartItem.type,
+            title: cartItem.title,
+            price: cartItem.price,
+            previewUrl: productData.preview_url,
+            downloadUrl: productData.download_url,
+          };
+          
+          orderItems.push(orderItem);
+        } else {
+        }
       }
-      // TODO: Add support for "pack" type
     }
-
+    
     const orderData = {
       customer_email: email,
       customer_name: session.customer_details?.name || "",
@@ -67,7 +86,7 @@ export async function POST(req: NextRequest) {
 
     await addDoc(collection(db, "orders"), orderData);
 
-    // Increment sales for each purchased midi file
+    // Increment sales for each purchased item
     for (const item of orderItems) {
       if (item.type === "midi") {
         const midiRef = doc(db, "midifiles", item.id);
@@ -79,6 +98,17 @@ export async function POST(req: NextRequest) {
           });
         } catch (err) {
           console.error(`Error updating sales for midi file ${item.id}:`, err);
+        }
+      } else if (item.type === "pack") {
+        const packRef = doc(db, "packs", item.id);
+        try {
+          await runTransaction(db, async (transaction) => {
+            const packDoc = await transaction.get(packRef);
+            const currentSales = packDoc.exists() && packDoc.data().sales ? packDoc.data().sales : 0;
+            transaction.update(packRef, { sales: currentSales + 1 });
+          });
+        } catch (err) {
+          console.error(`Error updating sales for pack ${item.id}:`, err);
         }
       }
     }

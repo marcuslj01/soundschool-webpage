@@ -35,5 +35,6 @@ export async function getPack(id: string): Promise<Pack | null> {
     return {
         ...data,
         id: packSnapshot.id,
+        created_at: data.created_at.toDate(),
     } as Pack;
 }
