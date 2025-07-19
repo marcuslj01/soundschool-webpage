@@ -129,7 +129,7 @@ function MidiCard({
   };
 
   return (
-    <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit">
+    <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit hover:bg-[#2b303a] transition-all duration-300">
       {/* Play/Pause Button */}
       <div className="flex-shrink-0">
         <button
