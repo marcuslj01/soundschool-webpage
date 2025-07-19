@@ -16,7 +16,8 @@ export async function getMidi(limitCount?: number) {
     let q = query(midiFilesCollection, orderBy("created_at", "desc"));
     
     if (limitCount) {
-        q = query(midiFilesCollection, orderBy("created_at", "desc"), limit(limitCount));
+        q = query(midiFilesCollection, orderBy("created_at", "desc"), limit(limitCount)); 
+        // May also use orderBy("name", "desc") 
     }
     
     const snapshot = await getDocs(q);
