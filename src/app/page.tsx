@@ -1,13 +1,13 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // Cache for 5 minutes
 
 import Hero from "@/components/sections/Hero";
-import { getMidi } from "@/lib/firestore/midifiles";
-import Midigrid from "@/components/ui/Midigrid";
+import LazyMidigrid from "@/components/ui/LazyMidigrid";
 import PackGrid from "@/components/ui/PackGrid";
 import { getPacks } from "@/lib/firestore/pack";
+import { getMidi } from "@/lib/firestore/midifiles";
 
 export default async function Home() {
-  const midiFiles = await getMidi();
+  const midiFiles = await getMidi(10); // Initial load of 10 MIDI files on server
   const packs = await getPacks();
   const midiPacks = packs.filter((pack) => pack.type === "midi");
   const samplePacks = packs.filter((pack) => pack.type === "sample");
@@ -38,7 +38,7 @@ export default async function Home() {
         )}
       </section>
       <h2 className="text-2xl font-bold text-white">Midi Files</h2>
-      <Midigrid midiFiles={midiFiles} />
+      <LazyMidigrid initialData={midiFiles} />
     </main>
   );
 }
