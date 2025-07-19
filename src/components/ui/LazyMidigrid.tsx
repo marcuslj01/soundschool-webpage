@@ -97,12 +97,12 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   }, [loadMore, loading, hasMore]);
 
   return (
-    <div className="w-full flex flex-col items-center bg-white/10 sm:max-w-2xl">
-      <h1 className="text-lg font-bold text-center bg-yellow-600 text-white p-2 w-full shadow-xl">
-        Limited time offer: Buy 2 get 1 free!
+    <div className="w-full flex flex-col items-center bg-black sm:max-w-2xl mb-10">
+      <h1 className="text-lg font-bold text-center bg-indigo-600 text-white p-2 w-full shadow-xl">
+        Limited time : Buy 2 get 1 free!
       </h1>
       <div className="w-full flex flex-col items-center max-h-[80vh] overflow-y-auto py-4">
-        <div className="flex flex-col gap-2 w-full max-w-md lg:max-w-md mb-8">
+        <div className="flex flex-col gap-2 w-full mb-8">
           {midiFiles.map((file) => (
             <MidiCard
               key={file.id}
