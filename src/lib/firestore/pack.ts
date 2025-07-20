@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, Timestamp, query, orderBy, limit } from "firebase/firestore";
 import { Pack, PackInput } from "../types/pack";
 import { db } from "../firebase";
 
@@ -35,6 +35,24 @@ export async function getPack(id: string): Promise<Pack | null> {
     return {
         ...data,
         id: packSnapshot.id,
+        created_at: data.created_at.toDate(),
+    } as Pack;
+}
+
+export async function getLatestPack() {
+    const packsCollection = collection(db, "packs");
+    const q = query(packsCollection, orderBy("created_at", "desc"), limit(1));
+    const snapshot = await getDocs(q);
+    
+    if (snapshot.empty) {
+        return null;
+    }
+    
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+    return {
+        ...data,
+        id: doc.id,
         created_at: data.created_at.toDate(),
     } as Pack;
 }
