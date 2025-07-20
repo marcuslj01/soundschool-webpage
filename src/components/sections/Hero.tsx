@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import Button from "@/components/ui/Button";
+import Link from "next/link";
 
 interface HeroProps {
   title: string;
@@ -10,6 +10,7 @@ interface HeroProps {
   backgroundImage: string;
   primaryButtonText: string;
   secondaryButtonText: string;
+  packLink: string;
 }
 
 function Hero(props: HeroProps) {
@@ -41,8 +42,19 @@ function Hero(props: HeroProps) {
               {props.description}
             </h3>
             <div className="flex flex-row gap-4 mt-8">
-              <Button style="primary" text={props.primaryButtonText} />
-              <Button style="secondary" text={props.secondaryButtonText} />
+              <Link
+                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer transition-all duration-300"
+                href={props.packLink}
+              >
+                {props.primaryButtonText}
+              </Link>
+
+              <Link
+                className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-all duration-300"
+                href="/#products"
+              >
+                {props.secondaryButtonText}
+              </Link>
             </div>
           </div>
         </div>
@@ -69,8 +81,19 @@ function Hero(props: HeroProps) {
             className="w-full h-full object-contain"
           />
           <div className="flex flex-row items-center justify-center gap-4 mt-8">
-            <Button style="primary" text={props.primaryButtonText} />
-            <Button style="secondary" text={props.secondaryButtonText} />
+            <Link
+              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer transition-all duration-300"
+              href={props.packLink}
+            >
+              {props.primaryButtonText}
+            </Link>
+
+            <Link
+              className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-all duration-300"
+              href="/#products"
+            >
+              {props.secondaryButtonText}
+            </Link>
           </div>
         </div>
       </div>
