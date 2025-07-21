@@ -82,6 +82,7 @@ export async function POST(req: NextRequest) {
       created_at: Timestamp.now(),
       payment_id: session.payment_intent,
       orderItems: orderItems,
+      userId: session.metadata?.userId || null,
     };
 
     await addDoc(collection(db, "orders"), orderData);

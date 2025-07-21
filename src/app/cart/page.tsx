@@ -6,10 +6,12 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { getCartItems, removeFromCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
 import BackButton from "@/components/ui/BackButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     setCartItems(getCartItems());
@@ -42,6 +44,7 @@ export default function Cart() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         cartItems,
+        userId: user?.uid || null,
       }),
     });
     const data = await response.json();
