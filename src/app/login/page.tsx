@@ -41,7 +41,7 @@ export default function LoginPage() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
         <div className="bg-white px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-          <form action="#" method="POST" className="space-y-6">
+          {/* <form action="#" method="POST" className="space-y-6">
             <div>
               <label
                 htmlFor="email"
@@ -138,10 +138,10 @@ export default function LoginPage() {
                 Sign in
               </button>
             </div>
-          </form>
+          </form> */}
 
           <div>
-            <div className="relative mt-10">
+            {/* <div className="relative mt-10">
               <div
                 aria-hidden="true"
                 className="absolute inset-0 flex items-center"
@@ -153,7 +153,7 @@ export default function LoginPage() {
                   Or continue with
                 </span>
               </div>
-            </div>
+            </div> */}
 
             <div className="mt-6 grid grid-cols-1 gap-4">
               <button
@@ -178,7 +178,9 @@ export default function LoginPage() {
                     fill="#34A853"
                   />
                 </svg>
-                <span className="text-sm/6 font-semibold">Google</span>
+                <span className="text-sm/6 font-semibold">
+                  Sign in with Google
+                </span>
               </button>
             </div>
           </div>

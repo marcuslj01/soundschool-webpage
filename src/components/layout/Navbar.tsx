@@ -222,6 +222,9 @@ export default function Navbar() {
                     transition
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                   >
+                    <p className="text-gray-700 text-sm px-4 py-2 font-bold">
+                      Hi, {user.displayName}!
+                    </p>
                     <MenuItem>
                       <Link
                         href="/profile"
