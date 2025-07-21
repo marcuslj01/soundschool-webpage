@@ -3,7 +3,7 @@
 import { Button } from "@headlessui/react";
 import {
   CheckCircleIcon,
-  HeartIcon,
+  // HeartIcon, // TODO: Fix heart button to work with Firebase
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
@@ -38,7 +38,7 @@ function MidiCard({
   onPlay,
   onPause,
 }: CardProps) {
-  const [isLiked, setIsLiked] = useState(false);
+  // const [isLiked, setIsLiked] = useState(false); // TODO: Fix heart button to work with Firebase
   const [isAdded, setIsAdded] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -197,7 +197,9 @@ function MidiCard({
         {/* New and Heart button */}
         <div className="flex flex-row gap-2 justify-end">
           {isNew && <Badge text="NEW!" style="yellow" />}
-          <Button
+
+          {/* TODO: Fix heart button to work with Firebase */}
+          {/* <Button
             className="h-5 w-5 flex items-center justify-center hover:cursor-pointer"
             onClick={() => setIsLiked(!isLiked)}
           >
@@ -206,7 +208,7 @@ function MidiCard({
             ) : (
               <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             )}
-          </Button>
+          </Button> */}
         </div>
         <div className="flex flex-row justify-end">
           {isAdded ? (
