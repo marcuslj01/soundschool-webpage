@@ -209,7 +209,7 @@ export default function Navbar() {
             <Menu as="div" className="relative ml-3">
               {user !== null ? (
                 <>
-                  <MenuButton className="relative flex text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden hover:cursor-pointer">
+                  <MenuButton className="relative flex text-sm hover:cursor-pointer">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     <UserCircleIcon
