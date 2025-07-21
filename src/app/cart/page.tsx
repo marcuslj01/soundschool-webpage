@@ -53,14 +53,15 @@ export default function Cart() {
       body: JSON.stringify({
         cartItems,
         userId: user?.uid || null,
+        email: user?.email || null,
       }),
     });
     const data = await response.json();
 
     if (data.url) {
-      window.location.href = data.url; // Send bruker til Stripe Checkout
+      window.location.href = data.url; // Send user to Stripe Checkout
     } else {
-      alert("Noe gikk galt med betaling. Prøv igjen!");
+      alert("Something went wrong with payment. Please try again!");
     }
   };
 
@@ -73,6 +74,7 @@ export default function Cart() {
       body: JSON.stringify({
         cartItems,
         userId: null,
+        email: null, // Guest checkout - no email pre-filled
       }),
     });
     const data = await response.json();
