@@ -74,7 +74,6 @@ export default function Cart() {
       body: JSON.stringify({
         cartItems,
         userId: null,
-        email: null, // Guest checkout - no email pre-filled
       }),
     });
     const data = await response.json();
