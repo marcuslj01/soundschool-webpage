@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
+import { createOrUpdateUser } from "@/lib/firestore/user";
 
 interface AuthContextType {
   user: User | null;
@@ -24,7 +25,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Create or update user in Firestore when they sign in
+        try {
+          await createOrUpdateUser(user);
+        } catch (error) {
+          console.error("Error saving user to Firestore:", error);
+        }
+      }
       setUser(user);
       setLoading(false);
     });
