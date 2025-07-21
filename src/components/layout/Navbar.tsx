@@ -209,7 +209,7 @@ export default function Navbar() {
             <Menu as="div" className="relative ml-3">
               {user !== null ? (
                 <>
-                  <MenuButton className="relative flex text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
+                  <MenuButton className="relative flex text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden hover:cursor-pointer">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     <UserCircleIcon
@@ -225,7 +225,7 @@ export default function Navbar() {
                     <MenuItem>
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
                       >
                         Your Profile
                       </Link>
@@ -233,7 +233,7 @@ export default function Navbar() {
                     <MenuItem>
                       <Link
                         href="/settings"
-                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
                       >
                         Settings
                       </Link>
@@ -241,7 +241,7 @@ export default function Navbar() {
                     <MenuItem>
                       <button
                         onClick={() => logout()}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
                       >
                         Sign out
                       </button>
