@@ -5,7 +5,6 @@ import LazyMidigrid from "@/components/ui/LazyMidigrid";
 import PackGrid from "@/components/ui/PackGrid";
 import { getPacks, getLatestPack } from "@/lib/firestore/pack";
 import { getMidi } from "@/lib/firestore/midifiles";
-import { LoginButton } from "@/components/ui/LoginButton";
 
 export default async function Home() {
   const midiFiles = await getMidi(10); // Initial load of 10 MIDI files on server
@@ -27,9 +26,6 @@ export default async function Home() {
         secondaryButtonText="Other products"
         packLink={`/packs?id=${latestPack?.id}`}
       />
-      <div className="flex justify-center w-full bg-white">
-        <LoginButton />
-      </div>
       <section
         className="flex flex-col gap-4 w-full items-center text-white"
         id="products"
