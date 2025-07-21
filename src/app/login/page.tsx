@@ -10,7 +10,14 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user && !loading) {
-      router.push("/");
+      // Check if there's a redirect URL saved
+      const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
+      if (redirectUrl) {
+        sessionStorage.removeItem("redirectAfterLogin"); // Clean up
+        router.push(redirectUrl);
+      } else {
+        router.push("/");
+      }
     }
   }, [user, loading, router]);
 

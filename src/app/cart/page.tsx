@@ -120,7 +120,14 @@ export default function Cart() {
               <Link
                 href="/login"
                 className="w-full block text-center bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/80  transition-colors cursor-pointer duration-300"
-                onClick={() => setShowCheckoutModal(false)}
+                onClick={() => {
+                  setShowCheckoutModal(false);
+                  // Save current page for redirect after login
+                  sessionStorage.setItem(
+                    "redirectAfterLogin",
+                    window.location.pathname
+                  );
+                }}
               >
                 Sign in
               </Link>
