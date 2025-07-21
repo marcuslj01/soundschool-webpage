@@ -38,7 +38,6 @@ export default function Navbar() {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const cartCount = useCartCount();
-  const [autoOpened, setAutoOpened] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -53,19 +52,28 @@ export default function Navbar() {
     return () => window.removeEventListener("cart-updated", update);
   }, [isMounted]);
 
-  // Close dropdown automatically after 3 seconds when it's opened because of add
-  useEffect(() => {
-    if (showCartDropdown && autoOpened) {
-      const timer = setTimeout(() => setShowCartDropdown(false), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showCartDropdown, autoOpened]);
-
   // Open dropdown when clicking on cart
   const handleCartClick = () => {
     setShowCartDropdown((prev) => !prev);
-    setAutoOpened(false);
   };
+
+  // Close dropdown when clicking outside of dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showCartDropdown && !target.closest(".cart-dropdown-container")) {
+        setShowCartDropdown(false);
+      }
+    };
+
+    if (showCartDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCartDropdown]);
 
   return (
     <Disclosure as="nav" className="bg-black/80 fixed top-0 w-full z-50">
@@ -118,21 +126,22 @@ export default function Navbar() {
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             <div
-              className="relative hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden hover:cursor-pointer"
-              onClick={handleCartClick}
+              className="relative hover:text-white cart-dropdown-container"
               role="button"
               tabIndex={0}
             >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View cart</span>
-              <ShoppingCartIcon
-                color="white"
-                aria-hidden="true"
-                className="size-6"
-              />
-              <span className="absolute top-0 right-0 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                {isMounted ? cartCount : null}
-              </span>
+              <div onClick={handleCartClick} className="hover:cursor-pointer">
+                <span className="absolute -inset-1.5" />
+                <span className="sr-only">View cart</span>
+                <ShoppingCartIcon
+                  color="white"
+                  aria-hidden="true"
+                  className="size-6"
+                />
+                <span className="absolute top-0 right-0 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {isMounted ? cartCount : null}
+                </span>
+              </div>
               {/* Cart dropdown */}
               {showCartDropdown && (
                 <div className="absolute right-0 mt-2 w-fit min-w-[300px] bg-[#23272f] rounded-xl shadow-2xl border border-gray-800 z-50 p-4">
@@ -158,7 +167,10 @@ export default function Navbar() {
                               ${item.price}
                             </span>
                             <button
-                              onClick={() => removeFromCart(item.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeFromCart(item.id);
+                              }}
                               className="ml-2 p-1 rounded hover:bg-red-600 transition-colors"
                               aria-label="Remove from cart"
                             >
