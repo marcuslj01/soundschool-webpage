@@ -155,7 +155,7 @@ export default function LoginPage() {
               </div>
             </div> */}
 
-            <div className="mt-6 grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <button
                 onClick={signInWithGoogle}
                 className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:ring-transparent hover:cursor-pointer transition-all duration-300"
