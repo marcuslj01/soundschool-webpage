@@ -7,10 +7,13 @@ import { getCartItems, removeFromCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
 import BackButton from "@/components/ui/BackButton";
 import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+
   const { user } = useAuth();
 
   useEffect(() => {
@@ -39,6 +42,11 @@ export default function Cart() {
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!user) {
+      setShowCheckoutModal(true);
+      return;
+    }
+
     const response = await fetch("/api/create-checkout-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -56,12 +64,76 @@ export default function Cart() {
     }
   };
 
+  const handleGuestCheckout = async () => {
+    setShowCheckoutModal(false);
+
+    const response = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cartItems,
+        userId: null,
+      }),
+    });
+    const data = await response.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert("Something went wrong with payment. Please try again!");
+    }
+  };
+
   // TODO: tax not included for now
   //   const tax = subtotalPrice * 0.25; // 25% tax (MVA)
   const totalPrice = subtotalPrice; // + tax;
 
   return (
     <div className="min-h-screen">
+      {/* Modal Overlay */}
+      {showCheckoutModal && (
+        <div
+          className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowCheckoutModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowCheckoutModal(false)}
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 p-1 hover:cursor-pointer"
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </button>
+
+            <h2 className="text-xl font-bold text-gray-900 mb-4 pr-8">
+              How would you like to checkout?
+            </h2>
+            <p className="text-gray-600 mb-6">
+              You can continue as a guest or sign in to your account.
+            </p>
+
+            <div className="space-y-3">
+              <Link
+                href="/login"
+                className="w-full block text-center bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/80  transition-colors cursor-pointer duration-300"
+                onClick={() => setShowCheckoutModal(false)}
+              >
+                Sign in
+              </Link>
+
+              <button
+                onClick={handleGuestCheckout}
+                className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors cursor-pointer duration-300"
+              >
+                Continue as guest
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="mx-auto max-w-2xl px-4 pt-24 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <BackButton />
         <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mt-4">
@@ -140,24 +212,6 @@ export default function Cart() {
                   ${subtotalPrice}
                 </dd>
               </div>
-              {/* <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-                <dt className="flex text-sm text-gray-600">
-                  <span>Tax estimate</span>
-                  <a
-                    href="#"
-                    className="ml-2 shrink-0 text-gray-400 hover:text-gray-500"
-                  >
-                    <span className="sr-only">
-                      Learn more about how tax is calculated
-                    </span>
-                    <QuestionMarkCircleIcon
-                      aria-hidden="true"
-                      className="size-5"
-                    />
-                  </a>
-                </dt>
-                <dd className="text-sm font-medium text-gray-900">${tax}</dd>
-              </div> */}
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <dt className="text-base font-medium text-gray-900">
                   Order total
@@ -172,7 +226,6 @@ export default function Cart() {
               <button
                 type="submit"
                 className="w-full rounded-md border border-transparent bg-primary px-4 py-3 text-base font-medium text-white shadow-xs hover:bg-primary/80 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden hover:scale-102 cursor-pointer"
-                onClick={handleCheckout}
               >
                 Checkout
               </button>
