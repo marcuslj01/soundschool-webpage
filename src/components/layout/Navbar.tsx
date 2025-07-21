@@ -257,7 +257,7 @@ export default function Navbar() {
                     <UserCircleIcon
                       color="white"
                       aria-hidden="true"
-                      className="size-6"
+                      className="size-6 hidden sm:block"
                     />
                     <span>Log in</span>
                   </div>
