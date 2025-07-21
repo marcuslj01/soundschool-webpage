@@ -252,7 +252,17 @@ export default function Navbar() {
                   </MenuItems>
                 </>
               ) : (
-                <Link href="/login" className="hover:cursor-pointer">
+                <Link
+                  href="/login"
+                  onClick={() => {
+                    // Save current page for redirect after login
+                    sessionStorage.setItem(
+                      "redirectAfterLogin",
+                      window.location.pathname + window.location.search
+                    );
+                  }}
+                  className="hover:cursor-pointer"
+                >
                   <div className="flex items-center gap-2 text-white hover:cursor-pointer">
                     <UserCircleIcon
                       color="white"

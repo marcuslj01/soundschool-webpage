@@ -125,7 +125,7 @@ export default function Cart() {
                   // Save current page for redirect after login
                   sessionStorage.setItem(
                     "redirectAfterLogin",
-                    window.location.pathname
+                    window.location.pathname + window.location.search
                   );
                 }}
               >

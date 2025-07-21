@@ -3,6 +3,9 @@ import { Pack, PackInput } from "../types/pack";
 import { db } from "../firebase";
 
 export async function addPack(pack: PackInput) {
+    if (!db) {
+        throw new Error("Firebase Firestore is not initialized");
+    }
     const packsCollection = collection(db, "packs");
     await addDoc(packsCollection, {
         ...pack,
@@ -11,6 +14,9 @@ export async function addPack(pack: PackInput) {
 }
 
 export async function getPacks() {
+    if (!db) {
+        throw new Error("Firebase Firestore is not initialized");
+    }
     const packsCollection = collection(db, "packs");
     const snapshot = await getDocs(packsCollection);
     return snapshot.docs.map((doc) => {
@@ -24,6 +30,9 @@ export async function getPacks() {
 }
 
 export async function getPack(id: string): Promise<Pack | null> {
+    if (!db) {
+        throw new Error("Firebase Firestore is not initialized");
+    }
     const packDoc = doc(db, "packs", id);
     const packSnapshot = await getDoc(packDoc);
     
@@ -40,6 +49,9 @@ export async function getPack(id: string): Promise<Pack | null> {
 }
 
 export async function getLatestPack() {
+    if (!db) {
+        throw new Error("Firebase Firestore is not initialized");
+    }
     const packsCollection = collection(db, "packs");
     const q = query(packsCollection, orderBy("created_at", "desc"), limit(1));
     const snapshot = await getDocs(q);

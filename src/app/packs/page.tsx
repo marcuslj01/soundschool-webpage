@@ -14,7 +14,18 @@ export default async function PackPage({ searchParams }: PackPageProps) {
   const id = (await searchParams).id as string;
   console.log(id);
 
-  const pack = await getPack(id);
+  // If no id is provided, show 404
+  if (!id) {
+    notFound();
+  }
+
+  let pack;
+  try {
+    pack = await getPack(id);
+  } catch (error) {
+    console.error("Error fetching pack:", error);
+    notFound();
+  }
 
   if (!pack) {
     notFound();
