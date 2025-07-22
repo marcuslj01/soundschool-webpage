@@ -95,7 +95,7 @@ export default function UserOrdersPage() {
                       <dt className="font-medium text-gray-900">
                         Total amount
                       </dt>
-                      <dd className="font-medium text-gray-900 sm:mt-1">
+                      <dd className="text-gray-900 sm:mt-1">
                         ${order.total_price}
                       </dd>
                     </div>
