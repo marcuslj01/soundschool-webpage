@@ -14,7 +14,7 @@ export default function LoginPage() {
       const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
       if (redirectUrl) {
         sessionStorage.removeItem("redirectAfterLogin"); // Clean up
-        router.push(redirectUrl);
+        router.push(redirectUrl || "/");
       } else {
         router.push("/");
       }
