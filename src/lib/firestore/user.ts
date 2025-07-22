@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, serverTimestamp, deleteDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { User as FirebaseUser } from 'firebase/auth';
 import { db } from '@/lib/firebase';
 import { User } from '@/lib/types/user';
@@ -59,14 +59,52 @@ export async function getUserData(uid: string): Promise<User | null> {
 }
 
 // Update user preferences
-export async function updateUserPreferences(uid: string, preferences: Partial<User['preferences']>): Promise<void> {
+export async function updateUserPreferences(uid: string, newPreferences: Partial<User['preferences']>): Promise<void> {
   try {
     const userRef = doc(db, 'users', uid);
+    
+    // Get existing user data
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+      throw new Error('User not found');
+    }
+    
+    const userData = userDoc.data() as User;
+    const currentPreferences = userData.preferences || { newsletter: false, marketing: false };
+    
+    // Update only the specific preferences, keep existing ones
+    const updatedPreferences = {
+      ...currentPreferences,
+      ...newPreferences,
+    };
+    
     await updateDoc(userRef, {
-      preferences: preferences,
+      preferences: updatedPreferences,
     });
   } catch (error) {
     console.error('Error updating user preferences:', error);
     throw error;
   }
 } 
+
+// Deletes user and all related data from Firestore
+export async function deleteUser(uid: string): Promise<void> {
+  try {
+    // Delete user document
+    const userRef = doc(db, 'users', uid);
+    await deleteDoc(userRef);
+
+    // Delete user's orders
+    const ordersCollection = collection(db, 'orders');
+    const ordersQuery = query(ordersCollection, where('userId', '==', uid));
+    const ordersSnapshot = await getDocs(ordersQuery);
+    
+    const orderDeletions = ordersSnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(orderDeletions);
+
+    console.log(`Deleted user ${uid} and ${ordersSnapshot.docs.length} orders`);
+  } catch (error) {
+    console.error('Error deleting user and related data:', error);
+    throw error;
+  }
+}
