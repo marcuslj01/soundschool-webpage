@@ -26,3 +26,13 @@ export async function getOrdersByUserId(userId: string) {
     id: doc.id, // Document ID
   } as Order));
 }
+
+export async function getOrdersCountAndRevenue(): Promise<{ count: number, revenue: number }> {
+  const ordersCollection = collection(db, "orders");
+  const ordersQuery = query(ordersCollection);
+  const ordersSnapshot = await getDocs(ordersQuery);
+  const orders = ordersSnapshot.docs.map((doc) => doc.data() as Order);
+  const count = orders.length;
+  const revenue = orders.reduce((acc, order) => acc + order.total_price, 0);
+  return { count, revenue };
+}

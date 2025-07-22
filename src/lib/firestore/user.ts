@@ -108,3 +108,10 @@ export async function deleteUser(uid: string): Promise<void> {
     throw error;
   }
 }
+
+export async function getUsersCount(): Promise<number> {
+  const usersCollection = collection(db, 'users');
+  const usersQuery = query(usersCollection);
+  const usersSnapshot = await getDocs(usersQuery);
+  return usersSnapshot.size;
+}
