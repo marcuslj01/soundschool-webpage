@@ -3,9 +3,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   onAuthStateChanged,
+  signInWithPopup,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { createOrUpdateUser } from "@/lib/firestore/user";
@@ -25,9 +27,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Handle redirect result
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          createOrUpdateUser(result.user);
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting redirect result:", error);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Create or update user in Firestore when they sign in
         try {
           await createOrUpdateUser(user);
         } catch (error) {
@@ -43,19 +55,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      // Ignore error when user closes popup window
-      if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        error.code === "auth/popup-closed-by-user"
-      ) {
-        console.log("User closed the popup window");
-        return;
+      // Check if we're on mobile
+      const isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+
+      if (isMobile) {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        await signInWithPopup(auth, googleProvider);
       }
+    } catch (error) {
       console.error("Error signing in with Google:", error);
+
+      // Handle specific mobile errors
+      if (error && typeof error === "object" && "code" in error) {
+        if (error.code === "auth/popup-closed-by-user") {
+          console.log("User closed the popup window");
+          return;
+        }
+        if (error.code === "auth/unauthorized-domain") {
+          console.error("Domain not authorized for Firebase Auth");
+          return;
+        }
+      }
     }
   };
 
