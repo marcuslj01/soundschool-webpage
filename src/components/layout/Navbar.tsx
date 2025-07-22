@@ -40,9 +40,9 @@ export default function Navbar() {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const cartCount = useCartCount();
-  const { user, logout } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
   const pathname = usePathname();
-  console.log(user);
+  console.log("Is the user an admin?", isAdmin);
 
   const handleLogout = () => {
     localStorage.removeItem("cartItems");
@@ -254,6 +254,16 @@ export default function Navbar() {
                         Settings
                       </Link>
                     </MenuItem>
+                    {isAdmin && (
+                      <MenuItem>
+                        <Link
+                          href="/admin/dashboard"
+                          className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
+                        >
+                          Admin Dashboard
+                        </Link>
+                      </MenuItem>
+                    )}
                     <MenuItem>
                       <button
                         onClick={handleLogout}
