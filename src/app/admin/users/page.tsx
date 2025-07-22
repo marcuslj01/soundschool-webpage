@@ -1,6 +1,6 @@
 "use client";
 
-// TODO: Limit fetches
+// ✅ Caching implemented: Server-side caching for 1 hour via revalidate = 3600
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";

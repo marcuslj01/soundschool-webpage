@@ -14,6 +14,9 @@ if (!getApps().length) {
   });
 }
 
+// Cache for 1 hour
+export const revalidate = 3600;
+
 // GET: Fetch all users with their custom claims
 export async function GET(request: NextRequest) {
   try {
