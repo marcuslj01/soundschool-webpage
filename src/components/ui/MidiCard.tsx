@@ -10,6 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { addToCart, removeFromCart, isInCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
 import Badge from "./Badge";
+import Link from "next/link";
 
 interface CardProps {
   id: string;
@@ -184,12 +185,17 @@ function MidiCard({
 
       {/* Text section */}
       <div className="flex flex-col gap-1 w-2/3 min-w-fit">
-        <h1 className="font-semibold text-sm sm:text-lg">{title}</h1>
-        <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
-          <Badge text={displayDate} style="gray" />
-          <Badge text={root + " " + scale} style="gray" />
-          <Badge text={bpm + " BPM"} style="gray" />
-        </div>
+        <Link href={`/midi?id=${id}`} className="hover:cursor-pointer">
+          <h1 className="font-semibold text-sm sm:text-lg hover:text-blue-400 transition-colors">
+            {title}
+          </h1>
+
+          <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
+            <Badge text={displayDate} style="gray" />
+            <Badge text={root + " " + scale} style="gray" />
+            <Badge text={bpm + " BPM"} style="gray" />
+          </div>
+        </Link>
       </div>
 
       {/* Buttons */}

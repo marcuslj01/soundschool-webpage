@@ -12,7 +12,6 @@ interface PackPageProps {
 
 export default async function PackPage({ searchParams }: PackPageProps) {
   const id = (await searchParams).id as string;
-  console.log(id);
 
   // If no id is provided, show 404
   if (!id) {

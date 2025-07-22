@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { collection, addDoc, getDocs, Timestamp, query, orderBy, limit } from "firebase/firestore";
+import { collection, addDoc, getDocs, getDoc, doc, Timestamp, query, orderBy, limit } from "firebase/firestore";
 import { Midi, MidiInput } from "../types/midi";
 
 
@@ -29,6 +29,27 @@ export async function getMidi(limitCount?: number) {
             created_at: data.created_at.toDate(),
         } as Midi;
     });
+}
+
+export async function getMidiById(id: string): Promise<Midi | null> {
+    try {
+        const midiDoc = doc(db, "midifiles", id);
+        const midiSnapshot = await getDoc(midiDoc);
+        
+        if (!midiSnapshot.exists()) {
+            return null;
+        }
+        
+        const data = midiSnapshot.data();
+        return {
+            ...data,
+            id: midiSnapshot.id,
+            created_at: data.created_at.toDate(),
+        } as Midi;
+    } catch (error) {
+        console.error("Error fetching MIDI file:", error);
+        return null;
+    }
 }
 
 
