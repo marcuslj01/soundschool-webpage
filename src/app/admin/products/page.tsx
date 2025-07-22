@@ -23,3 +23,12 @@ function Products() {
 }
 
 export default Products;
+
+/*
+TODO: Implementer sikker admin API for products
+- Opprett /api/admin/products route med Firebase Admin validering
+- Flytt database-operasjoner til API routes
+- Send Firebase token i API-kall for admin-validering
+- Implementer CRUD operasjoner (Create, Read, Update, Delete)
+- Legg til loading states og error handling
+*/
