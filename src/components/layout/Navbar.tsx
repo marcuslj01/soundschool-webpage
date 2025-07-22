@@ -18,6 +18,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useCartCount } from "@/hooks/useCartCount";
 import { getCartItems, removeFromCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
@@ -40,11 +41,17 @@ export default function Navbar() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const cartCount = useCartCount();
   const { user, logout } = useAuth();
+  const pathname = usePathname();
   console.log(user);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Close cart dropdown when navigating to a new page
+  useEffect(() => {
+    setShowCartDropdown(false);
+  }, [pathname]);
 
   // Update cartItems when cart changes
   useEffect(() => {
