@@ -39,15 +39,39 @@ export async function GET(request: NextRequest) {
       users.map(async (user) => {
         try {
           const userRecord = await auth().getUser(user.uid);
+          
+          // Helper function to convert timestamp to ISO string
+          const convertTimestamp = (timestamp: FirebaseFirestore.Timestamp | Date | string | null) => {
+            if (timestamp && typeof timestamp === 'object' && 'toDate' in timestamp) {
+              return (timestamp as FirebaseFirestore.Timestamp).toDate().toISOString();
+            }
+            return timestamp;
+          };
+          
           return {
             ...user,
+            // Convert Firestore Timestamps to ISO strings for JSON serialization
+            createdAt: convertTimestamp(user.createdAt),
+            lastLoginAt: convertTimestamp(user.lastLoginAt),
             isAdmin: userRecord.customClaims?.admin === true,
             role: userRecord.customClaims?.admin ? 'Admin' : 'User'
           };
         } catch (error) {
           console.error(`Error getting claims for user ${user.uid}:`, error);
+          
+          // Helper function to convert timestamp to ISO string
+          const convertTimestamp = (timestamp: FirebaseFirestore.Timestamp | Date | string | null) => {
+            if (timestamp && typeof timestamp === 'object' && 'toDate' in timestamp) {
+              return (timestamp as FirebaseFirestore.Timestamp).toDate().toISOString();
+            }
+            return timestamp;
+          };
+          
           return {
             ...user,
+            // Convert Firestore Timestamps to ISO strings for JSON serialization
+            createdAt: convertTimestamp(user.createdAt),
+            lastLoginAt: convertTimestamp(user.lastLoginAt),
             isAdmin: false,
             role: 'User'
           };
