@@ -23,7 +23,6 @@ import { useCartCount } from "@/hooks/useCartCount";
 import { getCartItems, removeFromCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
 import { useAuth } from "@/contexts/AuthContext";
-import router from "next/router";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
