@@ -1,5 +1,7 @@
 "use client";
 
+// TODO: Limit fetches
+
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -14,14 +16,14 @@ interface UserWithClaims {
 }
 
 export default function Users() {
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<UserWithClaims[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     try {
-      const token = await user?.getIdToken();
+      const token = await currentUser?.getIdToken();
       const response = await fetch("/api/admin/users", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -43,8 +45,14 @@ export default function Users() {
 
   const setAdminStatus = async (targetUserId: string, isAdmin: boolean) => {
     try {
+      // Prevent admin from removing their own admin status
+      if (!isAdmin && targetUserId === currentUser?.uid) {
+        alert("You cannot remove your own admin status!");
+        return;
+      }
+
       setUpdating(targetUserId);
-      const token = await user?.getIdToken();
+      const token = await currentUser?.getIdToken();
       const response = await fetch("/api/admin/users", {
         method: "POST",
         headers: {
@@ -93,10 +101,10 @@ export default function Users() {
   };
 
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
       fetchUsers();
     }
-  }, [user]);
+  }, [currentUser]);
 
   if (loading) {
     return (
@@ -181,15 +189,22 @@ export default function Users() {
                     <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
                       <button
                         onClick={() => setAdminStatus(user.uid, !user.isAdmin)}
-                        disabled={updating === user.uid}
+                        disabled={
+                          updating === user.uid ||
+                          (!user.isAdmin && user.uid === currentUser?.uid)
+                        }
                         className={`text-sm font-medium rounded-md px-3 py-1 ${
                           user.isAdmin
-                            ? "text-red-600 hover:text-red-900 hover:bg-red-50"
+                            ? user.uid === currentUser?.uid
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-red-600 hover:text-red-900 hover:bg-red-50"
                             : "text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50"
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
                         {updating === user.uid ? (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mx-auto"></div>
+                        ) : user.uid === currentUser?.uid && user.isAdmin ? (
+                          "Current User"
                         ) : user.isAdmin ? (
                           "Remove Admin"
                         ) : (
