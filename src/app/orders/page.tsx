@@ -6,6 +6,7 @@ import { Order } from "@/lib/types/order";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { OrderItem } from "@/lib/types/orderItem";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 export default function UserOrdersPage() {
   const { user } = useAuth();
@@ -146,6 +147,12 @@ export default function UserOrdersPage() {
                       >
                         Type
                       </th>
+                      <th
+                        scope="col"
+                        className="hidden py-3 pr-8 font-normal sm:table-cell"
+                      >
+                        Download
+                      </th>
                       <th scope="col" className="w-0 py-3 font-normal">
                         Info
                       </th>
@@ -172,7 +179,17 @@ export default function UserOrdersPage() {
                         <td className="hidden py-6 pr-8 sm:table-cell">
                           {product.type === "midi" ? "MIDI" : "Pack"}
                         </td>
-
+                        <td className="py-6 sm:pr-8 sm:table-cell">
+                          <a
+                            href={product.downloadUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 transition-colors inline-flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300 hover:cursor-pointer"
+                            title="Download file"
+                          >
+                            <ArrowDownTrayIcon className="w-4 h-4 text-black" />
+                          </a>
+                        </td>
                         <td className="py-6 text-right font-medium whitespace-nowrap">
                           <a
                             href={handleProductLink(product, product.type)}
