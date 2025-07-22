@@ -234,7 +234,7 @@ export default function Navbar() {
                     </p>
                     <MenuItem>
                       <Link
-                        href="/user-orders"
+                        href="/orders"
                         className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
                       >
                         Your Orders
