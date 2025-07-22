@@ -50,12 +50,12 @@ export default function UserOrdersPage() {
             Order history
           </h1>
           <p className="mt-2 text-sm text-gray-500">
-            Check the status of recent orders, manage returns, and download
-            invoices.
+            Check the status of recent orders, view owned products, and download
+            previous purchases.
           </p>
         </div>
 
-        <div className="mt-16">
+        <div className="mt-8">
           <h2 className="sr-only">Recent orders</h2>
 
           {orders.length === 0 && (
