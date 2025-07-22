@@ -8,6 +8,7 @@ import {
   signOut,
   onAuthStateChanged,
   signInWithPopup,
+  getIdTokenResult,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { createOrUpdateUser } from "@/lib/firestore/user";
@@ -15,6 +16,7 @@ import { createOrUpdateUser } from "@/lib/firestore/user";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAdmin: boolean; // Ny
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -25,6 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     // Handle redirect result
@@ -42,9 +45,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         try {
           await createOrUpdateUser(user);
+          // Check admin status
+          const adminStatus = await checkAdminStatus(user);
+          setIsAdmin(adminStatus);
         } catch (error) {
           console.error("Error saving user to Firestore:", error);
         }
+      } else {
+        setIsAdmin(false);
       }
       setUser(user);
       setLoading(false);
@@ -91,9 +99,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const checkAdminStatus = async (user: User) => {
+    try {
+      const tokenResult = await getIdTokenResult(user);
+      return tokenResult.claims?.admin === true;
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      return false;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     loading,
+    isAdmin,
     signInWithGoogle,
     logout,
   };
