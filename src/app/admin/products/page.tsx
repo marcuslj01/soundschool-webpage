@@ -3,14 +3,14 @@
 import React, { useState } from "react";
 import Button from "@/components/ui/Button";
 import UploadModal from "@/components/ui/UploadModal";
-import AdminGuard from "@/components/security/AdminGuard";
 
-function Products() {
+export default function Products() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <AdminGuard>
-      <div className="h-screen text-white flex items-center justify-center">
+    <>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Products</h1>
+      <div className="text-white flex items-center justify-center">
         <Button
           text="Add Product +"
           style="primary"
@@ -18,11 +18,9 @@ function Products() {
         />
         {isOpen && <UploadModal onClose={() => setIsOpen(false)} />}
       </div>
-    </AdminGuard>
+    </>
   );
 }
-
-export default Products;
 
 /*
 TODO: Implementer sikker admin API for products
