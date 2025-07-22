@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { EnvelopeIcon, BellIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  EnvelopeIcon,
+  BellIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   getUserData,
@@ -20,6 +25,7 @@ export default function SettingsPage() {
     marketing: false,
   });
   const router = useRouter();
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -66,12 +72,7 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     if (!user?.uid) return;
-
-    if (
-      confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
-      )
-    ) {
+    {
       try {
         await deleteUser(user.uid);
 
@@ -115,6 +116,36 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-black pt-16">
+      {showDeleteAccount && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-gray-900 rounded-lg p-6 w-full max-w-sm lg:max-w-lg mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">
+                Delete account
+              </h2>
+              <button
+                className="text-gray-400 hover:text-white transition-colors hover:cursor-pointer"
+                type="button"
+                onClick={() => setShowDeleteAccount(false)}
+              >
+                <XMarkIcon className="size-6" />
+              </button>
+            </div>
+            <p className="text-gray-400 mb-6">
+              Permanently delete your account and all associated data. This
+              action cannot be undone.
+            </p>
+            <button
+              type="button"
+              onClick={handleDeleteAccount}
+              className="flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-400 transition-colors hover:cursor-pointer"
+            >
+              <TrashIcon className="size-4" />
+              Delete my account
+            </button>
+          </div>
+        </div>
+      )}
       <div className="max-w-4xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-white mb-8">Account Settings</h1>
 
@@ -255,7 +286,7 @@ export default function SettingsPage() {
 
           <button
             type="button"
-            onClick={handleDeleteAccount}
+            onClick={() => setShowDeleteAccount(true)}
             className="flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-400 transition-colors"
           >
             <TrashIcon className="size-4" />
