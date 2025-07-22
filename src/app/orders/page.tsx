@@ -177,7 +177,11 @@ export default function UserOrdersPage() {
                           ${product.price}
                         </td>
                         <td className="hidden py-6 pr-8 sm:table-cell">
-                          {product.type === "midi" ? "MIDI" : "Pack"}
+                          {product.type === "midi"
+                            ? "MIDI"
+                            : product.type === "pack"
+                              ? "Pack"
+                              : "Product"}
                         </td>
                         <td className="py-6 sm:pr-8 sm:table-cell">
                           <a
