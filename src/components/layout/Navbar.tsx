@@ -23,6 +23,7 @@ import { useCartCount } from "@/hooks/useCartCount";
 import { getCartItems, removeFromCart } from "@/lib/cart";
 import { CartItem } from "@/lib/types/cartItem";
 import { useAuth } from "@/contexts/AuthContext";
+import router from "next/router";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -43,6 +44,12 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   console.log(user);
+
+  const handleLogout = () => {
+    localStorage.removeItem("cartItems");
+    logout();
+    window.location.reload();
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -250,7 +257,7 @@ export default function Navbar() {
                     </MenuItem>
                     <MenuItem>
                       <button
-                        onClick={() => logout()}
+                        onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
                       >
                         Sign out
