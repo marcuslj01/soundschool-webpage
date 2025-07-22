@@ -287,7 +287,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => setShowDeleteAccount(true)}
-            className="flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-400 transition-colors"
+            className="flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-400 transition-colors hover:cursor-pointer"
           >
             <TrashIcon className="size-4" />
             Delete my account
