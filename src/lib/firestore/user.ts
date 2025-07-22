@@ -115,3 +115,11 @@ export async function getUsersCount(): Promise<number> {
   const usersSnapshot = await getDocs(usersQuery);
   return usersSnapshot.size;
 }
+
+// TODO: Implement lazy loading for users to avoid loading all users at once
+export async function getAllUsers(): Promise<User[]> {
+  const usersCollection = collection(db, 'users');
+  const usersQuery = query(usersCollection);
+  const usersSnapshot = await getDocs(usersQuery);
+  return usersSnapshot.docs.map((doc) => doc.data() as User);
+}
