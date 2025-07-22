@@ -4,8 +4,10 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import AdminGuard from "@/components/security/AdminGuard";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AdminDashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     users: 0,
     orders: 0,
@@ -15,7 +17,12 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch("/api/admin/stats");
+      const token = await user?.getIdToken();
+      const response = await fetch("/api/admin/stats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await response.json();
       setStats(data);
     } catch (error) {
@@ -58,7 +65,7 @@ export default function AdminDashboard() {
               <div className="bg-white p-6 rounded-lg shadow">
                 <h3 className="text-lg font-semibold text-gray-900">Revenue</h3>
                 <p className="text-3xl font-bold text-indigo-600">
-                  ${stats.revenue.toFixed(2)}
+                  ${loading ? "0.00" : (stats.revenue || 0).toFixed(2)}
                 </p>
               </div>
             </div>

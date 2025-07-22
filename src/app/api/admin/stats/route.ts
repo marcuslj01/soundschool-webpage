@@ -3,14 +3,45 @@
 // a server component that fetches the stats from the database 
 // and returns them as a JSON object for the admin dashboard
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from 'firebase-admin';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getUsersCount } from '@/lib/firestore/user';
 import { getOrdersCountAndRevenue } from '@/lib/firestore/order';
 
+// Initialize Firebase Admin
+if (!getApps().length) {
+  initializeApp({
+    credential: cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    }),
+  });
+}
+
 export const revalidate = 3600; // 1 hour cache
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Get authorization header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'No valid authorization header' }, { status: 401 });
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+    
+    // Verify token and check admin status
+    const decodedToken = await auth().verifyIdToken(token);
+    const userRecord = await auth().getUser(decodedToken.uid);
+    
+    // Check if user has admin claim
+    if (!userRecord.customClaims?.admin) {
+      return NextResponse.json({ error: 'Unauthorized: Admin access required' }, { status: 403 });
+    }
+
+    // User is admin, fetch stats
     const [users, orders] = await Promise.all([
       getUsersCount(),
       getOrdersCountAndRevenue(),
