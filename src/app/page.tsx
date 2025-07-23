@@ -33,7 +33,9 @@ export default async function Home() {
         {midiPacks.length > 0 && (
           <>
             <h2 className="text-2xl font-bold">Midi Packs</h2>
-            <PackGrid products={midiPacks} />
+            <div className="max-w-5xl xl:max-w-7xl">
+              <PackGrid products={midiPacks} />
+            </div>
           </>
         )}
         {samplePacks.length > 0 && (
