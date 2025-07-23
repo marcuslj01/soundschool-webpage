@@ -206,7 +206,7 @@ export default function Orders() {
                       <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="text-indigo-600 hover:text-indigo-900 mr-4"
+                          className="text-indigo-600 hover:text-indigo-900 mr-4 hover:cursor-pointer"
                         >
                           View
                         </button>
