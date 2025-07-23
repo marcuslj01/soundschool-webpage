@@ -11,9 +11,11 @@ export async function getOrder(payment_id: string) {
   const doc = querySnapshot.docs[0];
   if (!doc) return null;
   
+  const data = doc.data();
   return {
-    ...doc.data(),
+    ...data,
     id: doc.id, // Document ID
+    created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
   } as Order;
 }
 
@@ -21,17 +23,41 @@ export async function getOrdersByUserId(userId: string) {
   const ordersCollection = collection(db, "orders");
   const q = query(ordersCollection, where("userId", "==", userId));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => ({
-    ...doc.data(),
-    id: doc.id, // Document ID
-  } as Order));
+  return querySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      id: doc.id, // Document ID
+      created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+    } as Order;
+  });
+}
+
+export async function getAllOrders() {
+  const ordersCollection = collection(db, "orders");
+  const querySnapshot = await getDocs(ordersCollection);
+  return querySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      id: doc.id, // Document ID
+      created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+    } as Order;
+  });
 }
 
 export async function getOrdersCountAndRevenue(): Promise<{ count: number, revenue: number }> {
   const ordersCollection = collection(db, "orders");
   const ordersQuery = query(ordersCollection);
   const ordersSnapshot = await getDocs(ordersQuery);
-  const orders = ordersSnapshot.docs.map((doc) => doc.data() as Order);
+  const orders = ordersSnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      id: doc.id,
+      created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+    } as Order;
+  });
   const count = orders.length;
   const revenue = orders.reduce((acc, order) => acc + order.total_price, 0);
   return { count, revenue };

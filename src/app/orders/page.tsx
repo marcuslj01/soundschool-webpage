@@ -38,6 +38,34 @@ export default function UserOrdersPage() {
     }
   }
 
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return "Unknown";
+
+    if (date instanceof Date) {
+      return date.toLocaleDateString();
+    }
+
+    if (typeof date === "string") {
+      return new Date(date).toLocaleDateString();
+    }
+
+    return "Unknown";
+  };
+
+  const formatDateTime = (date: Date | string | null) => {
+    if (!date) return "Unknown";
+
+    if (date instanceof Date) {
+      return date.toISOString();
+    }
+
+    if (typeof date === "string") {
+      return new Date(date).toISOString();
+    }
+
+    return "Unknown";
+  };
+
   if (loading) {
     return <div>Loading orders...</div>;
   }
@@ -75,8 +103,8 @@ export default function UserOrdersPage() {
               <div key={order.id}>
                 <h3 className="sr-only">
                   Order placed on{" "}
-                  <time dateTime={order.created_at.toDate().toISOString()}>
-                    {order.created_at.toDate().toLocaleDateString()}
+                  <time dateTime={formatDateTime(order.created_at)}>
+                    {formatDate(order.created_at)}
                   </time>
                 </h3>
 
@@ -85,10 +113,8 @@ export default function UserOrdersPage() {
                     <div className="flex justify-between py-4 sm:block sm:py-0">
                       <dt className="font-medium text-gray-900">Date placed</dt>
                       <dd className="sm:mt-1">
-                        <time
-                          dateTime={order.created_at.toDate().toISOString()}
-                        >
-                          {order.created_at.toDate().toLocaleDateString()}
+                        <time dateTime={formatDateTime(order.created_at)}>
+                          {formatDate(order.created_at)}
                         </time>
                       </dd>
                     </div>
