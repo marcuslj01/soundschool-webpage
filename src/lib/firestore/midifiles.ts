@@ -52,4 +52,15 @@ export async function getMidiById(id: string): Promise<Midi | null> {
     }
 }
 
-
+export async function getAllMidis() {
+    const midiFilesCollection = collection(db, "midifiles");
+    const snapshot = await getDocs(midiFilesCollection);
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            ...data,
+            id: doc.id,
+            created_at: data.created_at.toDate(),
+        } as Midi;
+    });
+}
