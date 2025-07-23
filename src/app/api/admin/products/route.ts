@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getPacks } from '@/lib/firestore/pack';
-import { getAllMidis } from '@/lib/firestore/midifiles';
+import { deletePack, getPacks } from '@/lib/firestore/pack';
+import { deleteMidi, getAllMidis } from '@/lib/firestore/midifiles';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -170,12 +170,29 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Missing type or id parameter' }, { status: 400 });
     }
 
-    // TODO: Implement product deletion logic
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Product deleted successfully` 
-    });
+
+    let success = false;
+    
+    if (type === 'packs') {
+      success = await deletePack(productId);
+    } else if (type === 'midis') {
+      success = await deleteMidi(productId);
+    } else {
+      return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 });
+    }
+
+    if (success) {
+      return NextResponse.json({ 
+        success: true, 
+        message: `${type === 'packs' ? 'Pack' : 'MIDI file'} deleted successfully` 
+      });
+    } else {
+      return NextResponse.json({ 
+        success: false, 
+        message: `Failed to delete ${type === 'packs' ? 'pack' : 'MIDI file'}` 
+      }, { status: 500 });
+    }
   } catch (error) {
     console.error('Error deleting product:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { collection, addDoc, getDocs, getDoc, doc, Timestamp, query, orderBy, limit } from "firebase/firestore";
+import { collection, addDoc, getDocs, getDoc, doc, Timestamp, query, orderBy, limit, deleteDoc } from "firebase/firestore";
 import { Midi, MidiInput } from "../types/midi";
 
 
@@ -63,4 +63,20 @@ export async function getAllMidis() {
             created_at: data.created_at.toDate(),
         } as Midi;
     });
+}
+
+// Delete MIDI file
+export async function deleteMidi(id: string): Promise<boolean> {
+    if (!db) {
+        throw new Error("Firebase Firestore is not initialized");
+    }
+    
+    try {
+        const midiDoc = doc(db, "midifiles", id);
+        await deleteDoc(midiDoc);
+        return true;
+    } catch (error) {
+        console.error("Error deleting MIDI file:", error);
+        return false;
+    }
 }
