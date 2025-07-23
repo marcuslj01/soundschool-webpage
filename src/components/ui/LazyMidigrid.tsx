@@ -18,7 +18,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   );
   const [error, setError] = useState<string | null>(null);
 
-  // NEW: Search states
+  // Search states
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isInSearchMode, setIsInSearchMode] = useState(false);
@@ -26,47 +26,49 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   const observer = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
 
-  // NEW: Simple search function
-  const handleSearch = async (term: string) => {
-    if (term.length < 2) {
-      // Reset to original data
-      setMidiFiles(initialData);
-      setIsInSearchMode(false);
-      setHasMore(initialData.length >= 10);
-      setLastId(
-        initialData.length > 0 ? initialData[initialData.length - 1].id : null
-      );
-      return;
-    }
-
-    try {
-      setIsSearching(true);
-      const response = await fetch(
-        `/api/midi/search?term=${encodeURIComponent(term)}`
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setMidiFiles(data.midiFiles);
-        setIsInSearchMode(true);
-        setHasMore(false); // Disable infinite scroll during search
-        setLastId(null);
+  // FIXED: Use useCallback for handleSearch
+  const handleSearch = useCallback(
+    async (term: string) => {
+      if (term.length < 2) {
+        // Reset to original data
+        setMidiFiles(initialData);
+        setIsInSearchMode(false);
+        setHasMore(initialData.length >= 10);
+        setLastId(
+          initialData.length > 0 ? initialData[initialData.length - 1].id : null
+        );
+        return;
       }
-    } catch (error) {
-      console.error("Search failed:", error);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
-  // NEW: Debounced search effect
+      try {
+        setIsSearching(true);
+        const response = await fetch(
+          `/api/midi/search?term=${encodeURIComponent(term)}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setMidiFiles(data.midiFiles);
+          setIsInSearchMode(true);
+          setHasMore(false); // Disable infinite scroll during search
+          setLastId(null);
+        }
+      } catch (error) {
+        console.error("Search failed:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [initialData]
+  );
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       handleSearch(searchTerm);
-    }, 500);
+    }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  }, [searchTerm, handleSearch]);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore || isInSearchMode) return; // Added isInSearchMode check
