@@ -3,6 +3,7 @@ import BackButton from "@/components/ui/BackButton";
 import { getMidiById } from "@/lib/firestore/midifiles";
 import MidiButton from "@/components/ui/MidiButton";
 import PlayButton from "@/components/ui/PlayButton";
+import Badge from "@/components/ui/Badge";
 
 interface MidiPageProps {
   searchParams: Promise<{ id?: string }>;
@@ -82,6 +83,16 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
                     <p className="text-gray-300">{midi.preset}</p>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-gray-300 font-bold mt-4">Tags:</p>
+              <div className="flex flex-row gap-2 flex-wrap">
+                {midi.tags?.map((tag) => (
+                  <div className="mt-2" key={tag}>
+                    <Badge text={tag} style="blue" key={tag} />
+                  </div>
+                ))}
               </div>
             </div>
 
