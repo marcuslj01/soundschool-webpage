@@ -84,9 +84,19 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 </div>
               </div>
             </div>
-            <p className="text-white text-lg font-bold mt-4">
-              Price: ${pack.price}
-            </p>
+            {!pack.is_discounted ? (
+              <p className="text-white text-lg font-bold mt-4">
+                Price: ${pack.price}
+              </p>
+            ) : (
+              <p className="text-white text-lg font-bold mt-4 flex flex-row gap-2">
+                Price:
+                <span className="text-gray-400 line-through">
+                  ${pack.price}
+                </span>
+                <span className="text-green-400">${pack.discount_price}</span>
+              </p>
+            )}
 
             <div className="mt-4 gap-x-6 gap-y-4 sm:grid-cols-2">
               <PacksButtons
