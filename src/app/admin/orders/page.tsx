@@ -2,7 +2,7 @@
 
 // ✅ Caching implemented: Server-side caching for 1 hour via revalidate = 3600
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Order } from "@/lib/types/order";
 
@@ -11,7 +11,7 @@ export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const token = await currentUser?.getIdToken();
       const response = await fetch("/api/admin/orders", {
@@ -31,7 +31,7 @@ export default function Orders() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
 
   const formatDate = (date: Date | string | null) => {
     if (!date) return "Unknown";
@@ -70,7 +70,7 @@ export default function Orders() {
     if (currentUser) {
       fetchOrders();
     }
-  }, [currentUser]);
+  }, [currentUser, fetchOrders]);
 
   if (loading) {
     return (
