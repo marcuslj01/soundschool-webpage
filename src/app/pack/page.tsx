@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PacksButtons from "@/components/ui/PacksButtons";
 import BackButton from "@/components/ui/BackButton";
+import Badge from "@/components/ui/Badge";
 
 interface PackPageProps {
   searchParams: Promise<{ id?: string }>;
@@ -84,6 +85,17 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 </div>
               </div>
             </div>
+            <div>
+              <p className="text-gray-300 font-bold mt-4">Tags:</p>
+              <div className="flex flex-row gap-2 flex-wrap">
+                {pack.tags?.map((tag) => (
+                  <div className="mt-2" key={tag}>
+                    <Badge text={tag} style="blue" key={tag} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {!pack.is_discounted ? (
               <p className="text-white text-lg font-bold mt-4">
                 Price: ${pack.price}
