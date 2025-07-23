@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { Midi } from "@/lib/types/midi";
 
 export const revalidate = 900; // Cache search results for 15 minutes
@@ -16,11 +16,10 @@ export async function GET(request: NextRequest) {
 
     const midiFilesCollection = collection(db, "midifiles");
     
-    // Get latest 50 files and filter in JavaScript
+    // Get all files and filter in JavaScript
     const q = query(
       midiFilesCollection,
-      orderBy("created_at", "desc"),
-      limit(50)
+      orderBy("created_at", "desc")
     );
     
     const snapshot = await getDocs(q);
