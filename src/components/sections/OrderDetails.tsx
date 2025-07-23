@@ -42,9 +42,11 @@ export default function OrderDetails({ order }: { order: Order }) {
               <div>
                 <dt className="text-gray-300">Date</dt>
                 <dd className="text-white">
-                  {order.created_at?.toDate
-                    ? order.created_at.toDate().toLocaleString()
-                    : ""}
+                  {order.created_at instanceof Date
+                    ? order.created_at.toLocaleString()
+                    : typeof order.created_at === "string"
+                      ? new Date(order.created_at).toLocaleString()
+                      : "Unknown"}
                 </dd>
               </div>
               <div>
