@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+
 import { OrderItem } from "./orderItem";
 
 export interface Order {
@@ -6,7 +6,7 @@ export interface Order {
   userId: string | null; // null for guest orders
   customer_email: string;
   customer_name: string;
-  created_at: Timestamp;
+  created_at: Date;
   total_price: number;
   orderItems: OrderItem[];
   status: "paid" | "refunded" | "pending" | "failed";
