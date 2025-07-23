@@ -37,7 +37,7 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
         </div>
 
         {/* midi */}
-        <div className="">
+        <div>
           {/* midi details */}
           <div className="mx-auto mt-14 max-w-xs lg:w-md sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
             <div className="flex flex-col-reverse">
@@ -84,9 +84,20 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
                 </div>
               </div>
             </div>
-            <p className="text-white text-lg font-bold mt-4">
-              Price: ${midi.price}
-            </p>
+
+            {!midi.is_discounted ? (
+              <p className="text-white text-lg font-bold mt-4">
+                Price: ${midi.price}
+              </p>
+            ) : (
+              <p className="text-white text-lg font-bold mt-4 flex flex-row gap-2">
+                Price:
+                <span className="text-gray-400 line-through">
+                  ${midi.price}
+                </span>
+                <span className="text-green-400">${midi.discount_price}</span>
+              </p>
+            )}
 
             <div className="mt-4 gap-x-6 gap-y-4 sm:grid-cols-2">
               <MidiButton
