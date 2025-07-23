@@ -33,6 +33,10 @@ export default function Orders() {
     }
   }, [currentUser]);
 
+  const isGuestOrder = (order: Order) => {
+    return order.userId === null;
+  };
+
   const formatDate = (date: Date | string | null) => {
     if (!date) return "Unknown";
 
@@ -113,6 +117,12 @@ export default function Orders() {
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
+                    Guest
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Name
                   </th>
                   <th
@@ -155,6 +165,13 @@ export default function Orders() {
                     </td>
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                       {order.customer_email}
+                    </td>
+                    <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(order.status)}`}
+                      >
+                        {isGuestOrder(order) ? "Yes" : "No"}
+                      </span>
                     </td>
                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                       {order.customer_name}
