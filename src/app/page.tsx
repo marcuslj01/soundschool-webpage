@@ -24,7 +24,7 @@ export default async function Home() {
         backgroundImage="/images/Hero.png"
         primaryButtonText="Read more"
         secondaryButtonText="Other products"
-        packLink={`/packs?id=${latestPack?.id}`}
+        packLink={`/pack?id=${latestPack?.id}`}
       />
       <section
         className="flex flex-col gap-4 w-full items-center text-white"

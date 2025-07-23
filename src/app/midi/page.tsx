@@ -1,85 +1,31 @@
-"use client";
-
-import { getMidiById } from "@/lib/firestore/midifiles";
 import { notFound } from "next/navigation";
 import BackButton from "@/components/ui/BackButton";
+import { getMidiById } from "@/lib/firestore/midifiles";
+import MidiButton from "@/components/ui/MidiButton";
 import PlayButton from "@/components/ui/PlayButton";
-import { addToCart, getCartItems, removeFromCart } from "@/lib/cart";
-import { CartItem } from "@/lib/types/cartItem";
-import { CheckCircleIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
-import { Midi } from "@/lib/types/midi";
 
 interface MidiPageProps {
   searchParams: Promise<{ id?: string }>;
 }
 
-export default function MidiPage({ searchParams }: MidiPageProps) {
-  const [midi, setMidi] = useState<Midi | null>(null);
-  const [isAdded, setIsAdded] = useState(false);
-  const [loading, setLoading] = useState(true);
+export default async function MidiPage({ searchParams }: MidiPageProps) {
+  const id = (await searchParams).id as string;
 
-  useEffect(() => {
-    const fetchMidi = async () => {
-      const id = (await searchParams).id as string;
-      console.log("MIDI ID:", id);
+  // If no id is provided, show 404
+  if (!id) {
+    notFound();
+  }
 
-      if (!id) {
-        notFound();
-      }
-
-      try {
-        const midiData = await getMidiById(id);
-        if (!midiData) {
-          notFound();
-        }
-        setMidi(midiData);
-      } catch (error) {
-        console.error("Error fetching MIDI file:", error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMidi();
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (midi) {
-      const update = () => {
-        const cartItems = getCartItems();
-        setIsAdded(cartItems.some((item: CartItem) => item.id === midi.id));
-      };
-      update();
-      window.addEventListener("cart-updated", update);
-      return () => window.removeEventListener("cart-updated", update);
-    }
-  }, [midi]);
-
-  const handleAddToCart = (item: CartItem) => {
-    if (isAdded) {
-      removeFromCart(midi!.id);
-      setIsAdded(false);
-    } else {
-      addToCart(item);
-      setIsAdded(true);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center pt-16">
-        <div className="flex justify-center items-center py-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-          <span className="ml-2 text-white">Loading...</span>
-        </div>
-      </div>
-    );
+  let midi;
+  try {
+    midi = await getMidiById(id);
+  } catch (error) {
+    console.error("Error fetching midi:", error);
+    notFound();
   }
 
   if (!midi) {
-    return null;
+    notFound();
   }
 
   return (
@@ -90,172 +36,69 @@ export default function MidiPage({ searchParams }: MidiPageProps) {
           <BackButton />
         </div>
 
-        {/* MIDI file details */}
-        <div className="lg:grid lg:grid-cols-7 lg:grid-rows-1 lg:gap-x-8 lg:gap-y-10 xl:gap-x-16 mx-auto">
-          {/* MIDI preview/audio player */}
-          <div className="lg:col-span-4 lg:row-end-1">
-            <div className="aspect-4/3 w-full rounded-lg bg-gray-900 object-cover flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🎵</div>
-                <h3 className="text-white text-lg font-medium">MIDI Preview</h3>
-                <p className="text-gray-400 text-sm mt-2">
-                  {midi.name} - {midi.bpm} BPM
-                </p>
-                {/* Audio player */}
-                <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                  <PlayButton previewUrl={midi.preview_url} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* MIDI file details */}
+        {/* midi */}
+        <div className="">
+          {/* midi details */}
           <div className="mx-auto mt-14 max-w-xs lg:w-md sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
             <div className="flex flex-col-reverse">
               <div className="mt-4">
-                <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                <h1 className="text-2xl font-bold tracking-tight text-white lg:text-3xl mb-6">
                   {midi.name}
                 </h1>
+                <div className="mb-4">
+                  <PlayButton previewUrl={midi.preview_url} />
+                </div>
 
                 <h2 id="information-heading" className="sr-only">
-                  MIDI file information
+                  midi information
                 </h2>
-
-                {/* MIDI file specifications */}
-                <div className="mt-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-400">Key</h3>
-                      <p className="text-white">
-                        {midi.root} {midi.scale}
-                      </p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-400">BPM</h3>
-                      <p className="text-white">{midi.bpm}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-400">
-                        Genre
-                      </h3>
-                      <p className="text-white">{midi.genre}</p>
-                    </div>
-                  </div>
-
-                  {/* TODO: Add VST and preset (maybe?) */}
-                  {/* {midi.vst && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-400">VST</h3>
-                      <p className="text-white">{midi.vst}</p>
-                    </div>
-                  )}
-
-                  {midi.preset && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-400">
-                        Preset
-                      </h3>
-                      <p className="text-white">{midi.preset}</p>
-                    </div>
-                  )} */}
-
-                  {midi.tags && midi.tags.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-400">
-                        Tags
-                      </h3>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {midi.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-400">
-                      Created
-                    </h3>
-                    <p className="text-white">
-                      {midi.created_at instanceof Date
-                        ? midi.created_at.toLocaleDateString()
-                        : new Date(midi.created_at).toLocaleDateString()}
+                    <p className="text-gray-300 font-bold">BPM</p>
+                    <p className="text-gray-300">{midi.bpm}</p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-gray-300 font-bold">Created</p>
+                    <p className="text-gray-300">
+                      {midi.created_at.toLocaleDateString()}
                     </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-gray-300 font-bold">Key</p>
+                    <p className="text-gray-300">
+                      {midi.root} {midi.scale}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-gray-300 font-bold">Genre</p>
+                    <p className="text-gray-300">{midi.genre}</p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-gray-300 font-bold">VST</p>
+                    <p className="text-gray-300">{midi.vst}</p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-gray-300 font-bold">Preset</p>
+                    <p className="text-gray-300">{midi.preset}</p>
                   </div>
                 </div>
               </div>
             </div>
+            <p className="text-white text-lg font-bold mt-4">
+              Price: ${midi.price}
+            </p>
 
-            {/* Price */}
-            <div className="mt-6">
-              {midi.is_discounted && midi.discount_price ? (
-                <div className="flex items-center gap-2">
-                  <p className="text-white text-lg font-bold">
-                    ${midi.discount_price}
-                  </p>
-                  <p className="text-gray-400 text-lg line-through">
-                    ${midi.price}
-                  </p>
-                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
-                    SALE
-                  </span>
-                </div>
-              ) : (
-                <p className="text-white text-lg font-bold">${midi.price}</p>
-              )}
+            <div className="mt-4 gap-x-6 gap-y-4 sm:grid-cols-2">
+              <MidiButton
+                midi={{
+                  id: midi.id,
+                  name: midi.name,
+                  price: midi.price,
+                  type: "midi",
+                }}
+              />
             </div>
 
-            {/* Add to Cart Button */}
-            <div className="mt-4">
-              {isAdded ? (
-                <button
-                  className="bg-primary/20 text-white rounded-md w-full px-4 py-2 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
-                  onClick={() =>
-                    handleAddToCart({
-                      id: midi.id,
-                      title: midi.name,
-                      price:
-                        midi.is_discounted && midi.discount_price
-                          ? midi.discount_price
-                          : midi.price,
-                      type: "midi",
-                    })
-                  }
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <p>In Cart</p>
-                    <CheckCircleIcon className="w-4 h-4" />
-                  </div>
-                </button>
-              ) : (
-                <button
-                  className="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer hover:scale-102 transition-all duration-300"
-                  onClick={() =>
-                    handleAddToCart({
-                      id: midi.id,
-                      title: midi.name,
-                      price:
-                        midi.is_discounted && midi.discount_price
-                          ? midi.discount_price
-                          : midi.price,
-                      type: "midi",
-                    })
-                  }
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <p>Add to Cart</p>
-                    <ShoppingCartIcon className="w-4 h-4" />
-                  </div>
-                </button>
-              )}
-            </div>
-
-            {/* Share section */}
             <div className="mt-10 border-t border-gray-200 pt-10">
               <h3 className="text-sm font-medium text-gray-400">Share</h3>
               <ul role="list" className="mt-4 flex items-center space-x-6">
