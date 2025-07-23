@@ -16,7 +16,7 @@ function Badge(props: BadgeProps) {
           : "bg-gray-400/10 text-gray-400"; // Default to gray
   return (
     <span
-      className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${style}`}
+      className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium max-h-8 ${style}`}
     >
       {props.text}
     </span>

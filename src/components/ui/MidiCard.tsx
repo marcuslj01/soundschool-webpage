@@ -205,8 +205,12 @@ function MidiCard({
       {/* Buttons */}
       <div className="flex-1 flex flex-col justify-end w-1/4 gap-2">
         {/* New and Heart button */}
-        <div className="flex flex-row gap-2 justify-end">
-          {isNew && <Badge text="NEW!" style="yellow" />}
+        <div className="flex flex-row gap-2 justify-end items-center">
+          {isDiscounted ? (
+            <Badge text="SALE!" style="green" />
+          ) : (
+            isNew && <Badge text="NEW!" style="yellow" />
+          )}
           {!isDiscounted ? (
             <p className="text-sm text-gray-200 p-1">${price}</p>
           ) : (
