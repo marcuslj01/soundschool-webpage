@@ -163,6 +163,8 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
               scale={file.scale}
               bpm={file.bpm}
               previewUrl={file.preview_url}
+              isDiscounted={file.is_discounted || false}
+              discountPrice={file.discount_price || file.price}
               price={file.price}
               isPlaying={currentlyPlaying === file.id}
               onPlay={() => setCurrentlyPlaying(file.id)}
