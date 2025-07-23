@@ -174,7 +174,7 @@ export default function Navbar() {
                           >
                             <Link
                               className="flex-1 truncate max-w-[200px] text-left text-sm w-full hover:bg-[#353B47FF] hover:cursor-pointer rounded-md p-2"
-                              href={`/packs?id=${item.id}`}
+                              href={`/${item.type}?id=${item.id}`}
                               key={item.id + item.type}
                             >
                               <span>{item.title}</span>
