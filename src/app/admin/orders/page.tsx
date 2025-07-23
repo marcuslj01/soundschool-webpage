@@ -108,7 +108,7 @@ export default function Orders() {
                       scope="col"
                       className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8"
                     >
-                      Order Number
+                      Order ID
                     </th>
                     <th
                       scope="col"

@@ -135,9 +135,7 @@ export default function UserOrdersPage() {
                       </dd>
                     </div>
                     <div className="flex justify-between py-4 sm:block sm:py-0">
-                      <dt className="font-medium text-gray-900">
-                        Order number
-                      </dt>
+                      <dt className="font-medium text-gray-900">Order ID</dt>
                       <dd className="sm:mt-1">{order.id}</dd>
                     </div>
                   </dl>

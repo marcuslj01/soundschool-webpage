@@ -32,7 +32,7 @@ export default function OrderDetails({ order }: { order: Order }) {
 
             <dl className="mt-8 text-sm font-medium text-gray-400 space-y-1">
               <div>
-                <dt className="text-gray-300">Order Number</dt>
+                <dt className="text-gray-300">Order ID</dt>
                 <dd className="text-primary break-all">{order.id}</dd>
               </div>
               <div>
