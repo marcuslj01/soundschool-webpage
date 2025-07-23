@@ -12,25 +12,66 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   const [midiFiles, setMidiFiles] = useState<Midi[]>(initialData);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(initialData.length >= 10); // Assume more if we got 10
+  const [hasMore, setHasMore] = useState(initialData.length >= 10);
   const [lastId, setLastId] = useState<string | null>(
     initialData.length > 0 ? initialData[initialData.length - 1].id : null
   );
   const [error, setError] = useState<string | null>(null);
 
+  // Search states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [isInSearchMode, setIsInSearchMode] = useState(false);
+
   const observer = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
 
+  // FIXED: Use useCallback for handleSearch
+  const handleSearch = useCallback(
+    async (term: string) => {
+      if (term.length < 2) {
+        // Reset to original data
+        setMidiFiles(initialData);
+        setIsInSearchMode(false);
+        setHasMore(initialData.length >= 10);
+        setLastId(
+          initialData.length > 0 ? initialData[initialData.length - 1].id : null
+        );
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+        const response = await fetch(
+          `/api/midi/search?term=${encodeURIComponent(term)}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setMidiFiles(data.midiFiles);
+          setIsInSearchMode(true);
+          setHasMore(false); // Disable infinite scroll during search
+          setLastId(null);
+        }
+      } catch (error) {
+        console.error("Search failed:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [initialData]
+  );
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      handleSearch(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, handleSearch]);
+
   const loadMore = useCallback(async () => {
-    console.log(
-      "loadMore called - loading:",
-      loading,
-      "hasMore:",
-      hasMore,
-      "lastId:",
-      lastId
-    );
-    if (loading || !hasMore) return;
+    if (loading || !hasMore || isInSearchMode) return; // Added isInSearchMode check
 
     try {
       setLoading(true);
@@ -44,7 +85,6 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
         params.append("lastId", lastId);
       }
 
-      console.log("Fetching from:", `/api/midi/lazy?${params}`);
       const response = await fetch(`/api/midi/lazy?${params}`);
 
       if (!response.ok) {
@@ -52,8 +92,6 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
       }
 
       const data = await response.json();
-      console.log("Received data:", data);
-
       setMidiFiles((prev) => [...prev, ...data.midiFiles]);
       setHasMore(data.hasMore);
       setLastId(data.lastId);
@@ -63,23 +101,17 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, lastId]);
+  }, [loading, hasMore, lastId, isInSearchMode]);
 
   // Set up intersection observer for infinite scroll
   useEffect(() => {
-    if (loading) return;
+    if (loading || isInSearchMode) return; // Added isInSearchMode check
 
     if (observer.current) observer.current.disconnect();
 
     observer.current = new IntersectionObserver(
       (entries) => {
-        console.log(
-          "Intersection observer triggered:",
-          entries[0].isIntersecting,
-          hasMore
-        );
         if (entries[0].isIntersecting && hasMore) {
-          console.log("Loading more files...");
           loadMore();
         }
       },
@@ -88,19 +120,33 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
 
     if (loadingRef.current) {
       observer.current.observe(loadingRef.current);
-      console.log("Observer set up for:", loadingRef.current);
     }
 
     return () => {
       if (observer.current) observer.current.disconnect();
     };
-  }, [loadMore, loading, hasMore]);
+  }, [loadMore, loading, hasMore, isInSearchMode]);
 
   return (
     <div className="w-full flex flex-col items-center bg-black sm:max-w-2xl">
       <h1 className="text-lg font-bold text-center bg-indigo-600 text-white p-2 w-full shadow-xl">
         Limited time: Buy 2 get 1 free!
       </h1>
+
+      {/* NEW: Search input - just added this section */}
+      <div className="w-full p-4">
+        <input
+          type="text"
+          placeholder="Search MIDI files... (min 2 characters)"
+          className="w-full px-4 py-2 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {isSearching && (
+          <p className="text-gray-400 text-sm mt-1">Searching...</p>
+        )}
+      </div>
+
       <div className="w-full flex flex-col items-center max-h-[80vh] overflow-y-auto py-4">
         <div className="flex flex-col gap-2 w-full mb-8">
           {midiFiles.map((file) => (
@@ -125,8 +171,8 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
           ))}
         </div>
 
-        {/* Load More Button */}
-        {hasMore && !loading && (
+        {/* Load More Button - only show when not searching */}
+        {hasMore && !loading && !isInSearchMode && (
           <button
             onClick={loadMore}
             className="px-6 py-3 bg-primary hover:bg-primary/80 hover:cursor-pointer text-white font-medium rounded-lg transition-colors mb-4"
@@ -143,6 +189,13 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
           </div>
         )}
 
+        {/* NEW: Search results indicator */}
+        {isInSearchMode && midiFiles.length === 0 && !isSearching && (
+          <div className="flex justify-center items-center py-4">
+            <p className="text-gray-400">No MIDI files found</p>
+          </div>
+        )}
+
         {/* Error message */}
         {error && (
           <div className="flex justify-center items-center py-4">
@@ -151,11 +204,14 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
         )}
 
         {/* End of list indicator */}
-        {!hasMore && midiFiles.length > 0 && (
+        {!hasMore && midiFiles.length > 0 && !isInSearchMode && (
           <div className="flex justify-center items-center py-4">
             <p className="text-gray-400">No more MIDI files to load</p>
           </div>
         )}
+
+        {/* Loading ref for infinite scroll */}
+        <div ref={loadingRef} />
       </div>
     </div>
   );
