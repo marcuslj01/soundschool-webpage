@@ -34,7 +34,7 @@ export default function UserOrdersPage() {
     if (type === "midi") {
       return `/midi?id=${product.id}`;
     } else if (type === "pack") {
-      return `/packs?id=${product.id}`;
+      return `/pack?id=${product.id}`;
     }
   }
 

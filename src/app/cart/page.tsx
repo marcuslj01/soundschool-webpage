@@ -169,7 +169,7 @@ export default function Cart() {
                         <div className="flex justify-between">
                           <h3 className="text-sm">
                             <a
-                              href={`/packs?id=${cartItems.id}`}
+                              href={`/pack?id=${cartItems.id}`}
                               className="text-xl text-gray-200 hover:text-gray-300"
                             >
                               {cartItems.title}
