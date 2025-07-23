@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, Timestamp, query, orderBy, limit } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, Timestamp, query, orderBy, limit, deleteDoc } from "firebase/firestore";
 import { Pack, PackInput } from "../types/pack";
 import { db } from "../firebase";
 
@@ -67,4 +67,20 @@ export async function getLatestPack() {
         id: doc.id,
         created_at: data.created_at.toDate(),
     } as Pack;
+}
+
+// Delete pack
+export async function deletePack(id: string): Promise<boolean> {
+    if (!db) {
+        throw new Error("Firebase Firestore is not initialized");
+    }
+    
+    try {
+        const packDoc = doc(db, "packs", id);
+        await deleteDoc(packDoc);
+        return true;
+    } catch (error) {
+        console.error("Error deleting pack:", error);
+        return false;
+    }
 }
