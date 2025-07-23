@@ -14,6 +14,7 @@ export default function Products() {
   const [midis, setMidis] = useState<Midi[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"packs" | "midis">("packs");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -46,6 +47,49 @@ export default function Products() {
       console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Delete product
+  const handleDelete = async (type: "packs" | "midis", id: string) => {
+    if (
+      !confirm(
+        `Are you sure you want to delete this ${type === "packs" ? "pack" : "MIDI file"}?`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      setDeletingId(id);
+      const token = await currentUser?.getIdToken();
+
+      const response = await fetch(
+        `/api/admin/products?type=${type}&id=${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        // Remove from local state
+        if (type === "packs") {
+          setPacks((prev) => prev.filter((pack) => pack.id !== id));
+        } else {
+          setMidis((prev) => prev.filter((midi) => midi.id !== id));
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to delete: ${errorData.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Failed to delete product");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -224,8 +268,16 @@ export default function Products() {
                         <button className="text-indigo-600 hover:text-indigo-900 mr-4">
                           Edit
                         </button>
-                        <button className="text-red-600 hover:text-red-900">
-                          Delete
+                        <button
+                          className={`text-red-600 hover:text-red-900 ${
+                            deletingId === pack.id
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                          onClick={() => handleDelete("packs", pack.id)}
+                          disabled={deletingId === pack.id}
+                        >
+                          {deletingId === pack.id ? "Deleting..." : "Delete"}
                         </button>
                       </td>
                     </tr>
@@ -341,11 +393,19 @@ export default function Products() {
                         {formatDate(midi.created_at)}
                       </td>
                       <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-4">
+                        <button className="text-indigo-600 hover:text-indigo-900 mr-4 hover:cursor-pointer">
                           Edit
                         </button>
-                        <button className="text-red-600 hover:text-red-900">
-                          Delete
+                        <button
+                          className={`text-red-600 hover:text-red-900 hover:cursor-pointer ${
+                            deletingId === midi.id
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                          onClick={() => handleDelete("midis", midi.id)}
+                          disabled={deletingId === midi.id}
+                        >
+                          {deletingId === midi.id ? "Deleting..." : "Delete"}
                         </button>
                       </td>
                     </tr>
