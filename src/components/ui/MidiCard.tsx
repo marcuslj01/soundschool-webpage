@@ -22,6 +22,8 @@ interface CardProps {
   previewUrl: string;
   price: number;
   isPlaying: boolean;
+  isDiscounted: boolean;
+  discountPrice: number;
   onPlay: () => void;
   onPause: () => void;
 }
@@ -36,6 +38,8 @@ function MidiCard({
   price,
   previewUrl,
   isPlaying,
+  isDiscounted,
+  discountPrice,
   onPlay,
   onPause,
 }: CardProps) {
@@ -203,6 +207,16 @@ function MidiCard({
         {/* New and Heart button */}
         <div className="flex flex-row gap-2 justify-end">
           {isNew && <Badge text="NEW!" style="yellow" />}
+          {!isDiscounted ? (
+            <p className="text-sm text-gray-200 p-1">${price}</p>
+          ) : (
+            <div className="flex flex-col items-end">
+              <p className="text-sm text-gray-400 line-through">${price}</p>
+              <p className="text-sm text-green-400 font-semibold">
+                ${discountPrice}
+              </p>
+            </div>
+          )}
 
           {/* TODO: Fix heart button to work with Firebase */}
           {/* <Button
