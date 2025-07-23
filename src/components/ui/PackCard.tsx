@@ -50,27 +50,29 @@ export default function PackCard({ product }: PackCardProps) {
           <p className="text-sm text-gray-500 font-bold">
             {product.file_count} high quality {product.type}s
           </p>
-
-          <div className="space-y-2 mt-2 flex flex-row justify-between">
-            <div className="flex flex-row gap-2 flex-wrap h-4">
-              {product.tags.map((tag) => (
-                <Badge key={tag} text={tag} style="blue" />
-              ))}
+          <div className="flex flex-row justify-between">
+            <div className="space-y-2 mt-2 flex flex-row justify-between">
+              <div className="flex flex-row gap-2 flex-wrap h-4">
+                {product.tags.map((tag) => (
+                  <Badge key={tag} text={tag} style="blue" />
+                ))}
+              </div>
             </div>
-          </div>
-          {!product.is_discounted ? (
-            <p className="text-white text-lg font-bold mt-4">
-              Price: ${product.price}
-            </p>
-          ) : (
-            <p className="text-white text-lg font-bold mt-4 flex flex-row gap-2">
-              Price:
-              <span className="text-gray-400 line-through">
+            {!product.is_discounted ? (
+              <p className="text-gray-200 text-lg font-bold mt-4">
                 ${product.price}
-              </span>
-              <span className="text-green-400">${product.discount_price}</span>
-            </p>
-          )}
+              </p>
+            ) : (
+              <p className="text-gray-200 text-lg font-bold mt-4 flex flex-row gap-2">
+                <span className="text-gray-400 line-through">
+                  ${product.price}
+                </span>
+                <span className="text-green-400">
+                  ${product.discount_price}
+                </span>
+              </p>
+            )}
+          </div>
         </div>
       </Link>
     </div>
