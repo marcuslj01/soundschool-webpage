@@ -4,6 +4,9 @@ import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { Order } from "../types/order";
 
+// Legg til Admin SDK versjon
+import { getFirestore } from 'firebase-admin/firestore';
+
 export async function getOrder(payment_id: string) {
   const ordersCollection = collection(db, "orders");
   const q = query(ordersCollection, where("payment_id", "==", payment_id));
@@ -19,6 +22,7 @@ export async function getOrder(payment_id: string) {
   } as Order;
 }
 
+// Client-side version of getOrdersByUserId
 export async function getOrdersByUserId(userId: string) {
   const ordersCollection = collection(db, "orders");
   const q = query(ordersCollection, where("userId", "==", userId));
@@ -30,6 +34,22 @@ export async function getOrdersByUserId(userId: string) {
       id: doc.id, // Document ID
       created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
     } as Order;
+  });
+}
+
+// Server-side version of getOrdersByUserId
+export async function getOrdersByUserIdServer(userId: string) {
+  const db = getFirestore();
+  const ordersCollection = db.collection("orders");
+  const querySnapshot = await ordersCollection.where("userId", "==", userId).get();
+  
+  return querySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      id: doc.id,
+      created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+    };
   });
 }
 

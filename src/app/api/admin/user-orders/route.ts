@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getOrdersByUserId } from '@/lib/firestore/order';
+import { getOrdersByUserIdServer } from '@/lib/firestore/order';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get orders with server-side access
-    const orders = await getOrdersByUserId(userId);
+    const orders = await getOrdersByUserIdServer(userId);
     
     return NextResponse.json(orders);
 
