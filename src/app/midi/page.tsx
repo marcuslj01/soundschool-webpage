@@ -43,9 +43,18 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
           <div className="mx-auto mt-14 max-w-xs lg:w-md sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
             <div className="flex flex-col-reverse">
               <div className="mt-4">
-                <h1 className="text-2xl font-bold tracking-tight text-white lg:text-3xl mb-6">
+                <h1 className="text-2xl font-bold tracking-tight text-white lg:text-3xl">
                   {midi.name}
                 </h1>
+                <div className="mb-4">
+                  <div className="flex flex-row gap-2 flex-wrap">
+                    {midi.tags?.map((tag) => (
+                      <div className="mt-2" key={tag}>
+                        <Badge text={tag} style="blue" key={tag} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="mb-4">
                   <PlayButton previewUrl={midi.preview_url} />
                 </div>
@@ -83,16 +92,6 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
                     <p className="text-gray-300">{midi.preset}</p>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-gray-300 font-bold mt-4">Tags:</p>
-              <div className="flex flex-row gap-2 flex-wrap">
-                {midi.tags?.map((tag) => (
-                  <div className="mt-2" key={tag}>
-                    <Badge text={tag} style="blue" key={tag} />
-                  </div>
-                ))}
               </div>
             </div>
 

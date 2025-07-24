@@ -46,9 +46,11 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             <Image
               alt={`Image of ${pack.name}`}
               src={pack.image_url}
-              width={500}
-              height={500}
-              className="aspect-4/3 w-full rounded-lg bg-gray-100 object-cover"
+              width={0}
+              height={0}
+              sizes="100vw"
+              style={{ width: "100%", height: "100%" }}
+              className="sm:max-h-[50vh] max-h-[30vh] md:max-w-full object-contain bg-gray-900 rounded-lg"
             />
           </div>
 
@@ -59,11 +61,21 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                   {pack.name}
                 </h1>
+                <div className="mb-4">
+                  <div className="flex flex-row gap-2 flex-wrap">
+                    {pack.tags?.map((tag) => (
+                      <div className="mt-2" key={tag}>
+                        <Badge text={tag} style="blue" key={tag} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
                 <h2 id="information-heading" className="sr-only">
                   pack information
                 </h2>
                 <div className="text-gray-300 mt-4">
+                  <p className="text-gray-300 font-bold mb-2">Description</p>
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
@@ -83,16 +95,6 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                     {pack.description}
                   </ReactMarkdown>
                 </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-gray-300 font-bold mt-4">Tags:</p>
-              <div className="flex flex-row gap-2 flex-wrap">
-                {pack.tags?.map((tag) => (
-                  <div className="mt-2" key={tag}>
-                    <Badge text={tag} style="blue" key={tag} />
-                  </div>
-                ))}
               </div>
             </div>
 
