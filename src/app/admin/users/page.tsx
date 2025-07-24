@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
 
 interface UserWithClaims {
   uid: string;
@@ -187,30 +188,40 @@ export default function Users() {
                       </span>
                     </td>
                     <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
-                      <button
-                        onClick={() => setAdminStatus(user.uid, !user.isAdmin)}
-                        disabled={
-                          updating === user.uid ||
-                          (!user.isAdmin && user.uid === currentUser?.uid)
-                        }
-                        className={`text-sm font-medium rounded-md px-3 py-1 ${
-                          user.isAdmin
-                            ? user.uid === currentUser?.uid
-                              ? "text-gray-400 cursor-not-allowed"
-                              : "text-red-600 hover:text-red-900 hover:bg-red-50"
-                            : "text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50"
-                        } disabled:opacity-50 disabled:cursor-not-allowed`}
-                      >
-                        {updating === user.uid ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mx-auto"></div>
-                        ) : user.uid === currentUser?.uid && user.isAdmin ? (
-                          "Current User"
-                        ) : user.isAdmin ? (
-                          "Remove Admin"
-                        ) : (
-                          "Make Admin"
-                        )}
-                      </button>
+                      <div className="flex flex-row gap-2">
+                        <Link
+                          href={`/admin/users/orders?userId=${user.uid}&userName=${encodeURIComponent(user.displayName)}`}
+                          className="text-sm font-medium rounded-md px-3 py-1 text-primary hover:text-primary/80 hover:bg-primary/10"
+                        >
+                          View Orders
+                        </Link>
+                        <button
+                          onClick={() =>
+                            setAdminStatus(user.uid, !user.isAdmin)
+                          }
+                          disabled={
+                            updating === user.uid ||
+                            (!user.isAdmin && user.uid === currentUser?.uid)
+                          }
+                          className={`text-sm font-medium rounded-md px-3 py-1 ${
+                            user.isAdmin
+                              ? user.uid === currentUser?.uid
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-red-600 hover:text-red-900 hover:bg-red-50"
+                              : "text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50"
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                          {updating === user.uid ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mx-auto"></div>
+                          ) : user.uid === currentUser?.uid && user.isAdmin ? (
+                            "Current User"
+                          ) : user.isAdmin ? (
+                            "Remove Admin"
+                          ) : (
+                            "Make Admin"
+                          )}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
