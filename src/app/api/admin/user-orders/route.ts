@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getOrdersByUserIdServer } from '@/lib/firestore/order';
+import { getOrdersByUserIdServer } from '@/lib/firestore/order.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
