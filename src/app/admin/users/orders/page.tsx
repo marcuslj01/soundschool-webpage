@@ -1,18 +1,19 @@
 "use client";
 
-import { getOrdersByUserId } from "@/lib/firestore/order";
 import { Order } from "@/lib/types/order";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { OrderItem } from "@/lib/types/orderItem";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import BackButton from "@/components/ui/BackButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UserOrdersPageProps {
   searchParams: Promise<{ userId?: string; userName?: string }>;
 }
 
 export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
+  const { user: currentUser } = useAuth();
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -30,9 +31,23 @@ export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
 
   useEffect(() => {
     async function fetchOrders() {
-      if (userId) {
+      if (userId && currentUser) {
         try {
-          const userOrders = await getOrdersByUserId(userId);
+          const token = await currentUser.getIdToken();
+          const response = await fetch(
+            `/api/admin/user-orders?userId=${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch orders");
+          }
+
+          const userOrders = await response.json();
           setOrders(userOrders);
         } catch (error) {
           console.error("Error fetching orders:", error);
@@ -43,7 +58,7 @@ export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
     }
 
     fetchOrders();
-  }, [userId]);
+  }, [userId, currentUser]);
 
   function handleProductLink(product: OrderItem, type: string) {
     if (type === "midi") {
