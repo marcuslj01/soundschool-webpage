@@ -36,7 +36,7 @@ export default function Sidebar() {
   // Update current state based on current path
   const updatedNavigation = navigation.map((item) => ({
     ...item,
-    current: pathname === item.href,
+    current: pathname.startsWith(item.href),
   }));
 
   return (
