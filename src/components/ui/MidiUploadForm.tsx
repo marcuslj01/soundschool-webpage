@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Button from "./Button";
-import { addMidi } from "@/lib/firestore/midifiles";
-import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
+// import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "@/contexts/AuthContext";
 
-const storage = getStorage();
+// const storage = getStorage(); // Removed as per edit hint
 
 interface MidiUploadFormProps {
   onClose: () => void;
@@ -12,6 +12,7 @@ interface MidiUploadFormProps {
 }
 
 function MidiUploadForm({ onClose, onBack }: MidiUploadFormProps) {
+  const { user: currentUser } = useAuth();
   const [form, setForm] = useState({
     name: "",
     price: "",
@@ -103,13 +104,8 @@ function MidiUploadForm({ onClose, onBack }: MidiUploadFormProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!file) {
-      alert("Please upload a file");
-      return;
-    }
-
-    if (!preview) {
-      alert("Please upload a preview");
+    if (!file || !preview) {
+      alert("Please upload required files");
       return;
     }
 
@@ -119,42 +115,50 @@ function MidiUploadForm({ onClose, onBack }: MidiUploadFormProps) {
     }
 
     try {
-      const fileRef = ref(storage, `midifiles/${file.name}`);
-      await uploadBytes(fileRef, file);
-      const file_url = await getDownloadURL(fileRef);
+      // get auth token
+      const token = await currentUser?.getIdToken();
 
-      let preview_url = "";
-      if (preview) {
-        const previewRef = ref(storage, `previews/${preview.name}`);
-        await uploadBytes(previewRef, preview);
-        preview_url = await getDownloadURL(previewRef);
+      if (!token) {
+        alert("You must be logged in to upload files");
+        return;
       }
 
-      await addMidi({
-        name: form.name,
-        price: Number(form.price),
-        root: form.root,
-        scale: form.scale,
-        bpm: Number(form.bpm),
-        genre: form.genre,
-        vst: form.vst,
-        preset: form.preset,
-        discount_price: form.discount_price
-          ? Number(form.discount_price)
-          : undefined,
-        file_url,
-        preview_url,
-        tags,
-        hidden: form.hidden,
-        is_featured: form.is_featured,
-        is_discounted: form.is_discounted,
+      // use FormData for secure server-side upload
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("price", form.price);
+      formData.append("root", form.root);
+      formData.append("scale", form.scale);
+      formData.append("bpm", form.bpm);
+      formData.append("genre", form.genre);
+      formData.append("vst", form.vst);
+      formData.append("preset", form.preset);
+      formData.append("discount_price", form.discount_price);
+      formData.append("tags", JSON.stringify(tags));
+      formData.append("hidden", form.hidden.toString());
+      formData.append("is_featured", form.is_featured.toString());
+      formData.append("is_discounted", form.is_discounted.toString());
+      formData.append("file", file);
+      formData.append("preview", preview);
+
+      const response = await fetch("/api/admin/midi/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
       });
 
-      alert("Midi file uploaded successfully");
-      onClose();
+      if (response.ok) {
+        alert("MIDI file uploaded successfully");
+        onClose();
+      } else {
+        const errorData = await response.json();
+        alert(`Upload failed: ${errorData.error || "Unknown error"}`);
+      }
     } catch (error) {
-      console.error("Error uploading midi file:", error);
-      alert("Failed to upload midi file");
+      console.error("Error uploading:", error);
+      alert("Failed to upload MIDI file");
     }
   };
 

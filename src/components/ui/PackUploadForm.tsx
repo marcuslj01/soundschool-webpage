@@ -1,12 +1,10 @@
 import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import { addPack } from "@/lib/firestore/pack";
 import { PackInput } from "@/lib/types/pack";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Button from "./Button";
-import { storage } from "@/lib/firebase";
-import { getDownloadURL, uploadBytes, ref } from "firebase/storage";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PackUploadFormProps {
   onClose: () => void;
@@ -14,6 +12,7 @@ interface PackUploadFormProps {
 }
 
 function PackUploadForm({ onClose, onBack }: PackUploadFormProps) {
+  const { user: currentUser } = useAuth();
   const [form, setForm] = useState<PackInput>({
     name: "",
     type: "midi",
@@ -105,48 +104,60 @@ function PackUploadForm({ onClose, onBack }: PackUploadFormProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("Handling submit...");
     e.preventDefault();
     if (!file || !preview || !image) {
       alert("Please upload a file, preview, and image");
       return;
     }
 
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     try {
-      const fileRef = ref(storage, `midifiles/${file.name}`);
-      await uploadBytes(fileRef, file);
-      const file_url = await getDownloadURL(fileRef);
+      // get auth token
+      const token = await currentUser?.getIdToken();
 
-      let preview_url = "";
-      if (preview) {
-        const previewRef = ref(storage, `previews/${preview.name}`);
-        await uploadBytes(previewRef, preview);
-        preview_url = await getDownloadURL(previewRef);
+      if (!token) {
+        alert("You must be logged in to upload files");
+        return;
       }
 
-      let image_url = "";
-      if (image) {
-        const imageRef = ref(storage, `images/${image.name}`);
-        await uploadBytes(imageRef, image);
-        image_url = await getDownloadURL(imageRef);
-      }
+      // use FormData for secure server-side upload
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("type", form.type || "midi");
+      formData.append("description", form.description);
+      formData.append("price", form.price.toString());
+      formData.append("discount_price", form.discount_price.toString());
+      formData.append("genre", form.genre || "");
+      formData.append("file_count", form.file_count.toString());
+      formData.append("tags", JSON.stringify(tags));
+      formData.append("hidden", form.hidden.toString());
+      formData.append("is_featured", form.is_featured.toString());
+      formData.append("is_discounted", form.is_discounted.toString());
+      formData.append("file", file);
+      formData.append("preview", preview);
+      formData.append("image", image);
 
-      await addPack({
-        ...form,
-        download_url: file_url,
-        preview_url,
-        image_url,
-        tags,
+      const response = await fetch("/api/admin/pack/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
       });
-      alert("Pack uploaded successfully");
-      onClose();
+
+      if (response.ok) {
+        alert("Pack uploaded successfully");
+        onClose();
+      } else {
+        const errorData = await response.json();
+        alert(`Upload failed: ${errorData.error || "Unknown error"}`);
+      }
     } catch (error) {
-      console.error("Error uploading midi file:", error);
-      alert("Failed to upload midi file");
+      console.error("Error uploading:", error);
+      alert("Failed to upload pack");
     } finally {
-      setIsLoading(false); // Stop loading regardless of success/failure
+      setIsLoading(false);
     }
   };
 
