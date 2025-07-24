@@ -149,28 +149,31 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
 
       <div className="w-full flex flex-col items-center max-h-[80vh] overflow-y-auto py-4">
         <div className="flex flex-col gap-2 w-full mb-8">
-          {midiFiles.map((file) => (
-            <MidiCard
-              key={file.id}
-              id={file.id}
-              title={file.name}
-              date={
-                file.created_at instanceof Date
-                  ? file.created_at.toISOString()
-                  : new Date(file.created_at).toISOString()
-              }
-              root={file.root}
-              scale={file.scale}
-              bpm={file.bpm}
-              previewUrl={file.preview_url}
-              isDiscounted={file.is_discounted || false}
-              discountPrice={file.discount_price || file.price}
-              price={file.price}
-              isPlaying={currentlyPlaying === file.id}
-              onPlay={() => setCurrentlyPlaying(file.id)}
-              onPause={() => setCurrentlyPlaying(null)}
-            />
-          ))}
+          {midiFiles.map(
+            (file) =>
+              !file.hidden && (
+                <MidiCard
+                  key={file.id}
+                  id={file.id}
+                  title={file.name}
+                  date={
+                    file.created_at instanceof Date
+                      ? file.created_at.toISOString()
+                      : new Date(file.created_at).toISOString()
+                  }
+                  root={file.root}
+                  scale={file.scale}
+                  bpm={file.bpm}
+                  previewUrl={file.preview_url}
+                  isDiscounted={file.is_discounted || false}
+                  discountPrice={file.discount_price || file.price}
+                  price={file.price}
+                  isPlaying={currentlyPlaying === file.id}
+                  onPlay={() => setCurrentlyPlaying(file.id)}
+                  onPause={() => setCurrentlyPlaying(null)}
+                />
+              )
+          )}
         </div>
 
         {/* Load More Button - only show when not searching */}
