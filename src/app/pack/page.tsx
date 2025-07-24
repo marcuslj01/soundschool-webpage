@@ -50,7 +50,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               height={0}
               sizes="100vw"
               style={{ width: "100%", height: "100%" }}
-              className="sm:max-h-[50vh] max-h-[30vh] md:max-w-full object-contain bg-gray-900 rounded-lg"
+              className="sm:max-h-[50vh] max-h-[40vh] md:max-w-full object-contain bg-gray-900 rounded-lg"
             />
           </div>
 
