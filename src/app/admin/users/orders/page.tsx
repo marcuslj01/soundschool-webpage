@@ -7,13 +7,11 @@ import { OrderItem } from "@/lib/types/orderItem";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import BackButton from "@/components/ui/BackButton";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSearchParams } from "next/navigation";
 
-interface UserOrdersPageProps {
-  searchParams: Promise<{ userId?: string; userName?: string }>;
-}
-
-export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
+export default function UserOrdersPage() {
   const { user: currentUser } = useAuth();
+  const searchParams = useSearchParams();
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -27,14 +25,15 @@ export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
 
   // get userId from searchParams
   useEffect(() => {
-    async function getUserId() {
-      console.log("getUserId useEffect triggered");
-      const params = await searchParams;
-      console.log("Search params:", params);
-      setUserId(params.userId || null);
-      setUserName(params.userName || null);
-    }
-    getUserId();
+    console.log("getUserId useEffect triggered");
+    const userIdParam = searchParams.get("userId");
+    const userNameParam = searchParams.get("userName");
+    console.log("Search params from useSearchParams:", {
+      userIdParam,
+      userNameParam,
+    });
+    setUserId(userIdParam);
+    setUserName(userNameParam);
   }, [searchParams]);
 
   useEffect(() => {
