@@ -19,10 +19,18 @@ export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
+  console.log("Component rendered with:", {
+    currentUser: !!currentUser,
+    userId,
+    userName,
+  });
+
   // get userId from searchParams
   useEffect(() => {
     async function getUserId() {
+      console.log("getUserId useEffect triggered");
       const params = await searchParams;
+      console.log("Search params:", params);
       setUserId(params.userId || null);
       setUserName(params.userName || null);
     }
@@ -30,10 +38,23 @@ export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
   }, [searchParams]);
 
   useEffect(() => {
+    console.log("fetchOrders useEffect triggered with:", {
+      userId,
+      currentUser: !!currentUser,
+    });
+
     async function fetchOrders() {
+      console.log("fetchOrders called with:", {
+        userId,
+        currentUser: !!currentUser,
+      });
+
       if (userId && currentUser) {
         try {
+          console.log("Getting token...");
           const token = await currentUser.getIdToken();
+          console.log("Token received, making API call...");
+
           const response = await fetch(
             `/api/admin/user-orders?userId=${userId}`,
             {
@@ -43,17 +64,31 @@ export default function UserOrdersPage({ searchParams }: UserOrdersPageProps) {
             }
           );
 
+          console.log("API response status:", response.status);
+
           if (!response.ok) {
-            throw new Error("Failed to fetch orders");
+            const errorText = await response.text();
+            console.error("API error:", errorText);
+            throw new Error(
+              `Failed to fetch orders: ${response.status} ${errorText}`
+            );
           }
 
           const userOrders = await response.json();
+          console.log("Orders received:", userOrders);
           setOrders(userOrders);
         } catch (error) {
           console.error("Error fetching orders:", error);
+          alert(`Error loading orders: ${error}`);
         } finally {
           setLoading(false);
         }
+      } else {
+        console.log("Missing userId or currentUser:", {
+          userId,
+          currentUser: !!currentUser,
+        });
+        setLoading(false);
       }
     }
 
