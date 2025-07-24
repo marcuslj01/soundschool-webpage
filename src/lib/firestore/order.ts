@@ -19,6 +19,7 @@ export async function getOrder(payment_id: string) {
   } as Order;
 }
 
+// Client-side version of getOrdersByUserId
 export async function getOrdersByUserId(userId: string) {
   const ordersCollection = collection(db, "orders");
   const q = query(ordersCollection, where("userId", "==", userId));
