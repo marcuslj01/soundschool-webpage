@@ -32,7 +32,7 @@ export default function PackCard({ product }: PackCardProps) {
             src={product.image_url}
             width={500}
             height={500}
-            className="w-full h-64 sm:h-80 md:h-96 bg-gray-200 object-cover"
+            className="w-full h-64 sm:h-80 md:h-96 bg-gray-200 object-contain"
           />
         </div>
         <div className="p-4">
