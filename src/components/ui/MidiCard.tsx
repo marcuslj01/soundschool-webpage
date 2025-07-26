@@ -2,6 +2,7 @@
 
 import { Button } from "@headlessui/react";
 import {
+  ArrowRightIcon,
   CheckCircleIcon,
   // HeartIcon, // TODO: Fix heart button to work with Firebase
   ShoppingCartIcon,
@@ -246,9 +247,9 @@ function MidiCard({
           {isOwned ? (
             <Link
               href="/my-files"
-              className="bg-green-700 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-green-700 hover:cursor-pointer transition-all duration-300"
+              className="bg-green-700 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-green-800 hover:cursor-pointer transition-all duration-300"
             >
-              <p>Already Owned</p> <CheckCircleIcon className="w-4 h-4" />
+              <p>My Files</p> <ArrowRightIcon className="ml-1 w-4 h-4" />
             </Link>
           ) : isAdded ? (
             <Button
