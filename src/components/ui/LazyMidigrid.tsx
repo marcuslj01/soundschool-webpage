@@ -3,12 +3,17 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import MidiCard from "./MidiCard";
 import { Midi } from "@/lib/types/midi";
+import { useAuth } from "@/contexts/AuthContext";
+import { OwnedFile } from "@/lib/types/ownedFile";
+import { getOwnedFiles } from "@/lib/firestore/user";
 
 interface LazyMidigridProps {
   initialData: Midi[];
 }
 
 function LazyMidigrid({ initialData }: LazyMidigridProps) {
+  const { user } = useAuth();
+  const [ownedFiles, setOwnedFiles] = useState<OwnedFile[]>([]);
   const [midiFiles, setMidiFiles] = useState<Midi[]>(initialData);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,6 +23,16 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   );
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (user) {
+      const fetchOwnedFiles = async () => {
+        const ownedFiles = await getOwnedFiles(user.uid);
+        setOwnedFiles(ownedFiles);
+      };
+      fetchOwnedFiles();
+    }
+  }, [user]);
+
   // Search states
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -26,7 +41,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   const observer = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
 
-  // FIXED: Use useCallback for handleSearch
+  // Use useCallback for handleSearch
   const handleSearch = useCallback(
     async (term: string) => {
       if (term.length < 2) {
@@ -171,6 +186,10 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
                   isPlaying={currentlyPlaying === file.id}
                   onPlay={() => setCurrentlyPlaying(file.id)}
                   onPause={() => setCurrentlyPlaying(null)}
+                  isOwned={ownedFiles.some(
+                    (ownedFile) =>
+                      ownedFile.id === file.id && ownedFile.type === "midi"
+                  )}
                 />
               )
           )}

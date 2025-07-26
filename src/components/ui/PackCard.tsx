@@ -7,9 +7,10 @@ import React from "react";
 import Badge from "./Badge";
 interface PackCardProps {
   product: Pack;
+  isOwned: boolean;
 }
 
-export default function PackCard({ product }: PackCardProps) {
+export default function PackCard({ product, isOwned }: PackCardProps) {
   function checkIsNew(date: string) {
     const today = new Date();
     const dateObj = new Date(date);
@@ -41,7 +42,9 @@ export default function PackCard({ product }: PackCardProps) {
               <span aria-hidden="true" className="absolute inset-0" />
               {product.name}
             </h3>
-            {product.is_discounted ? (
+            {isOwned ? (
+              <Badge text="OWNED" style="indigo" />
+            ) : product.is_discounted ? (
               <Badge text="SALE!" style="green" />
             ) : (
               isNew && <Badge text="NEW!" style="yellow" />
