@@ -137,9 +137,7 @@ function MidiCard({
 
   return (
     <div
-      className={`bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit transition-all duration-300 ${
-        isOwned ? "opacity-70 grayscale hover:opacity-90" : "hover:bg-[#2b303a]"
-      }`}
+      className={`bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit transition-all duration-300`}
     >
       {/* Play/Pause Button */}
       <div className="flex-shrink-0">
@@ -178,9 +176,7 @@ function MidiCard({
             </div>
           ) : (
             <div
-              className={`w-full h-full rounded-full flex items-center justify-center hover:cursor-pointer ${
-                isOwned ? "bg-gray-600" : "bg-[#292E35]"
-              }`}
+              className={`w-full h-full rounded-full flex items-center justify-center hover:cursor-pointer bg-[#292E35]`}
             >
               {/* Play Icon */}
               <svg
@@ -200,11 +196,7 @@ function MidiCard({
       {/* Text section */}
       <div className="flex flex-col gap-1 w-2/3 min-w-fit">
         <Link href={`/midi?id=${id}`} className="hover:cursor-pointer">
-          <h1
-            className={`font-semibold text-sm sm:text-lg transition-colors ${
-              isOwned ? "text-gray-400" : "hover:text-blue-400"
-            }`}
-          >
+          <h1 className={`font-semibold text-sm sm:text-lg transition-colors`}>
             {title}
           </h1>
 
@@ -221,7 +213,7 @@ function MidiCard({
         {/* New and Heart button */}
         <div className="flex flex-row gap-2 justify-end items-center">
           {isOwned ? (
-            <Badge text="OWNED" style="yellow" />
+            <Badge text="OWNED" style="indigo" />
           ) : isDiscounted ? (
             <Badge text="SALE!" style="green" />
           ) : (
