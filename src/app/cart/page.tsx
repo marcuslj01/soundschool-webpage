@@ -246,12 +246,22 @@ export default function Cart() {
             </dl>
 
             <div className="mt-6">
-              <button
-                type="submit"
-                className="w-full rounded-md border border-transparent bg-primary px-4 py-3 text-base font-medium text-white shadow-xs hover:bg-primary/80 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden hover:scale-102 cursor-pointer"
-              >
-                Checkout
-              </button>
+              {cartItems.length > 0 ? (
+                <button
+                  type="submit"
+                  className="w-full rounded-md border border-transparent bg-primary px-4 py-3 text-base font-medium text-white shadow-xs hover:bg-primary/80 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden hover:scale-102 cursor-pointer"
+                >
+                  Checkout
+                </button>
+              ) : (
+                <p className="text-gray-600">
+                  Your cart is empty. Please add some items to your cart.{" "}
+                  <Link href="/" className="text-primary hover:text-primary/80">
+                    Browse items
+                  </Link>
+                  .
+                </p>
+              )}
             </div>
           </section>
         </form>
