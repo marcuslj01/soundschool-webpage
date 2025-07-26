@@ -119,6 +119,8 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   name: pack.name,
                   price: pack.price,
                   type: pack.type || "midi",
+                  discount_price: pack.discount_price,
+                  is_discounted: pack.is_discounted,
                 }}
               />
             </div>

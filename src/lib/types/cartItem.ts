@@ -3,4 +3,6 @@ export interface CartItem {
     type: "midi" | "pack";
     title: string;
     price: number;
+    discount_price?: number;
+    is_discounted?: boolean;
 }

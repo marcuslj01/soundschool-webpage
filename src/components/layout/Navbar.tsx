@@ -180,7 +180,18 @@ export default function Navbar() {
                               <span>{item.title}</span>
                             </Link>
                             <span className="min-w-[60px] text-right font-mono font-medium">
-                              ${item.price}
+                              {item.is_discounted ? (
+                                <span className="flex flex-row justify-end gap-1">
+                                  <span className="text-gray-400 line-through">
+                                    ${item.price}
+                                  </span>
+                                  <span className="text-green-400">
+                                    ${item.discount_price}
+                                  </span>
+                                </span>
+                              ) : (
+                                `$${item.price}`
+                              )}
                             </span>
                             <button
                               onClick={(e) => {
@@ -201,7 +212,13 @@ export default function Navbar() {
                         <span className="font-bold text-white text-lg">
                           $
                           {cartItems.reduce(
-                            (sum, item) => sum + Number(item.price),
+                            (sum, item) =>
+                              sum +
+                              Number(
+                                item.is_discounted
+                                  ? item.discount_price
+                                  : item.price
+                              ),
                             0
                           )}
                         </span>

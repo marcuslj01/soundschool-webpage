@@ -36,7 +36,8 @@ export default function Cart() {
   };
 
   const subtotalPrice = cartItems.reduce(
-    (sum: number, item: CartItem) => sum + Number(item.price),
+    (sum: number, item: CartItem) =>
+      sum + Number(item.is_discounted ? item.discount_price : item.price),
     0
   );
 
@@ -193,7 +194,18 @@ export default function Cart() {
                         </div>
 
                         <p className="mt-1 text-sm font-medium text-gray-300">
-                          ${cartItems.price}
+                          {cartItems.is_discounted ? (
+                            <span className="flex flex-row gap-2">
+                              <span className="text-gray-400 line-through">
+                                ${cartItems.price}
+                              </span>
+                              <span className="text-green-400">
+                                ${cartItems.discount_price}
+                              </span>
+                            </span>
+                          ) : (
+                            `$${cartItems.price}`
+                          )}
                         </p>
                       </div>
 

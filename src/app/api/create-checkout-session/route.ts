@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       price_data: {
         currency: "usd",
         product_data: { name: item.title },
-        unit_amount: Math.round(Number(item.price) * 100), // Stripe expects cents
+        unit_amount: Math.round(Number(item.is_discounted ? item.discount_price : item.price) * 100), // Stripe expects cents
       },
       quantity: 1,
     })),
