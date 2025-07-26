@@ -187,7 +187,8 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
                   onPlay={() => setCurrentlyPlaying(file.id)}
                   onPause={() => setCurrentlyPlaying(null)}
                   isOwned={ownedFiles.some(
-                    (ownedFile) => ownedFile.id === file.id
+                    (ownedFile) =>
+                      ownedFile.id === file.id && ownedFile.type === "midi"
                   )}
                 />
               )
