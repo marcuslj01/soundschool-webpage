@@ -8,6 +8,7 @@ import { CartItem } from "@/lib/types/cartItem";
 import BackButton from "@/components/ui/BackButton";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import { getOwnedFiles } from "@/lib/firestore/user";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -44,6 +45,20 @@ export default function Cart() {
 
     if (!user) {
       setShowCheckoutModal(true);
+      return;
+    }
+
+    const ownedFiles = await getOwnedFiles(user.uid);
+    const isOwned = cartItems.some((item) =>
+      ownedFiles.some((ownedFile) => ownedFile.id === item.id)
+    );
+    if (isOwned) {
+      alert(
+        `You already own some of these items: ${ownedFiles
+          .filter((file) => cartItems.some((item) => item.id === file.id))
+          .map((file) => file.name)
+          .join(", ")}. Please remove them from your cart before checking out.`
+      );
       return;
     }
 
