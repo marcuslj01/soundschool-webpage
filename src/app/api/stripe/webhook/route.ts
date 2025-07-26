@@ -5,6 +5,7 @@ import { collection, addDoc, Timestamp, doc, getDoc, runTransaction } from "fire
 import { OrderItem } from "@/lib/types/orderItem";
 import { CartItem } from "@/lib/types/cartItem";
 import { Resend } from "resend";
+import { OwnedFile } from "@/lib/types/ownedFile";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-06-30.basil",
@@ -112,6 +113,35 @@ export async function POST(req: NextRequest) {
           console.error(`Error updating sales for pack ${item.id}:`, err);
         }
       }
+    }
+
+    // Add new files to user's owned files
+    if (orderData.userId) {
+      const userRef = doc(db, "users", orderData.userId);
+      await runTransaction(db, async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+        const currentOwnedFiles: OwnedFile[] = userDoc.exists() && userDoc.data().ownedFiles ? userDoc.data().ownedFiles : [];
+        
+        // Create a map of existing files to avoid duplicates
+        const existingFilesMap = new Map(currentOwnedFiles.map((file: OwnedFile) => [file.id, file]));
+        
+        // Convert OrderItems to OwnedFiles
+        const newOwnedFiles: OwnedFile[] = orderItems.map((item: OrderItem) => ({
+          id: item.id,
+          type: item.type,
+          name: item.title,
+        }));
+        
+        // Only add files that don't already exist
+        for (const newFile of newOwnedFiles) {
+          if (!existingFilesMap.has(newFile.id)) {
+            existingFilesMap.set(newFile.id, newFile);
+          }
+        }
+        
+        const updatedOwnedFiles = Array.from(existingFilesMap.values());
+        transaction.update(userRef, { ownedFiles: updatedOwnedFiles });
+      });
     }
 
     // Send email with Resend
