@@ -14,6 +14,8 @@ interface MidiButtonProps {
     name: string;
     price: number;
     type: string;
+    discount_price?: number;
+    is_discounted?: boolean;
   };
 }
 
@@ -80,6 +82,10 @@ export default function MidiButton({ midi }: MidiButtonProps) {
               id: midi.id,
               title: midi.name,
               price: midi.price,
+              discount_price: midi.is_discounted
+                ? midi.discount_price
+                : undefined,
+              is_discounted: midi.is_discounted,
               type: "midi",
             })
           }
@@ -97,6 +103,10 @@ export default function MidiButton({ midi }: MidiButtonProps) {
               id: midi.id,
               title: midi.name,
               price: midi.price,
+              discount_price: midi.is_discounted
+                ? midi.discount_price
+                : undefined,
+              is_discounted: midi.is_discounted,
               type: "midi",
             })
           }

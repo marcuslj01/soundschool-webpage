@@ -14,6 +14,8 @@ interface PackButtonsProps {
     name: string;
     price: number;
     type: string;
+    discount_price?: number;
+    is_discounted?: boolean;
   };
 }
 
@@ -81,6 +83,10 @@ function PacksButtons({ pack }: PackButtonsProps) {
               id: pack.id,
               title: pack.name,
               price: pack.price,
+              discount_price: pack.is_discounted
+                ? pack.discount_price
+                : undefined,
+              is_discounted: pack.is_discounted,
               type: "pack",
             })
           }
@@ -98,6 +104,10 @@ function PacksButtons({ pack }: PackButtonsProps) {
               id: pack.id,
               title: pack.name,
               price: pack.price,
+              discount_price: pack.is_discounted
+                ? pack.discount_price
+                : undefined,
+              is_discounted: pack.is_discounted,
               type: "pack",
             })
           }

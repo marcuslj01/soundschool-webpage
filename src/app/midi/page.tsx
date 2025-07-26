@@ -116,6 +116,8 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
                   name: midi.name,
                   price: midi.price,
                   type: "midi",
+                  discount_price: midi.discount_price,
+                  is_discounted: midi.is_discounted,
                 }}
               />
             </div>

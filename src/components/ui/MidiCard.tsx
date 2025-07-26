@@ -259,6 +259,8 @@ function MidiCard({
                   type: "midi",
                   title: title,
                   price: price,
+                  discount_price: isDiscounted ? discountPrice : undefined,
+                  is_discounted: isDiscounted,
                 })
               }
             >
@@ -273,6 +275,8 @@ function MidiCard({
                   type: "midi",
                   title: title,
                   price: price,
+                  discount_price: isDiscounted ? discountPrice : undefined,
+                  is_discounted: isDiscounted,
                 })
               }
             >
