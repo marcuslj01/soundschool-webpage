@@ -1,8 +1,11 @@
 "use client";
 
+import { useAuth } from "@/contexts/AuthContext";
 import { addToCart, getCartItems, removeFromCart } from "@/lib/cart";
+import { getOwnedFiles } from "@/lib/firestore/user";
 import { CartItem } from "@/lib/types/cartItem";
 import { CheckCircleIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 interface PackButtonsProps {
@@ -16,6 +19,22 @@ interface PackButtonsProps {
 
 function PacksButtons({ pack }: PackButtonsProps) {
   const [isAdded, setIsAdded] = useState(false);
+  const { user } = useAuth();
+  const [isOwned, setIsOwned] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const fetchOwnedFiles = async () => {
+        const ownedFiles = await getOwnedFiles(user.uid);
+        setIsOwned(
+          ownedFiles.some(
+            (ownedFile) => ownedFile.id === pack.id && ownedFile.type === "pack"
+          )
+        );
+      };
+      fetchOwnedFiles();
+    }
+  }, [user, pack.id]);
 
   useEffect(() => {
     const update = () => {
@@ -38,6 +57,19 @@ function PacksButtons({ pack }: PackButtonsProps) {
       setIsAdded(true);
     }
   };
+
+  if (isOwned) {
+    return (
+      <div className="w-full">
+        <Link
+          href="/my-files"
+          className="bg-green-600 text-white text-sm rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-green-700 hover:cursor-pointer transition-all duration-300"
+        >
+          <p>Already Owned</p> <CheckCircleIcon className="ml-2 w-4 h-4" />
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-sm">

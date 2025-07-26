@@ -1,4 +1,5 @@
 import { CartItem } from "./cartItem";
+import { OwnedFile } from "./ownedFile";
 
 export interface User {
   uid: string;
@@ -14,4 +15,5 @@ export interface User {
     marketing?: boolean;
   };
   favorites?: string[]; // Array of favorite product IDs (for future use)
+  ownedFiles?: OwnedFile[];
 } 
