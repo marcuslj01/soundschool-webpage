@@ -2,6 +2,7 @@ import { doc, setDoc, getDoc, updateDoc, serverTimestamp, deleteDoc, collection,
 import { User as FirebaseUser } from 'firebase/auth';
 import { db } from '@/lib/firebase';
 import { User } from '@/lib/types/user';
+import { OwnedFile } from '../types/ownedFile';
 
 // Create or update user in Firestore
 export async function createOrUpdateUser(firebaseUser: FirebaseUser): Promise<void> {
@@ -122,4 +123,10 @@ export async function getAllUsers(): Promise<User[]> {
   const usersQuery = query(usersCollection);
   const usersSnapshot = await getDocs(usersQuery);
   return usersSnapshot.docs.map((doc) => doc.data() as User);
+}
+
+export async function getOwnedFiles(uid: string): Promise<OwnedFile[]> {
+  const userRef = doc(db, 'users', uid);
+  const userDoc = await getDoc(userRef);
+  return userDoc.data()?.ownedFiles || [];
 }

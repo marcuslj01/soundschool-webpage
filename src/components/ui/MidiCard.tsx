@@ -26,6 +26,7 @@ interface CardProps {
   discountPrice: number;
   onPlay: () => void;
   onPause: () => void;
+  isOwned: boolean;
 }
 
 function MidiCard({
@@ -42,6 +43,7 @@ function MidiCard({
   discountPrice,
   onPlay,
   onPause,
+  isOwned,
 }: CardProps) {
   // const [isLiked, setIsLiked] = useState(false); // TODO: Fix heart button to work with Firebase
   const [isAdded, setIsAdded] = useState(false);
@@ -134,7 +136,11 @@ function MidiCard({
   };
 
   return (
-    <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit hover:bg-[#2b303a] transition-all duration-300">
+    <div
+      className={`bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit transition-all duration-300 ${
+        isOwned ? "opacity-70 grayscale hover:opacity-90" : "hover:bg-[#2b303a]"
+      }`}
+    >
       {/* Play/Pause Button */}
       <div className="flex-shrink-0">
         <button
@@ -171,7 +177,11 @@ function MidiCard({
               </svg>
             </div>
           ) : (
-            <div className="w-full h-full rounded-full bg-[#292E35] flex items-center justify-center hover:cursor-pointer">
+            <div
+              className={`w-full h-full rounded-full flex items-center justify-center hover:cursor-pointer ${
+                isOwned ? "bg-gray-600" : "bg-[#292E35]"
+              }`}
+            >
               {/* Play Icon */}
               <svg
                 width="24"
@@ -190,7 +200,11 @@ function MidiCard({
       {/* Text section */}
       <div className="flex flex-col gap-1 w-2/3 min-w-fit">
         <Link href={`/midi?id=${id}`} className="hover:cursor-pointer">
-          <h1 className="font-semibold text-sm sm:text-lg hover:text-blue-400 transition-colors">
+          <h1
+            className={`font-semibold text-sm sm:text-lg transition-colors ${
+              isOwned ? "text-gray-400" : "hover:text-blue-400"
+            }`}
+          >
             {title}
           </h1>
 
@@ -206,7 +220,9 @@ function MidiCard({
       <div className="flex-1 flex flex-col justify-end w-1/4 gap-2">
         {/* New and Heart button */}
         <div className="flex flex-row gap-2 justify-end items-center">
-          {isDiscounted ? (
+          {isOwned ? (
+            <Badge text="OWNED" style="yellow" />
+          ) : isDiscounted ? (
             <Badge text="SALE!" style="green" />
           ) : (
             isNew && <Badge text="NEW!" style="yellow" />
@@ -235,7 +251,14 @@ function MidiCard({
           </Button> */}
         </div>
         <div className="flex flex-row justify-end">
-          {isAdded ? (
+          {isOwned ? (
+            <Link
+              href="/my-files"
+              className="bg-green-600 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-green-700 hover:cursor-pointer transition-all duration-300"
+            >
+              <p>Already Owned</p> <CheckCircleIcon className="w-4 h-4" />
+            </Link>
+          ) : isAdded ? (
             <Button
               className="bg-primary/20 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
               onClick={() =>
