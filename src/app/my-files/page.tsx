@@ -8,6 +8,7 @@ import { Midi } from "@/lib/types/midi";
 import { Pack } from "@/lib/types/pack";
 import React, { useEffect, useState } from "react";
 import { OwnedMidiCard, OwnedPackCard } from "@/components/ui/OwnedProducts";
+import ClaimFilesButton from "@/components/ui/ClaimFilesButton";
 
 export default function MyFilesPage() {
   const { user } = useAuth();
@@ -70,6 +71,9 @@ export default function MyFilesPage() {
     <div className="min-h-screen flex flex-col mt-32 gap-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto w-full">
         <h1 className="text-4xl font-bold text-white mb-8">My Files</h1>
+
+        {/* Claim Files Button */}
+        <ClaimFilesButton />
 
         <div className="space-y-12">
           {/* MIDI Files Section */}
