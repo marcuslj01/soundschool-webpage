@@ -79,7 +79,7 @@ export default function MyFilesPage() {
             </h2>
 
             {ownedMidis.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-scroll h-full max-h-[50vh]">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-scroll max-h-[50vh]">
                 {ownedMidis.map((midi) => (
                   <OwnedMidiCard key={midi.id} midi={midi} />
                 ))}
