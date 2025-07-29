@@ -148,15 +148,38 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
         Limited time: Buy 2 get 1 free!
       </h1>
 
-      {/* NEW: Search input - just added this section */}
+      {/* Search input */}
       <div className="w-full p-4">
-        <input
-          type="text"
-          placeholder="Search MIDI files... (min 2 characters)"
-          className="w-full px-4 py-2 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search MIDI files... (min 2 characters)"
+            className="w-full px-4 py-2 pr-10 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white hover:cursor-pointer transition-colors"
+              aria-label="Clear search"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
         {isSearching && (
           <p className="text-gray-400 text-sm mt-1">Searching...</p>
         )}
