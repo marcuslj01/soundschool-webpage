@@ -59,7 +59,7 @@ export default function MyFilesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col mt-32 gap-4">
+      <div className="min-h-screen flex flex-col mt-32 gap-4 justify-center items-center">
         <h1 className="text-4xl font-bold text-white">My Files</h1>
         <p className="text-white">Loading...</p>
       </div>
@@ -67,29 +67,44 @@ export default function MyFilesPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col mt-32 gap-4">
-      <h1 className="text-4xl font-bold text-white">My Files</h1>
+    <div className="min-h-screen flex flex-col mt-32 gap-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto w-full">
+        <h1 className="text-4xl font-bold text-white mb-8">My Files</h1>
 
-      <div>
-        <h2 className="text-2xl font-bold text-white">
-          Midis ({ownedMidis.length})
-        </h2>
-        {ownedMidis.length > 0 ? (
-          ownedMidis.map((midi) => <OwnedMidiCard key={midi.id} midi={midi} />)
-        ) : (
-          <p className="text-white">You don&apos;t have any midis yet!</p>
-        )}
-      </div>
+        <div className="space-y-12">
+          {/* MIDI Files Section */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-6">
+              Midis ({ownedMidis.length})
+            </h2>
 
-      <div>
-        <h2 className="text-2xl font-bold text-white">
-          Packs ({ownedPacks.length})
-        </h2>
-        {ownedPacks.length > 0 ? (
-          ownedPacks.map((pack) => <OwnedPackCard key={pack.id} pack={pack} />)
-        ) : (
-          <p className="text-white">You don&apos;t have any packs yet!</p>
-        )}
+            {ownedMidis.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {ownedMidis.map((midi) => (
+                  <OwnedMidiCard key={midi.id} midi={midi} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-white">You don&apos;t have any midis yet!</p>
+            )}
+          </div>
+
+          {/* Pack Files Section */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-6">
+              Packs ({ownedPacks.length})
+            </h2>
+            {ownedPacks.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {ownedPacks.map((pack) => (
+                  <OwnedPackCard key={pack.id} pack={pack} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-white">You don&apos;t have any packs yet!</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

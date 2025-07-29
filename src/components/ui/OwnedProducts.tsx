@@ -107,7 +107,7 @@ export function OwnedMidiCard({ midi }: OwnedMidiCardProps) {
   };
 
   return (
-    <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit transition-all duration-300 hover:bg-[#2b303a]">
+    <div className="bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 transition-all duration-300 hover:bg-[#2b303a]">
       {/* Play/Pause Button */}
       <div className="flex-shrink-0">
         <button
@@ -161,23 +161,24 @@ export function OwnedMidiCard({ midi }: OwnedMidiCardProps) {
       </div>
 
       {/* Text section */}
-      <div className="flex flex-col gap-1 w-2/3 min-w-fit">
+      <div className="flex flex-col gap-1 flex-1 min-w-0">
         <Link href={`/midi?id=${midi.id}`} className="hover:cursor-pointer">
           <h1 className="font-semibold text-sm sm:text-lg transition-colors hover:text-blue-400">
             {midi.name}
           </h1>
 
-          <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
-            <Badge text={displayDate} style="gray" />
+          <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400">
+            <div className="hidden sm:block">
+              <Badge text={displayDate} style="gray" />
+            </div>
             <Badge text={midi.root + " " + midi.scale} style="gray" />
             <Badge text={midi.bpm + " BPM"} style="gray" />
-            {midi.genre && <Badge text={midi.genre} style="blue" />}
           </div>
         </Link>
       </div>
 
       {/* Download Button */}
-      <div className="flex-1 flex flex-col justify-end w-1/4 gap-2">
+      <div className="flex flex-col justify-end gap-2 flex-shrink-0">
         <div className="flex flex-row gap-2 justify-end items-center">
           <Badge text="OWNED" style="indigo" />
         </div>
@@ -187,7 +188,7 @@ export function OwnedMidiCard({ midi }: OwnedMidiCardProps) {
             className="bg-green-600 text-white text-xs rounded-md w-full h-8 px-1 flex items-center justify-center flex-row gap-1 hover:bg-green-700 hover:cursor-pointer transition-all duration-300"
           >
             <ArrowDownTrayIcon className="w-4 h-4" />
-            <span>Download</span>
+            <span className="hidden sm:block">Download</span>
           </button>
         </div>
       </div>
@@ -237,7 +238,7 @@ export function OwnedPackCard({ pack }: OwnedPackCardProps) {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-lg bg-black/10 w-80 sm:w-96 md:w-[500px] border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300">
+    <div className="group relative overflow-hidden rounded-lg bg-black/10 border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300 w-full">
       <Link href={`/pack?id=${pack.id}`}>
         <div className="relative">
           <Image
@@ -245,33 +246,32 @@ export function OwnedPackCard({ pack }: OwnedPackCardProps) {
             src={pack.image_url}
             width={500}
             height={500}
-            className="w-full h-64 sm:h-80 md:h-96 bg-gray-900 object-contain"
+            className="w-full h-48 sm:h-64 md:h-80 lg:h-96 bg-gray-900 object-contain"
           />
         </div>
-        <div className="p-4">
-          <div className="flex flex-row justify-between relative">
-            <h3 className="text-lg lg:text-2xl font-medium text-white">
-              <span aria-hidden="true" className="absolute inset-0" />
-              {pack.name}
-            </h3>
+        <div className="p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-0">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-medium text-white mb-1">
+                {pack.name}
+              </h3>
+              <p className="text-sm text-gray-500 font-bold mb-3">
+                {pack.file_count} high quality {pack.type}s
+              </p>
+            </div>
             <Badge text="OWNED" style="indigo" />
           </div>
-          <p className="text-sm text-gray-500 font-bold">
-            {pack.file_count} high quality {pack.type}s
-          </p>
-          <div className="flex flex-row justify-between">
-            <div className="space-y-2 mt-2 flex flex-row justify-between">
-              <div className="flex flex-row gap-2 flex-wrap h-4">
-                {pack.tags.map((tag) => (
-                  <Badge key={tag} text={tag} style="blue" />
-                ))}
-              </div>
-            </div>
+
+          {/* Tags - Mobile: wrap, Desktop: flex */}
+          <div className="flex flex-wrap gap-2 mt-3 max-w-4/5">
+            {pack.tags.map((tag) => (
+              <Badge key={tag} text={tag} style="blue" />
+            ))}
           </div>
         </div>
       </Link>
 
-      {/* Download Button - positioned absolutely */}
+      {/* Download Button - Mobile: bottom center, Desktop: bottom right */}
       <div className="absolute bottom-4 right-4">
         <button
           onClick={(e) => {
@@ -279,10 +279,10 @@ export function OwnedPackCard({ pack }: OwnedPackCardProps) {
             e.stopPropagation();
             handleDownload();
           }}
-          className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700 transition-colors"
+          className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700 transition-colors text-xs sm:text-sm"
         >
           <ArrowDownTrayIcon className="w-4 h-4" />
-          <span>Download</span>
+          <span className="hidden sm:block">Download</span>
         </button>
       </div>
     </div>
