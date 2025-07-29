@@ -79,7 +79,7 @@ export default function MyFilesPage() {
             </h2>
 
             {ownedMidis.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-scroll h-full max-h-[50vh]">
                 {ownedMidis.map((midi) => (
                   <OwnedMidiCard key={midi.id} midi={midi} />
                 ))}
@@ -95,7 +95,7 @@ export default function MyFilesPage() {
               Packs ({ownedPacks.length})
             </h2>
             {ownedPacks.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-scroll h-full max-h-[50vh] sm:max-h-[90vh]">
                 {ownedPacks.map((pack) => (
                   <OwnedPackCard key={pack.id} pack={pack} />
                 ))}
