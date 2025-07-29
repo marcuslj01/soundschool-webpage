@@ -257,10 +257,18 @@ export default function Navbar() {
                     </p>
                     <MenuItem>
                       <Link
+                        href="/my-files"
+                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
+                      >
+                        My Files
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link
                         href="/orders"
                         className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden hover:cursor-pointer"
                       >
-                        Your Orders
+                        My Orders
                       </Link>
                     </MenuItem>
                     <MenuItem>
