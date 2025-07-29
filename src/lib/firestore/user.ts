@@ -3,6 +3,7 @@ import { User as FirebaseUser } from 'firebase/auth';
 import { db } from '@/lib/firebase';
 import { User } from '@/lib/types/user';
 import { OwnedFile } from '../types/ownedFile';
+import { Order } from '../types/order';
 
 // Create or update user in Firestore
 export async function createOrUpdateUser(firebaseUser: FirebaseUser): Promise<void> {
@@ -129,4 +130,78 @@ export async function getOwnedFiles(uid: string): Promise<OwnedFile[]> {
   const userRef = doc(db, 'users', uid);
   const userDoc = await getDoc(userRef);
   return userDoc.data()?.ownedFiles || [];
+}
+
+// Claims all the files a user owns and adds them to their ownedFiles array
+// Runs through all orders with customer_email = email for the logged in user
+export async function claimFiles(uid: string, email: string): Promise<{ success: boolean; claimedCount: number; message: string }> {
+  try {
+    const userRef = doc(db, 'users', uid);
+    const userDoc = await getDoc(userRef);
+    
+    if (!userDoc.exists()) {
+      throw new Error('User not found');
+    }
+
+    // Get all orders with this email
+    const ordersCollection = collection(db, 'orders');
+    const ordersQuery = query(ordersCollection, where('customer_email', '==', email));
+    const ordersSnapshot = await getDocs(ordersQuery);
+    
+    if (ordersSnapshot.empty) {
+      return {
+        success: false,
+        claimedCount: 0,
+        message: 'No orders found with this email address.'
+      };
+    }
+
+    const orders = ordersSnapshot.docs.map((doc) => doc.data() as Order);
+    
+    // Get current owned files
+    const currentOwnedFiles: OwnedFile[] = userDoc.data()?.ownedFiles || [];
+    const existingFilesMap = new Map(currentOwnedFiles.map((file: OwnedFile) => [file.id, file]));
+    
+    // Extract all files from orders
+    const newOwnedFiles: OwnedFile[] = [];
+    let claimedCount = 0;
+    
+    for (const order of orders) {
+      for (const orderItem of order.orderItems) {
+        // Only add if not already owned
+        if (!existingFilesMap.has(orderItem.id)) {
+          const ownedFile: OwnedFile = {
+            id: orderItem.id,
+            type: orderItem.type,
+            name: orderItem.title,
+          };
+          existingFilesMap.set(orderItem.id, ownedFile);
+          newOwnedFiles.push(ownedFile);
+          claimedCount++;
+        }
+      }
+    }
+    
+    if (claimedCount === 0) {
+      return {
+        success: true,
+        claimedCount: 0,
+        message: 'All files from your previous orders are already claimed.'
+      };
+    }
+    
+    // Update user with new owned files
+    const updatedOwnedFiles = Array.from(existingFilesMap.values());
+    await updateDoc(userRef, { ownedFiles: updatedOwnedFiles });
+    
+    return {
+      success: true,
+      claimedCount,
+      message: `Successfully claimed ${claimedCount} files from your previous orders!`
+    };
+    
+  } catch (error) {
+    console.error('Error claiming files:', error);
+    throw error;
+  }
 }
