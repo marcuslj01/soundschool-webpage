@@ -1,9 +1,62 @@
+"use client";
+
 import { Order } from "@/lib/types/order";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
+import { OrderItem } from "@/lib/types/orderItem";
+import { useState } from "react";
 
 export default function OrderDetails({ order }: { order: Order }) {
+  const { user } = useAuth();
+  const [downloadingItems, setDownloadingItems] = useState<Set<string>>(
+    new Set()
+  );
+
+  const handleDownload = async (item: OrderItem) => {
+    if (!user) return;
+
+    // Add item to downloading set
+    setDownloadingItems((prev) => new Set(prev).add(item.id));
+
+    try {
+      const response = await fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.uid,
+          fileId: item.id,
+          fileType: item.type,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Download failed");
+      }
+
+      const { downloadUrl, fileName } = await response.json();
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download file. Please try again.");
+    } finally {
+      // Remove item from downloading set
+      setDownloadingItems((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(item.id);
+        return newSet;
+      });
+    }
+  };
+
   return (
     <main className="relative lg:min-h-full">
       <div>
@@ -62,27 +115,41 @@ export default function OrderDetails({ order }: { order: Order }) {
               role="list"
               className="mt-8 divide-y divide-gray-700 border-t border-gray-700 text-sm font-medium text-gray-300"
             >
-              {order.orderItems.map((item) => (
-                <li key={item.id} className="flex space-x-6 py-6 items-center">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-white font-semibold text-sm lg:text-lg">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <p className="flex-none font-medium text-white text-sm lg:text-lg">
-                    ${item.price}
-                  </p>
-                  <a
-                    href={item.downloadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-4 p-2 rounded-full bg-primary/80 hover:bg-primary/70 transition-colors"
-                    title="Download file"
+              {order.orderItems.map((item) => {
+                const isDownloading = downloadingItems.has(item.id);
+
+                return (
+                  <li
+                    key={item.id}
+                    className="flex space-x-6 py-6 items-center"
                   >
-                    <ArrowDownTrayIcon className="w-5 h-5 text-white" />
-                  </a>
-                </li>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-semibold text-sm lg:text-lg">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <p className="flex-none font-medium text-white text-sm lg:text-lg">
+                      ${item.price}
+                    </p>
+                    <button
+                      onClick={() => handleDownload(item)}
+                      disabled={isDownloading}
+                      className={`ml-4 p-2 rounded-full transition-all duration-300 ${
+                        isDownloading
+                          ? "bg-green-600/80 cursor-not-allowed"
+                          : "bg-primary/80 hover:bg-primary/70 hover:scale-110"
+                      }`}
+                      title={isDownloading ? "Downloading..." : "Download file"}
+                    >
+                      {isDownloading ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <ArrowDownTrayIcon className="w-5 h-5 text-white" />
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
 
             <dl className="space-y-6 border-t border-white pt-6 font-medium mt-8">
