@@ -94,7 +94,13 @@ export default function OrderDetails({ order }: { order: Order }) {
             </p>
             <p className="mt-2 text-base text-gray-200 max-w-md">
               Here are the details of your order. An email confirmation is sent
-              to your email address.
+              to your email address. If you have any questions, please{" "}
+              <Link
+                href="/contact"
+                className="text-primary hover:text-primary/80"
+              >
+                Contact support
+              </Link>
             </p>
 
             <dl className="mt-8 text-sm font-medium text-gray-400 space-y-1">
