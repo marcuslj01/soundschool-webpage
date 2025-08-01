@@ -35,6 +35,52 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+// Custom hook for scroll direction detection
+function useScrollDirection() {
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(
+    null
+  );
+  const [prevScrollY, setPrevScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Only apply on mobile (screen width < 640px)
+      if (window.innerWidth >= 640) {
+        setIsVisible(true);
+        return;
+      }
+
+      // Don't hide navbar at the very top
+      if (currentScrollY <= 10) {
+        setIsVisible(true);
+        setScrollDirection(null);
+        setPrevScrollY(currentScrollY);
+        return;
+      }
+
+      if (currentScrollY > prevScrollY) {
+        // Scrolling down
+        setScrollDirection("down");
+        setIsVisible(false);
+      } else if (currentScrollY < prevScrollY) {
+        // Scrolling up
+        setScrollDirection("up");
+        setIsVisible(true);
+      }
+
+      setPrevScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [prevScrollY]);
+
+  return { isVisible, scrollDirection };
+}
+
 export default function Navbar() {
   const [isMounted, setIsMounted] = useState(false);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
@@ -42,6 +88,7 @@ export default function Navbar() {
   const cartCount = useCartCount();
   const { user, isAdmin, logout } = useAuth();
   const pathname = usePathname();
+  const { isVisible } = useScrollDirection();
   console.log("Is the user an admin?", isAdmin);
 
   const handleLogout = () => {
@@ -92,7 +139,12 @@ export default function Navbar() {
   }, [showCartDropdown]);
 
   return (
-    <Disclosure as="nav" className="bg-black/80 fixed top-0 w-full z-50">
+    <Disclosure
+      as="nav"
+      className={`bg-black/80 fixed top-0 w-full z-50 transition-transform duration-300 ease-in-out ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
