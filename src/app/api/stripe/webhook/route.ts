@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
       // Mail to customer
       try {
         await resend.emails.send({
-          from: "onboarding@resend.dev",
+          from: "noreply@soundschoolmidis.com",
           to: email,
           subject: "Thanks for your order! Here are your download links",
           html: `
@@ -189,8 +189,9 @@ export async function POST(req: NextRequest) {
       // Mail to admin
       try {
         await resend.emails.send({
-          from: "onboarding@resend.dev",
+          from: "noreply@soundschoolmidis.com",
           to: "schoolsound18@gmail.com",
+          cc: "marcus.l.jakobsen@gmail.com",
           subject: "Soundschool: You have a new sale!",
           html: `
             <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 24px; border-radius: 8px; max-width: 600px; margin: auto;">
