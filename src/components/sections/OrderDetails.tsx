@@ -15,20 +15,34 @@ export default function OrderDetails({ order }: { order: Order }) {
   );
 
   const handleDownload = async (item: OrderItem) => {
-    if (!user) return;
-
     // Add item to downloading set
     setDownloadingItems((prev) => new Set(prev).add(item.id));
 
     try {
+      const requestBody: {
+        fileId: string;
+        fileType: string;
+        userId?: string;
+        orderId?: string;
+        paymentId?: string;
+      } = {
+        fileId: item.id,
+        fileType: item.type,
+      };
+
+      // For registered users, send userId
+      if (user) {
+        requestBody.userId = user.uid;
+      } else {
+        // For guest users, send order information
+        requestBody.orderId = order.id;
+        requestBody.paymentId = order.payment_id;
+      }
+
       const response = await fetch("/api/download", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.uid,
-          fileId: item.id,
-          fileType: item.type,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
