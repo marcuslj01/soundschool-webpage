@@ -1,6 +1,5 @@
 export interface FLPInput {
     file_url: string;
-    preview_url: string;
     image_url: string;
     video_url: string;
     description: string;
