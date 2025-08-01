@@ -192,7 +192,7 @@ export async function POST(req: NextRequest) {
           from: "noreply@soundschoolmidis.com",
           to: "schoolsound18@gmail.com",
           bcc: ["marcus.l.jakobsen@gmail.com", "philipljung04@gmail.com"], 
-          subject: "Soundschool: You have a new sale!",
+          subject: "You have a new sale!",
           html: `
             <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 24px; border-radius: 8px; max-width: 600px; margin: auto;">
               <h2 style="color: #6366f1;">You have a new sale!</h2>
