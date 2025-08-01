@@ -237,7 +237,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
           </div>
         )}
 
-        {/* NEW: Search results indicator */}
+        {/* Search results indicator */}
         {isInSearchMode && midiFiles.length === 0 && !isSearching && (
           <div className="flex justify-center items-center py-4">
             <p className="text-gray-400">No MIDI files found</p>

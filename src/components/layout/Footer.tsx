@@ -13,7 +13,7 @@ const navigation = {
   social: [
     {
       name: "YouTube",
-      href: "https://www.youtube.com/channel/UCyGTjYY_MMOeu9OpbwC-0HA",
+      href: "https://www.youtube.com/@Soundschool18",
       icon: (props: React.SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
@@ -83,6 +83,8 @@ function Footer() {
                   key={item.name}
                   href={item.href}
                   className="text-gray-400 hover:text-white transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <span className="sr-only">{item.name}</span>
                   <item.icon aria-hidden="true" className="size-6" />

@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/v0/b/**',
       },
-      // Legg til Google's bildedomener
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
@@ -31,6 +30,19 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'lh6.googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
+
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
         port: '',
         pathname: '/**',
       },

@@ -6,14 +6,18 @@ import Button from "@/components/ui/Button";
 import UploadModal from "@/components/ui/UploadModal";
 import { Pack } from "@/lib/types/pack";
 import { Midi } from "@/lib/types/midi";
+import { FLP } from "@/lib/types/FLP";
 
 export default function Products() {
   const { user: currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [packs, setPacks] = useState<Pack[]>([]);
   const [midis, setMidis] = useState<Midi[]>([]);
+  const [flps, setFlps] = useState<FLP[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"packs" | "midis">("packs");
+  const [activeTab, setActiveTab] = useState<"packs" | "midis" | "flps">(
+    "packs"
+  );
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchProducts = async () => {
@@ -34,6 +38,13 @@ export default function Products() {
         },
       });
 
+      // Fetch FLPs
+      const flpsResponse = await fetch("/api/admin/products?type=flps", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       if (packsResponse.ok) {
         const packsData = await packsResponse.json();
         setPacks(packsData);
@@ -43,6 +54,11 @@ export default function Products() {
         const midisData = await midisResponse.json();
         setMidis(midisData);
       }
+
+      if (flpsResponse.ok) {
+        const flpsData = await flpsResponse.json();
+        setFlps(flpsData);
+      }
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -51,10 +67,10 @@ export default function Products() {
   };
 
   // Delete product
-  const handleDelete = async (type: "packs" | "midis", id: string) => {
+  const handleDelete = async (type: "packs" | "midis" | "flps", id: string) => {
     if (
       !confirm(
-        `Are you sure you want to delete this ${type === "packs" ? "pack" : "MIDI file"}?`
+        `Are you sure you want to delete this ${type === "packs" ? "pack" : type === "midis" ? "MIDI file" : "FLP"}?`
       )
     ) {
       return;
@@ -78,8 +94,10 @@ export default function Products() {
         // Remove from local state
         if (type === "packs") {
           setPacks((prev) => prev.filter((pack) => pack.id !== id));
-        } else {
+        } else if (type === "midis") {
           setMidis((prev) => prev.filter((midi) => midi.id !== id));
+        } else if (type === "flps") {
+          setFlps((prev) => prev.filter((flp) => flp.id !== id));
         }
       } else {
         const errorData = await response.json();
@@ -166,6 +184,16 @@ export default function Products() {
             }`}
           >
             MIDI Files ({midis.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("flps")}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === "flps"
+                ? "border-indigo-500 text-indigo-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            }`}
+          >
+            FLPs ({flps.length})
           </button>
         </nav>
       </div>
@@ -406,6 +434,143 @@ export default function Products() {
                           disabled={deletingId === midi.id}
                         >
                           {deletingId === midi.id ? "Deleting..." : "Delete"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLPs Table */}
+      {activeTab === "flps" && (
+        <div className="mt-8 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle">
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th
+                      scope="col"
+                      className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8"
+                    >
+                      Name
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Genre
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      BPM
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Key
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Price
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Sales
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Created
+                    </th>
+                    <th
+                      scope="col"
+                      className="relative py-3.5 pr-4 pl-3 sm:pr-6 lg:pr-8"
+                    >
+                      <span className="sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {flps.map((flp) => (
+                    <tr key={flp.id}>
+                      <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-6 lg:pl-8">
+                        {flp.name}
+                      </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {flp.genre}
+                      </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {flp.bpm}
+                      </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {flp.root} {flp.scale}
+                      </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {formatPrice(flp.price)}
+                        {flp.is_discounted && flp.discount_price && (
+                          <span className="ml-2 text-red-600">
+                            → {formatPrice(flp.discount_price)}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {flp.sales || 0}
+                      </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap">
+                        <div className="flex space-x-1">
+                          {flp.hidden && (
+                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+                              Hidden
+                            </span>
+                          )}
+                          {flp.is_featured && (
+                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800">
+                              Featured
+                            </span>
+                          )}
+                          {flp.is_discounted && (
+                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-red-100 text-red-800">
+                              Discounted
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {formatDate(flp.created_at)}
+                      </td>
+                      <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
+                        <button className="text-indigo-600 hover:text-indigo-900 mr-4 hover:cursor-pointer">
+                          Edit
+                        </button>
+                        <button
+                          className={`text-red-600 hover:text-red-900 hover:cursor-pointer ${
+                            deletingId === flp.id
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                          onClick={() => handleDelete("flps", flp.id)}
+                          disabled={deletingId === flp.id}
+                        >
+                          {deletingId === flp.id ? "Deleting..." : "Delete"}
                         </button>
                       </td>
                     </tr>
