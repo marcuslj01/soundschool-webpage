@@ -3,13 +3,14 @@ import Button from "./Button";
 import MidiUploadForm from "./MidiUploadForm";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import PackUploadForm from "./PackUploadForm";
+import FLPUploadForm from "./FLPUploadForm";
 
 interface UploadModalProps {
   onClose: () => void;
 }
 
 function UploadModal({ onClose }: UploadModalProps) {
-  const [type, setType] = useState<"midi" | "pack" | null>(null);
+  const [type, setType] = useState<"midi" | "pack" | "flp" | null>(null);
 
   return (
     <dialog
@@ -21,6 +22,9 @@ function UploadModal({ onClose }: UploadModalProps) {
       )}
       {type === "pack" && (
         <PackUploadForm onClose={onClose} onBack={() => setType(null)} />
+      )}
+      {type === "flp" && (
+        <FLPUploadForm onClose={onClose} onBack={() => setType(null)} />
       )}
       {type === null && (
         <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-4 relative">
@@ -41,6 +45,7 @@ function UploadModal({ onClose }: UploadModalProps) {
               style="primary"
               onClick={() => setType("pack")}
             />
+            <Button text="FLP" style="primary" onClick={() => setType("flp")} />
           </div>
         </div>
       )}

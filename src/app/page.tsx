@@ -5,10 +5,15 @@ import LazyMidigrid from "@/components/ui/LazyMidigrid";
 import PackGrid from "@/components/ui/PackGrid";
 import { getPacks, getLatestPack } from "@/lib/firestore/pack";
 import { getMidi } from "@/lib/firestore/midifiles";
+import { getFLPs } from "@/lib/firestore/flp";
+import FLPGrid from "@/components/ui/FLPGrid";
+import Link from "next/link";
 
 export default async function Home() {
   const midiFiles = await getMidi(10); // Initial load of 10 MIDI files on server
   const packs = await getPacks();
+  const flps = await getFLPs();
+  const visibleFlps = flps.filter((flp) => !flp.hidden);
   const midiPacks = packs.filter((pack) => pack.type === "midi");
   const samplePacks = packs.filter((pack) => pack.type === "sample");
 
@@ -47,6 +52,13 @@ export default async function Home() {
       </section>
       <h2 className="text-2xl font-bold text-white">Midi Files</h2>
       <LazyMidigrid initialData={midiFiles} />
+      <h2 className="text-2xl font-bold text-white">YouTube Tutorials</h2>
+      <Link href="https://www.youtube.com/@Soundschool18" target="_blank">
+        <h3 className="text-gray-400 text-md hover:text-white transition-all duration-300">
+          Check out our YouTube channel!
+        </h3>
+      </Link>
+      <FLPGrid flps={visibleFlps} />
     </main>
   );
 }

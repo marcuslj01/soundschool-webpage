@@ -3,6 +3,7 @@ import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { deletePack, getPacks } from '@/lib/firestore/pack';
 import { deleteMidi, getAllMidis } from '@/lib/firestore/midifiles';
+import { deleteFLP, getFLPs } from '@/lib/firestore/flp';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -62,6 +63,18 @@ export async function GET(request: NextRequest) {
       }));
 
       return NextResponse.json(midisWithFormattedDates);
+    } else if (type === 'flps') {
+      const flps = await getFLPs();
+      
+      // Convert Firestore Timestamps to ISO strings for JSON serialization
+      const flpsWithFormattedDates = flps.map(flp => ({
+        ...flp,
+        created_at: flp.created_at instanceof Date 
+          ? flp.created_at.toISOString() 
+          : flp.created_at
+      }));
+
+      return NextResponse.json(flpsWithFormattedDates);
     } else {
       return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 });
     }
@@ -178,6 +191,8 @@ export async function DELETE(request: NextRequest) {
       success = await deletePack(productId);
     } else if (type === 'midis') {
       success = await deleteMidi(productId);
+    } else if (type === 'flps') {
+      success = await deleteFLP(productId);
     } else {
       return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 });
     }
@@ -185,12 +200,12 @@ export async function DELETE(request: NextRequest) {
     if (success) {
       return NextResponse.json({ 
         success: true, 
-        message: `${type === 'packs' ? 'Pack' : 'MIDI file'} deleted successfully` 
+        message: `${type === 'packs' ? 'Pack' : type === 'midis' ? 'MIDI file' : 'FLP'} deleted successfully` 
       });
     } else {
       return NextResponse.json({ 
         success: false, 
-        message: `Failed to delete ${type === 'packs' ? 'pack' : 'MIDI file'}` 
+        message: `Failed to delete ${type === 'packs' ? 'pack' : type === 'midis' ? 'MIDI file' : 'FLP'}` 
       }, { status: 500 });
     }
   } catch (error) {

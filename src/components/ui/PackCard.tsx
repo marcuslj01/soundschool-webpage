@@ -54,19 +54,19 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
             {product.file_count} high quality {product.type}s
           </p>
           <div className="flex flex-row justify-between">
-            <div className="space-y-2 mt-2 flex flex-row justify-between">
-              <div className="flex flex-row gap-2 flex-wrap h-4">
+            <div className="space-y-2 flex flex-row justify-between">
+              <div className="flex flex-row gap-2 flex-wrap h-fit">
                 {product.tags.map((tag) => (
                   <Badge key={tag} text={tag} style="blue" />
                 ))}
               </div>
             </div>
             {!product.is_discounted ? (
-              <p className="text-gray-200 text-lg font-bold mt-4">
+              <p className="text-gray-200 text-lg font-bold">
                 ${product.price}
               </p>
             ) : (
-              <p className="text-gray-200 text-lg font-bold mt-4 flex flex-row gap-2">
+              <p className="text-gray-200 text-lg font-bold flex flex-row gap-2">
                 <span className="text-gray-400 line-through">
                   ${product.price}
                 </span>
