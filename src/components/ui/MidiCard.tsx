@@ -215,7 +215,7 @@ function MidiCard({
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-col justify-end gap-2 flex-shrink-0 min-w-0 h-full w-25">
+      <div className="flex flex-col justify-end gap-2 flex-shrink-0 min-w-0 w-25">
         {/* Badge and Price Row - Fixed height */}
         <div className="flex flex-row gap-1 sm:gap-2 justify-between items-center h-6">
           {isOwned ? (
