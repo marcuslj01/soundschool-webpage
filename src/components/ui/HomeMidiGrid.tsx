@@ -6,6 +6,7 @@ import { Midi } from "@/lib/types/midi";
 import { useAuth } from "@/contexts/AuthContext";
 import { OwnedFile } from "@/lib/types/ownedFile";
 import { getOwnedFiles } from "@/lib/firestore/user";
+import Link from "next/link";
 
 interface HomeMidiGridProps {
   midiFiles: Midi[];
@@ -27,7 +28,7 @@ function HomeMidiGrid({ midiFiles }: HomeMidiGridProps) {
   }, [user]);
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center max-h-96 overflow-y-scroll">
       <div className="flex flex-col gap-2 w-full">
         {midiFiles.map(
           (file) =>
@@ -58,6 +59,14 @@ function HomeMidiGrid({ midiFiles }: HomeMidiGridProps) {
               />
             )
         )}
+        <div className="flex flex-row items-center justify-center mt-4 pb-4">
+          <Link
+            href="/midis"
+            className="text-white bg-primary px-4 py-2 rounded-md hover:bg-primary/80 transition-colors"
+          >
+            See all MIDI files →
+          </Link>
+        </div>
       </div>
     </div>
   );
