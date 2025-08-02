@@ -90,7 +90,7 @@ function Hero(props: HeroProps) {
 
             <Link
               className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-all duration-300"
-              href="/#products"
+              href="/midis"
             >
               {props.secondaryButtonText}
             </Link>

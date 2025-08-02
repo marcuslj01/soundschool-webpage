@@ -26,10 +26,10 @@ import { CartItem } from "@/lib/types/cartItem";
 import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
-  { name: "Home", href: "/", current: true },
-  // { name: "All midifiles", href: "#", current: false },
-  // { name: "Free files", href: "#", current: false },
-  // { name: "My files", href: "/files", current: false },
+  { name: "Home", href: "/", current: false },
+  { name: "Midi files", href: "/midis", current: false },
+  { name: "Packs", href: "/packs", current: false },
+  { name: "FLPs", href: "/flps", current: false },
 ];
 
 function classNames(...classes: string[]) {
@@ -175,21 +175,27 @@ export default function Navbar() {
             </Link>
             <div className="hidden sm:ml-6 sm:block h-full">
               <div className="flex space-x-4 h-full">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    aria-current={item.current ? "page" : undefined}
-                    className={classNames(
-                      item.current
-                        ? "text-white border-primary"
-                        : "text-gray-300 hover:border-white border-transparent hover:text-white",
-                      "h-full flex items-center justify-center border-b-2"
-                    )}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+                {navigation.map((item) => {
+                  const isCurrent =
+                    pathname === item.href ||
+                    (item.href.includes("#") &&
+                      pathname === item.href.split("#")[0]);
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      aria-current={isCurrent ? "page" : undefined}
+                      className={classNames(
+                        isCurrent
+                          ? "text-white border-primary"
+                          : "text-gray-300 hover:border-white border-transparent hover:text-white",
+                        "h-full flex items-center justify-center border-b-2"
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -381,22 +387,25 @@ export default function Navbar() {
 
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pt-2 pb-3">
-          {navigation.map((item) => (
-            <DisclosureButton
-              key={item.name}
-              as={Link}
-              href={item.href}
-              aria-current={item.current ? "page" : undefined}
-              className={classNames(
-                item.current
-                  ? "text-white border-l-2 border-primary"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                "block px-3 py-2 text-base font-medium "
-              )}
-            >
-              {item.name}
-            </DisclosureButton>
-          ))}
+          {navigation.map((item) => {
+            const isCurrent = pathname === item.href;
+            return (
+              <DisclosureButton
+                key={item.name}
+                as={Link}
+                href={item.href}
+                aria-current={isCurrent ? "page" : undefined}
+                className={classNames(
+                  isCurrent
+                    ? "text-white border-l-2 border-primary"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                  "block px-3 py-2 text-base font-medium "
+                )}
+              >
+                {item.name}
+              </DisclosureButton>
+            );
+          })}
         </div>
       </DisclosurePanel>
     </Disclosure>
