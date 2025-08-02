@@ -193,14 +193,14 @@ function MidiCard({
       </div>
 
       {/* Text section */}
+
       <div className="flex flex-col gap-1 flex-1 min-w-0">
         <Link href={`/midi?id=${id}`} className="hover:cursor-pointer">
           <h1
             className={`font-semibold text-sm sm:text-lg transition-colors truncate`}
           >
             {title}
-          </h1>
-
+          </h1>{" "}
           <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400">
             <span className="hidden sm:block">
               <Badge text={displayDate} style="gray" />
@@ -215,32 +215,36 @@ function MidiCard({
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-col justify-end gap-2 flex-shrink-0 min-w-0 h-full">
+      <div className="flex flex-col justify-end gap-2 flex-shrink-0 min-w-0 h-full w-25">
         {/* Badge and Price Row - Fixed height */}
-        <div className="flex flex-row gap-1 sm:gap-2 justify-end items-center h-6">
+        <div className="flex flex-row gap-1 sm:gap-2 justify-between items-center h-6">
           {isOwned ? (
             <Badge text="OWNED" style="indigo" />
           ) : isDiscounted ? (
             <Badge text="SALE!" style="green" />
+          ) : isNew ? (
+            <Badge text="NEW!" style="yellow" />
           ) : (
-            isNew && <Badge text="NEW!" style="yellow" />
+            <div className="w-7" />
           )}
-          {!isDiscounted ? (
-            <p className="text-sm text-gray-200 px-1 truncate">${price}</p>
-          ) : (
-            <div className="flex flex-col items-end min-w-0">
-              <p className="text-sm text-gray-400 line-through truncate">
-                ${price}
-              </p>
-              <p className="text-sm text-green-400 font-semibold truncate">
-                ${discountPrice}
-              </p>
-            </div>
-          )}
+          <div className="flex flex-col items-end min-w-0 w-7">
+            {!isDiscounted ? (
+              <p className="text-sm text-gray-200 px-1 truncate">${price}</p>
+            ) : (
+              <div className="flex flex-col items-end px-1">
+                <p className="text-sm text-gray-400 line-through truncate">
+                  ${price}
+                </p>
+                <p className="text-sm text-green-400 font-semibold truncate">
+                  ${discountPrice}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Button Row - Fixed width */}
-        <div className="flex flex-row justify-end h-8 w-20">
+        <div className="flex flex-row justify-end h-8 w-full">
           {isOwned ? (
             <Link
               href="/my-files"
