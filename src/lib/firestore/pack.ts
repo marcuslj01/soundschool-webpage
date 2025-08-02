@@ -69,6 +69,25 @@ export async function getLatestPack() {
     } as Pack;
 }
 
+// Get latest packs for homepage (cached)
+export async function getLatestPacks(count: number = 3) {
+    if (!db) {
+        throw new Error("Firebase Firestore is not initialized");
+    }
+    const packsCollection = collection(db, "packs");
+    const q = query(packsCollection, orderBy("created_at", "desc"), limit(count));
+    const snapshot = await getDocs(q);
+    
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            ...data,
+            id: doc.id,
+            created_at: data.created_at.toDate(),
+        } as Pack;
+    });
+}
+
 // Delete pack
 export async function deletePack(id: string): Promise<boolean> {
     if (!db) {

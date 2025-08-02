@@ -138,7 +138,7 @@ function MidiCard({
 
   return (
     <div
-      className={`bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 min-w-fit transition-all duration-300`}
+      className={`bg-[#1A1D23] rounded-2xl w-full h-[100px] text-white p-2 flex flex-row items-center gap-2 transition-all duration-300 overflow-hidden`}
     >
       {/* Play/Pause Button */}
       <div className="flex-shrink-0">
@@ -195,13 +195,15 @@ function MidiCard({
       </div>
 
       {/* Text section */}
-      <div className="flex flex-col gap-1 w-2/3 min-w-fit">
+      <div className="flex flex-col gap-1 flex-1 min-w-0">
         <Link href={`/midi?id=${id}`} className="hover:cursor-pointer">
-          <h1 className={`font-semibold text-sm sm:text-lg transition-colors`}>
+          <h1
+            className={`font-semibold text-sm sm:text-lg transition-colors truncate`}
+          >
             {title}
           </h1>
 
-          <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400 truncate">
+          <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400">
             <Badge text={displayDate} style="gray" />
             <Badge text={root + " " + scale} style="gray" />
             <Badge text={bpm + " BPM"} style="gray" />
@@ -210,9 +212,9 @@ function MidiCard({
       </div>
 
       {/* Buttons */}
-      <div className="flex-1 flex flex-col justify-end w-1/4 gap-2">
+      <div className="flex flex-col justify-end gap-2 flex-shrink-0 min-w-0">
         {/* New and Heart button */}
-        <div className="flex flex-row gap-2 justify-end items-center">
+        <div className="flex flex-row gap-1 sm:gap-2 justify-end items-center">
           {isOwned ? (
             <Badge text="OWNED" style="indigo" />
           ) : isDiscounted ? (
@@ -221,27 +223,17 @@ function MidiCard({
             isNew && <Badge text="NEW!" style="yellow" />
           )}
           {!isDiscounted ? (
-            <p className="text-sm text-gray-200 p-1">${price}</p>
+            <p className="text-sm text-gray-200 px-1 truncate">${price}</p>
           ) : (
-            <div className="flex flex-col items-end">
-              <p className="text-sm text-gray-400 line-through">${price}</p>
-              <p className="text-sm text-green-400 font-semibold">
+            <div className="flex flex-col items-end min-w-0">
+              <p className="text-sm text-gray-400 line-through truncate">
+                ${price}
+              </p>
+              <p className="text-sm text-green-400 font-semibold truncate">
                 ${discountPrice}
               </p>
             </div>
           )}
-
-          {/* TODO: Fix heart button to work with Firebase */}
-          {/* <Button
-            className="h-5 w-5 flex items-center justify-center hover:cursor-pointer"
-            onClick={() => setIsLiked(!isLiked)}
-          >
-            {isLiked ? (
-              <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
-            ) : (
-              <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-            )}
-          </Button> */}
         </div>
         <div className="flex flex-row justify-end">
           {isOwned ? (

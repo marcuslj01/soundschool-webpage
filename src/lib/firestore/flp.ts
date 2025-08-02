@@ -48,26 +48,23 @@ export async function getFLP(id: string): Promise<FLP | null> {
     } as FLP;
 }
 
-// Get latest 3 FLPs
-export async function getLatestFLPs() {
+// Get latest FLPs for homepage (cached)
+export async function getLatestFLPs(count: number = 3) {
     if (!db) {
         throw new Error("Firebase Firestore is not initialized");
     }
     const flpsCollection = collection(db, "flps");
-    const q = query(flpsCollection, orderBy("created_at", "desc"), limit(3));
+    const q = query(flpsCollection, orderBy("created_at", "desc"), limit(count));
     const snapshot = await getDocs(q);
     
-    if (snapshot.empty) {
-        return null;
-    }
-    
-    const doc = snapshot.docs[0];
-    const data = doc.data();
-    return {
-        ...data,
-        id: doc.id,
-        created_at: data.created_at.toDate(),
-    } as FLP;
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            ...data,
+            id: doc.id,
+            created_at: data.created_at.toDate(),
+        } as FLP;
+    });
 }
 
 // Delete FLP
