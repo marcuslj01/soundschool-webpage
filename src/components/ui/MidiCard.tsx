@@ -202,9 +202,14 @@ function MidiCard({
           </h1>
 
           <div className="flex flex-row flex-wrap items-center gap-0.5 text-xs sm:text-md text-gray-400">
-            <Badge text={displayDate} style="gray" />
+            <span className="hidden sm:block">
+              <Badge text={displayDate} style="gray" />
+            </span>
             <Badge text={root + " " + scale} style="gray" />
             <Badge text={bpm + " BPM"} style="gray" />
+            <span className="block sm:hidden">
+              <Badge text="+1" style="gray" />
+            </span>
           </div>
         </Link>
       </div>
