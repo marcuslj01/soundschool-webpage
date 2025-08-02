@@ -117,7 +117,7 @@ export default async function TutorialPage({
                 <span className="text-green-400">${flp.discount_price}</span>
               </p>
             )}
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 mt-4 border-t border-gray-200 pt-4">
               <FLPButton
                 flp={{
                   id: flp.id,
