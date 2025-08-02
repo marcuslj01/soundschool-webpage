@@ -31,7 +31,10 @@ export default async function Home() {
       />
 
       {/* Products Overview Section */}
-      <div className="flex flex-col gap-12 w-full items-center text-white py-16 px-4">
+      <div
+        className="flex flex-col gap-12 w-full items-center text-white py-16 px-4 scroll-mt-20"
+        id="products"
+      >
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white sm:text-4xl mb-4">
             Latest Products
@@ -46,7 +49,7 @@ export default async function Home() {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-bold text-white">Latest MIDI Files</h3>
             <Link
-              href="/midis"
+              href="/midi"
               className="text-primary hover:text-primary/80 transition-colors"
             >
               View all MIDI files →

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +16,16 @@ interface HeroProps {
 }
 
 function Hero(props: HeroProps) {
+  const scrollToProducts = () => {
+    const element = document.getElementById("products");
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <div className="relative h-screen w-full">
       <Image
@@ -49,12 +61,12 @@ function Hero(props: HeroProps) {
                 {props.primaryButtonText}
               </Link>
 
-              <Link
+              <button
+                onClick={scrollToProducts}
                 className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-all duration-300"
-                href="/#products"
               >
                 {props.secondaryButtonText}
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -88,12 +100,12 @@ function Hero(props: HeroProps) {
               {props.primaryButtonText}
             </Link>
 
-            <Link
+            <button
+              onClick={scrollToProducts}
               className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-all duration-300"
-              href="/midis"
             >
               {props.secondaryButtonText}
-            </Link>
+            </button>
           </div>
         </div>
       </div>
