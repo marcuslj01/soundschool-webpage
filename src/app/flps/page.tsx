@@ -8,7 +8,7 @@ export default async function Tutorials() {
   const visibleFlps = flps.filter((flp) => !flp.hidden);
 
   return (
-    <div className="flex flex-col gap-4 w-full items-center text-white min-h-screen justify-center mt-16">
+    <div className="flex flex-col gap-4 w-full items-center text-white min-h-screen mt-20">
       <h2 className="text-2xl font-bold text-white sm:text-4xl">
         All our tutorials with FLPs!
       </h2>

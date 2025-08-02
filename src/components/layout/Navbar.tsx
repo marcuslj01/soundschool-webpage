@@ -27,8 +27,8 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
   { name: "Home", href: "/", current: false },
-  { name: "Midi files", href: "/midis", current: false },
-  { name: "Packs", href: "/packs", current: false },
+  { name: "Midi files", href: "/products#midis", current: false },
+  { name: "Packs", href: "/products#packs", current: false },
   { name: "FLPs", href: "/flps", current: false },
 ];
 
