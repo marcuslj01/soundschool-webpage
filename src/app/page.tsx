@@ -1,23 +1,21 @@
-export const revalidate = 300; // Cache for 5 minutes
+export const revalidate = 3600; // Cache for 1 hour
 
-import Hero from "@/components/sections/Hero";
-import LazyMidigrid from "@/components/ui/LazyMidigrid";
-import PackGrid from "@/components/ui/PackGrid";
-import { getPacks, getLatestPack } from "@/lib/firestore/pack";
-import { getMidi } from "@/lib/firestore/midifiles";
-import { getFLPs } from "@/lib/firestore/flp";
-import FLPGrid from "@/components/ui/FLPGrid";
+import React from "react";
 import Link from "next/link";
+import Hero from "@/components/sections/Hero";
+import { getLatestPack } from "@/lib/firestore/pack";
+import { getLatestPacks } from "@/lib/firestore/pack";
+import { getLatestMidiFiles } from "@/lib/firestore/midifiles";
+import { getLatestFLPs } from "@/lib/firestore/flp";
+import HomeMidiGrid from "@/components/ui/HomeMidiGrid";
+import PackGrid from "@/components/ui/PackGrid";
+import FLPGrid from "@/components/ui/FLPGrid";
 
 export default async function Home() {
-  const midiFiles = await getMidi(10); // Initial load of 10 MIDI files on server
-  const packs = await getPacks();
-  const flps = await getFLPs();
-  const visibleFlps = flps.filter((flp) => !flp.hidden);
-  const midiPacks = packs.filter((pack) => pack.type === "midi");
-  const samplePacks = packs.filter((pack) => pack.type === "sample");
-
   const latestPack = await getLatestPack();
+  const latestPacks = await getLatestPacks(3);
+  const latestMidiFiles = await getLatestMidiFiles(10);
+  const latestFLPs = await getLatestFLPs(3);
 
   return (
     <main className="flex flex-col gap-4 w-full items-center">
@@ -31,34 +29,66 @@ export default async function Home() {
         secondaryButtonText="Other products"
         packLink={`/pack?id=${latestPack?.id}`}
       />
-      <section
-        className="flex flex-col gap-4 w-full items-center text-white"
-        id="products"
-      >
-        {midiPacks.length > 0 && (
-          <>
-            <h2 className="text-2xl font-bold">Midi Packs</h2>
-            <div className="max-w-5xl xl:max-w-7xl">
-              <PackGrid products={midiPacks} />
+
+      {/* Products Overview Section */}
+      <div className="flex flex-col gap-12 w-full items-center text-white py-16 px-4">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white sm:text-4xl mb-4">
+            Latest Products
+          </h2>
+          <p className="text-gray-300 text-center max-w-2xl">
+            Discover our newest music production resources
+          </p>
+        </div>
+
+        {/* Latest MIDI Files Section */}
+        <div className="w-full max-w-7xl">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold text-white">Latest MIDI Files</h3>
+            <Link
+              href="/midis"
+              className="text-primary hover:text-primary/80 transition-colors"
+            >
+              View all MIDI files →
+            </Link>
+          </div>
+          <HomeMidiGrid midiFiles={latestMidiFiles} />
+        </div>
+
+        {/* Latest Packs Section */}
+        {latestPacks.length > 0 && (
+          <div className="w-full max-w-7xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-white">Latest Packs</h3>
+              <Link
+                href="/packs"
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
+                View all packs →
+              </Link>
             </div>
-          </>
+            <PackGrid products={latestPacks} />
+          </div>
         )}
-        {samplePacks.length > 0 && (
-          <>
-            <h2 className="text-2xl font-bold">Sample Packs</h2>
-            <PackGrid products={samplePacks} />
-          </>
+
+        {/* Latest FLPs Section */}
+        {latestFLPs.length > 0 && (
+          <div className="w-full max-w-7xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-white">
+                Latest FLP Projects
+              </h3>
+              <Link
+                href="/flps"
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
+                View all FLPs →
+              </Link>
+            </div>
+            <FLPGrid flps={latestFLPs} />
+          </div>
         )}
-      </section>
-      <h2 className="text-2xl font-bold text-white">Midi Files</h2>
-      <LazyMidigrid initialData={midiFiles} />
-      <h2 className="text-2xl font-bold text-white">YouTube Tutorials</h2>
-      <Link href="https://www.youtube.com/@Soundschool18" target="_blank">
-        <h3 className="text-gray-400 text-md hover:text-white transition-all duration-300">
-          Check out our YouTube channel!
-        </h3>
-      </Link>
-      <FLPGrid flps={visibleFlps} />
+      </div>
     </main>
   );
 }

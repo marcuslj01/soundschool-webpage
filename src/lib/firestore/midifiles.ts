@@ -80,3 +80,19 @@ export async function deleteMidi(id: string): Promise<boolean> {
         return false;
     }
 }
+
+// Get latest MIDI files for homepage (cached)
+export async function getLatestMidiFiles(count: number = 10) {
+    const midiFilesCollection = collection(db, "midifiles");
+    const q = query(midiFilesCollection, orderBy("created_at", "desc"), limit(count));
+    
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            ...data,
+            id: doc.id,
+            created_at: data.created_at.toDate(),
+        } as Midi;
+    });
+}
