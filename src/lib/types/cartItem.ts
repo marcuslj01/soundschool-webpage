@@ -1,6 +1,6 @@
 export interface CartItem {
     id: string;
-    type: "midi" | "pack";
+    type: "midi" | "pack" | "flp";
     title: string;
     price: number;
     discount_price?: number;

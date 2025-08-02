@@ -261,13 +261,6 @@ function FLPUploadForm({ onClose, onBack }: FLPUploadFormProps) {
             >
               <option value="Major">Major</option>
               <option value="Minor">Minor</option>
-              <option value="Pentatonic">Pentatonic</option>
-              <option value="Blues">Blues</option>
-              <option value="Dorian">Dorian</option>
-              <option value="Mixolydian">Mixolydian</option>
-              <option value="Lydian">Lydian</option>
-              <option value="Phrygian">Phrygian</option>
-              <option value="Locrian">Locrian</option>
             </select>
           </div>
 
