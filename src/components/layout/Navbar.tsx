@@ -27,8 +27,8 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
   { name: "Home", href: "/", current: false },
-  { name: "Midi files", href: "/products#midis", current: false },
-  { name: "Packs", href: "/products#packs", current: false },
+  { name: "Midi files", href: "/midis", current: false },
+  { name: "Packs", href: "/packs", current: false },
   { name: "FLPs", href: "/flps", current: false },
 ];
 
@@ -176,7 +176,10 @@ export default function Navbar() {
             <div className="hidden sm:ml-6 sm:block h-full">
               <div className="flex space-x-4 h-full">
                 {navigation.map((item) => {
-                  const isCurrent = pathname === item.href;
+                  const isCurrent =
+                    pathname === item.href ||
+                    (item.href.includes("#") &&
+                      pathname === item.href.split("#")[0]);
                   return (
                     <Link
                       key={item.name}
