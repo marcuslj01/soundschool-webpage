@@ -12,6 +12,7 @@ import {
 import {
   Bars3Icon,
   ShoppingCartIcon,
+  TrashIcon,
   UserCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -250,10 +251,10 @@ export default function Navbar() {
                                 e.stopPropagation();
                                 removeFromCart(item.id);
                               }}
-                              className="ml-2 p-1 rounded hover:bg-red-600 transition-colors"
+                              className="ml-2 p-1 rounded hover:bg-red-600 transition-colors hover:cursor-pointer"
                               aria-label="Remove from cart"
                             >
-                              <XMarkIcon className="w-4 h-4 text-white" />
+                              <TrashIcon className="w-4 h-4 text-white" />
                             </button>
                           </li>
                         ))}
