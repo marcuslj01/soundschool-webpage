@@ -4,7 +4,6 @@ import { Button } from "@headlessui/react";
 import {
   ArrowRightIcon,
   CheckCircleIcon,
-  // HeartIcon, // TODO: Fix heart button to work with Firebase
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
@@ -46,7 +45,6 @@ function MidiCard({
   onPause,
   isOwned,
 }: CardProps) {
-  // const [isLiked, setIsLiked] = useState(false); // TODO: Fix heart button to work with Firebase
   const [isAdded, setIsAdded] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -212,9 +210,9 @@ function MidiCard({
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-col justify-end gap-2 flex-shrink-0 min-w-0">
-        {/* New and Heart button */}
-        <div className="flex flex-row gap-1 sm:gap-2 justify-end items-center">
+      <div className="flex flex-col justify-end gap-2 flex-shrink-0 min-w-0 h-full">
+        {/* Badge and Price Row - Fixed height */}
+        <div className="flex flex-row gap-1 sm:gap-2 justify-end items-center h-6">
           {isOwned ? (
             <Badge text="OWNED" style="indigo" />
           ) : isDiscounted ? (
@@ -235,7 +233,9 @@ function MidiCard({
             </div>
           )}
         </div>
-        <div className="flex flex-row justify-end">
+
+        {/* Button Row - Fixed width */}
+        <div className="flex flex-row justify-end h-8 w-20">
           {isOwned ? (
             <Link
               href="/my-files"
