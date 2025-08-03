@@ -95,7 +95,7 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("cartItems");
     logout();
-    window.location.reload();
+    window.location.href = "/";
   };
 
   useEffect(() => {
