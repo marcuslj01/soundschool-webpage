@@ -9,6 +9,10 @@ import {
   onAuthStateChanged,
   signInWithPopup,
   getIdTokenResult,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  UserCredential,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { createOrUpdateUser } from "@/lib/firestore/user";
@@ -16,12 +20,16 @@ import { createOrUpdateUser } from "@/lib/firestore/user";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  isAdmin: boolean; // Ny
+  isAdmin: boolean;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<UserCredential>;
+  resetPassword: (email: string) => Promise<void>;
+  updateUserInState: (updatedUser: User) => void;
 }
 
-// Definer AuthContext med riktig type
+// Define AuthContext with correct type
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -61,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe;
   }, []);
 
+  // Google sign in
   const signInWithGoogle = async () => {
     try {
       // Check if we're on mobile
@@ -91,6 +100,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Email and password sign in
+  const signInWithEmail = async (
+    email: string,
+    password: string
+  ): Promise<void> => {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    await createOrUpdateUser(result.user);
+  };
+
+  // Email and password sign up
+  const signUpWithEmail = async (
+    email: string,
+    password: string
+  ): Promise<UserCredential> => {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    await createOrUpdateUser(result.user);
+    return result;
+  };
+
+  // Update user in state
+  const updateUserInState = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
+
+  // Email and password reset password
+  const resetPassword = async (email: string): Promise<void> => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -115,6 +153,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAdmin,
     signInWithGoogle,
     logout,
+    signInWithEmail,
+    signUpWithEmail,
+    resetPassword,
+    updateUserInState,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -6,6 +6,7 @@ import {
   BellIcon,
   TrashIcon,
   XMarkIcon,
+  KeyIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -14,10 +15,31 @@ import {
   deleteUser,
 } from "@/lib/firestore/user";
 import { useRouter } from "next/navigation";
+import { User } from "firebase/auth";
 import Image from "next/image";
 
+// Helper function to get initials from display name
+const getInitials = (displayName: string | null): string => {
+  if (!displayName) return "?";
+
+  const names = displayName.trim().split(" ");
+  if (names.length === 1) {
+    return names[0].charAt(0).toUpperCase();
+  }
+
+  return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+};
+
+// Helper function to check if user signed up with email/password
+const isEmailPasswordUser = (user: User): boolean => {
+  return (
+    user?.providerData?.length > 0 &&
+    user.providerData[0].providerId === "password"
+  );
+};
+
 export default function SettingsPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, resetPassword } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState({
@@ -26,6 +48,8 @@ export default function SettingsPage() {
   });
   const router = useRouter();
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -67,6 +91,22 @@ export default function SettingsPage() {
       setPreferences((prev) => ({ ...prev, [key]: !value }));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!user?.email) return;
+
+    try {
+      await resetPassword(user.email);
+      setResetEmailSent(true);
+      setTimeout(() => {
+        setShowResetPassword(false);
+        setResetEmailSent(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error sending reset email:", error);
+      alert("Failed to send reset email. Please try again.");
     }
   };
 
@@ -114,8 +154,68 @@ export default function SettingsPage() {
     );
   }
 
+  const initials = getInitials(user?.displayName as string);
+  const isEmailUser = isEmailPasswordUser(user as User);
+
   return (
     <div className="min-h-screen bg-black pt-16">
+      {/* Reset Password Modal */}
+      {showResetPassword && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-gray-900 rounded-lg p-6 w-full max-w-sm lg:max-w-lg mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">
+                Reset Password
+              </h2>
+              <button
+                className="text-gray-400 hover:text-white transition-colors hover:cursor-pointer"
+                type="button"
+                onClick={() => setShowResetPassword(false)}
+              >
+                <XMarkIcon className="size-6" />
+              </button>
+            </div>
+            {resetEmailSent ? (
+              <div className="text-center">
+                <p className="text-green-400 mb-4">
+                  Password reset email sent! Check your inbox.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowResetPassword(false)}
+                  className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-400 mb-6">
+                  We&apos;ll send a password reset link to your email address.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={handleResetPassword}
+                    className="flex-1 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors"
+                  >
+                    Send Reset Link
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowResetPassword(false)}
+                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Modal */}
       {showDeleteAccount && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-gray-900 rounded-lg p-6 w-full max-w-sm lg:max-w-lg mx-4">
@@ -146,41 +246,47 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Account Settings</h1>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">
+          Account Settings
+        </h1>
 
         {/* Profile Information */}
-        <div className="bg-gray-900 rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">
+        <div className="bg-gray-900 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">
             Profile Information
           </h2>
-          <p className="text-gray-400 mb-6">
-            Your profile information is managed by your Google account.
-          </p>
 
-          <div className="flex items-center gap-6 mb-6">
-            <Image
-              width={96}
-              height={96}
-              alt="Profile picture"
-              src={
-                user?.photoURL ||
-                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              }
-              className="size-24 rounded-full bg-gray-800 object-cover"
-            />
-            <div>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
+            {/* Avatar - Show photo for Google users, initials for email users */}
+            {user?.photoURL && !isEmailUser ? (
+              <Image
+                src={user.photoURL}
+                alt="Profile picture"
+                className="size-20 sm:size-24 rounded-full bg-gray-800 object-cover mx-auto sm:mx-0"
+              />
+            ) : (
+              <div className="size-20 sm:size-24 rounded-full bg-indigo-600 flex items-center justify-center mx-auto sm:mx-0">
+                <span className="text-xl sm:text-2xl font-bold text-white">
+                  {initials}
+                </span>
+              </div>
+            )}
+
+            <div className="text-center sm:text-left">
               <p className="text-sm font-semibold text-white">
-                Profile managed by Google
+                {isEmailUser ? "Email & Password Account" : "Google Account"}
               </p>
-              <p className="text-sm text-gray-400">
-                To change your profile picture or name, please update your
-                Google account.
+              <p className="text-sm text-gray-400 mt-1">
+                {isEmailUser
+                  ? "Your profile information is managed through your account settings."
+                  : "To change your profile picture or name, please update your Google account."}
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Display name
@@ -204,22 +310,48 @@ export default function SettingsPage() {
               />
             </div>
           </div>
+
+          {/* Password Reset Section - Only for email/password users */}
+          {isEmailUser && (
+            <div className="mt-6 pt-6 border-t border-gray-800">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <KeyIcon className="size-5 text-gray-400 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-medium text-white">Password</h3>
+                    <p className="text-sm text-gray-400">
+                      Reset your password via email
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowResetPassword(true)}
+                  className="w-full sm:w-auto rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors"
+                >
+                  Reset Password
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Preferences */}
-        <div className="bg-gray-900 rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Preferences</h2>
+        <div className="bg-gray-900 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">
+            Preferences
+          </h2>
           <p className="text-gray-400 mb-6">
             Manage your notification and communication preferences.
           </p>
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <EnvelopeIcon className="size-5 text-gray-400" />
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-start sm:items-center gap-3">
+                <EnvelopeIcon className="size-5 text-gray-400 flex-shrink-0 mt-0.5 sm:mt-0" />
                 <div>
                   <h3 className="text-sm font-medium text-white">Newsletter</h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-gray-400 mt-1">
                     Receive updates about new products and features
                   </p>
                 </div>
@@ -230,7 +362,7 @@ export default function SettingsPage() {
                   handlePreferenceChange("newsletter", !preferences.newsletter)
                 }
                 disabled={saving}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 self-start sm:self-center ${
                   preferences.newsletter ? "bg-indigo-600" : "bg-gray-700"
                 }`}
               >
@@ -242,14 +374,14 @@ export default function SettingsPage() {
               </button>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <BellIcon className="size-5 text-gray-400" />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-start sm:items-center gap-3">
+                <BellIcon className="size-5 text-gray-400 flex-shrink-0 mt-0.5 sm:mt-0" />
                 <div>
                   <h3 className="text-sm font-medium text-white">
                     Marketing emails
                   </h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-gray-400 mt-1">
                     Receive promotional emails and special offers
                   </p>
                 </div>
@@ -260,7 +392,7 @@ export default function SettingsPage() {
                   handlePreferenceChange("marketing", !preferences.marketing)
                 }
                 disabled={saving}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 self-start sm:self-center ${
                   preferences.marketing ? "bg-indigo-600" : "bg-gray-700"
                 }`}
               >
@@ -275,8 +407,8 @@ export default function SettingsPage() {
         </div>
 
         {/* Delete Account */}
-        <div className="bg-gray-900 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">
+        <div className="bg-gray-900 rounded-lg p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">
             Delete account
           </h2>
           <p className="text-gray-400 mb-6">
@@ -287,7 +419,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => setShowDeleteAccount(true)}
-            className="flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-400 transition-colors hover:cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-400 transition-colors hover:cursor-pointer"
           >
             <TrashIcon className="size-4" />
             Delete my account
