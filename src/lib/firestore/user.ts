@@ -205,3 +205,17 @@ export async function claimFiles(uid: string, email: string): Promise<{ success:
     throw error;
   }
 }
+
+// Update displayName and preferences for a user
+export async function updateUserProfile(uid: string, displayName: string, preferences: { newsletter: boolean; marketing: boolean }) {
+  try {
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, {
+      displayName,
+      preferences,
+    });
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    throw error;
+  }
+}

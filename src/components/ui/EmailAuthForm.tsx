@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { updateUserProfile } from "@/lib/firestore/user";
+import { updateProfile } from "firebase/auth";
 
 interface EmailAuthFormProps {
   mode: "login" | "register";
@@ -23,21 +26,97 @@ export default function EmailAuthForm({
   const [resetEmail, setResetEmail] = useState("");
   const [resetSent, setResetSent] = useState(false);
 
+  const { signInWithEmail, signUpWithEmail, resetPassword, updateUserInState } =
+    useAuth();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    // Simulate loading
-    setTimeout(() => {
-      setLoading(false);
-      // For now, just show a placeholder message
+    try {
       if (mode === "register") {
-        setError("Registration functionality not implemented yet");
+        // Validate
+        if (!displayName.trim()) {
+          setError("Please enter your name");
+          setLoading(false);
+          return;
+        }
+        if (password !== confirmPassword) {
+          setError("Passwords do not match");
+          setLoading(false);
+          return;
+        }
+        if (password.length < 6) {
+          setError("Password must be at least 6 characters long");
+          setLoading(false);
+          return;
+        }
+
+        // Register user
+        const userCredential = await signUpWithEmail(email, password);
+
+        // Update Firebase Auth User with displayName
+        await updateProfile(userCredential.user, { displayName });
+
+        // Update user in state
+        updateUserInState(userCredential.user);
+
+        // Save extra data to Firestore
+        await updateUserProfile(userCredential.user.uid, displayName, {
+          newsletter,
+          marketing,
+        });
       } else {
-        setError("Login functionality not implemented yet");
+        // Login
+        await signInWithEmail(email, password);
       }
-    }, 1000);
+    } catch (error: unknown) {
+      console.error("Auth error:", error);
+
+      // Handle errors
+      if (error && typeof error === "object" && "code" in error) {
+        const firebaseError = error as { code?: string };
+
+        switch (firebaseError.code) {
+          case "auth/email-already-in-use":
+            setError(
+              "An account with this email already exists. Please log in instead."
+            );
+            break;
+          case "auth/user-not-found":
+            setError(
+              "No account found with this email address. Please check your email or create a new account."
+            );
+            break;
+          case "auth/wrong-password":
+            setError(
+              "Incorrect password. Please check your password and try again."
+            );
+            break;
+          case "auth/invalid-credential":
+            setError(
+              "Invalid email or password. Please check your credentials and try again."
+            );
+            break;
+          case "auth/invalid-email":
+            setError("Please enter a valid email address.");
+            break;
+          case "auth/weak-password":
+            setError(
+              "Password is too weak. Please choose a stronger password (at least 6 characters)."
+            );
+            break;
+          default:
+            setError("An unexpected error occurred. Please try again.");
+            break;
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -45,11 +124,23 @@ export default function EmailAuthForm({
     setError("");
     setLoading(true);
 
-    // Simulate loading
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await resetPassword(resetEmail);
       setResetSent(true);
-    }, 1000);
+    } catch (error: unknown) {
+      console.error("Reset password error:", error);
+      const firebaseError = error as { code?: string };
+
+      if (firebaseError.code === "auth/user-not-found") {
+        setError("No account found with this email address.");
+      } else if (firebaseError.code === "auth/invalid-email") {
+        setError("Please enter a valid email address.");
+      } else {
+        setError("An error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (showResetPassword) {
