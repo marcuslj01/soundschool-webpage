@@ -219,7 +219,7 @@ export default function Navbar() {
               </div>
               {/* Cart dropdown */}
               {showCartDropdown && (
-                <div className="absolute right-0 mt-2 w-fit min-w-[300px] bg-[#23272f] rounded-xl shadow-2xl border border-gray-800 z-50 p-4">
+                <div className="absolute right-0 mt-2 w-fit min-w-[300px] bg-[#23272f] rounded-xl shadow-2xl border border-gray-800 z-50 p-4 max-h-[80vh] overflow-y-scroll">
                   <h3 className="font-bold mb-4 text-lg text-white">My Cart</h3>
                   {cartItems.length === 0 ? (
                     <div className="text-gray-400 py-8">Cart is empty</div>
@@ -232,13 +232,13 @@ export default function Navbar() {
                             className="flex items-center text-white py-2 px-1 bg-[#23272f] rounded gap-2"
                           >
                             <Link
-                              className="flex-1 truncate max-w-[200px] text-left text-sm w-full hover:bg-[#353B47FF] hover:cursor-pointer rounded-md p-2"
+                              className="flex-1 max-w-[190px] text-left text-xs sm:text-sm sm:w-auto hover:bg-[#353B47FF] hover:cursor-pointer rounded-md p-2"
                               href={`/${item.type}?id=${item.id}`}
                               key={item.id + item.type}
                             >
                               <span>{item.title}</span>
                             </Link>
-                            <span className="min-w-[60px] text-right font-mono font-medium">
+                            <span className="min-w-[60px] text-right font-mono font-medium text-xs sm:text-sm">
                               {item.is_discounted ? (
                                 <span className="flex flex-row justify-end gap-1">
                                   <span className="text-gray-400 line-through">

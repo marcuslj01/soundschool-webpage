@@ -58,7 +58,7 @@ function FLPCard({ flp, isOwned }: FLPCardProps) {
           </div>
           <Link
             className="text-gray-200 text-sm font-bold px-4 bg-primary hover:bg-primary/80 transition-all duration-300 rounded-md py-2"
-            href={`/tutorial?flp=${flp.id}`}
+            href={`/flp?id=${flp.id}`}
           >
             Get FLP
           </Link>

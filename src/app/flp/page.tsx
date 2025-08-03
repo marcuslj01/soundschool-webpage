@@ -7,8 +7,8 @@ import remarkGfm from "remark-gfm";
 import Badge from "@/components/ui/Badge";
 import FLPButton from "@/components/ui/FLPButton";
 
-interface TutorialPageProps {
-  searchParams: Promise<{ flp?: string }>;
+interface FLPPageProps {
+  searchParams: Promise<{ id?: string }>;
 }
 
 function getYouTubeEmbedUrl(videoUrl: string): string {
@@ -27,11 +27,9 @@ function getYouTubeEmbedUrl(videoUrl: string): string {
   return videoUrl; // Fallback to original URL if no match
 }
 
-export default async function TutorialPage({
-  searchParams,
-}: TutorialPageProps) {
-  const flp_id = (await searchParams).flp as string;
-  const flp = await getFLP(flp_id);
+export default async function FLPPage({ searchParams }: FLPPageProps) {
+  const id = (await searchParams).id as string;
+  const flp = await getFLP(id);
 
   if (!flp) {
     return notFound();
