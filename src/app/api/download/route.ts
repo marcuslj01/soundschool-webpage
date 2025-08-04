@@ -52,6 +52,14 @@ export async function POST(req: NextRequest) {
       const packData = packDoc.data()!;
       downloadUrl = packData.download_url;
       fileName = packData.name;
+    } else if (fileType === "flp") {
+      const flpDoc = await db.collection("flps").doc(fileId).get();
+      if (!flpDoc.exists) {
+        return NextResponse.json({ error: "File not found" }, { status: 404 });
+      }
+      const flpData = flpDoc.data()!;
+      downloadUrl = flpData.file_url;
+      fileName = flpData.name;
     } else {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }
