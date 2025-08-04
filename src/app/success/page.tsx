@@ -51,7 +51,26 @@ export default async function SuccessPage({
     );
   }
 
-  const order = await getOrderServer(session.payment_intent as string);
+  let order;
+  try {
+    order = await getOrderServer(session.payment_intent as string);
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-white">
+        <p className="text-gray-400 text-2xl">
+          Your payment was successful, but we couldn&apos;t load your order
+          details. Please check your email for download links.
+        </p>
+        <Link
+          href="/"
+          className="text-white mt-4 bg-primary/80 hover:bg-primary/70 transition-colors px-4 py-2 rounded-md"
+        >
+          Go back to home
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-white">
