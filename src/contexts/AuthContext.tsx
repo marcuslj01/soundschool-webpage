@@ -91,21 +91,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Google sign in
   const signInWithGoogle = async () => {
     try {
-      // Check if we're on mobile
+      // Check if we're on mobile or Safari (which has stricter popup blocking)
       const isMobile =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
         );
 
-      if (isMobile) {
+      const isSafari =
+        /Safari/.test(navigator.userAgent) &&
+        !/Chrome/.test(navigator.userAgent);
+
+      // Use redirect for mobile OR Safari (to avoid popup blocking issues)
+      if (isMobile || isSafari) {
+        console.log("Using signInWithRedirect (mobile or Safari detected)");
         await signInWithRedirect(auth, googleProvider);
       } else {
+        console.log("Using signInWithPopup (desktop Chrome/Firefox)");
         await signInWithPopup(auth, googleProvider);
       }
     } catch (error) {
       console.error("Error signing in with Google:", error);
 
-      // Handle specific mobile errors
+      // Handle specific errors
       if (error && typeof error === "object" && "code" in error) {
         if (error.code === "auth/popup-closed-by-user") {
           console.log("User closed the popup window");
@@ -113,6 +120,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         if (error.code === "auth/unauthorized-domain") {
           console.error("Domain not authorized for Firebase Auth");
+          return;
+        }
+        if (error.code === "auth/popup-blocked") {
+          console.error(
+            "Popup blocked by browser - this should not happen with redirect"
+          );
           return;
         }
       }
