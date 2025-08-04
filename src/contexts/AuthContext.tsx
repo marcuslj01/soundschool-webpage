@@ -48,44 +48,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // Handle redirect result
-    getRedirectResult(auth)
-      .then((result) => {
+    const initializeAuth = async () => {
+      try {
+        // Handle redirect result FIRST (before onAuthStateChanged)
+        const result = await getRedirectResult(auth);
         if (result?.user) {
-          createOrUpdateUser(result.user);
+          await createOrUpdateUser(result.user);
+          const adminStatus = await checkAdminStatus(result.user);
+          setIsAdmin(adminStatus);
+          setUser(result.user);
+          setLoading(false);
+          return; // Don't continue with onAuthStateChanged if we have a redirect result
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error getting redirect result:", error);
+      }
+
+      // Only set up onAuthStateChanged if no redirect result
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            await createOrUpdateUser(user);
+            const adminStatus = await checkAdminStatus(user);
+            setIsAdmin(adminStatus);
+
+            if (!user.displayName) {
+              console.log("User has no displayName, attempting to refresh...");
+              await user.getIdToken(true);
+              setUser({ ...user });
+            }
+          } catch (error) {
+            console.error("Error saving user to Firestore:", error);
+          }
+        } else {
+          setIsAdmin(false);
+        }
+        setUser(user);
+        setLoading(false);
       });
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          await createOrUpdateUser(user);
-          // Check admin status
-          const adminStatus = await checkAdminStatus(user);
-          setIsAdmin(adminStatus);
+      return unsubscribe;
+    };
 
-          // If user has no displayName, try to get it from Firestore
-          if (!user.displayName) {
-            console.log("User has no displayName, attempting to refresh...");
-            // Force a token refresh to get updated user data
-            await user.getIdToken(true);
-            // Update user state with refreshed data
-            setUser({ ...user });
-          }
-        } catch (error) {
-          console.error("Error saving user to Firestore:", error);
-        }
-      } else {
-        setIsAdmin(false);
-      }
-      setUser(user);
-      setLoading(false);
-    });
-
-    return unsubscribe;
+    initializeAuth();
   }, []);
 
   // Google sign in
