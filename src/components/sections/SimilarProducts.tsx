@@ -10,7 +10,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getOwnedFiles } from "@/lib/firestore/user";
 import { getSimilarMidis } from "@/lib/firestore/midifiles";
 import { getSimilarPacks } from "@/lib/firestore/pack";
+import { getSimilarFLPs } from "@/lib/firestore/flp";
 import PackGrid from "../ui/PackGrid";
+import FLPGrid from "../ui/FLPGrid";
 
 export interface SimilarProductsProps {
   midi?: Midi;
@@ -21,11 +23,12 @@ export interface SimilarProductsProps {
 export default function SimilarProducts({
   midi,
   pack,
-  //   flp,
+  flp,
 }: SimilarProductsProps) {
   const [productType, setProductType] = useState<"midi" | "pack" | "flp">();
   const [similarMidis, setSimilarMidis] = useState<Midi[]>([]);
   const [similarPacks, setSimilarPacks] = useState<Pack[]>([]);
+  const [similarFLPs, setSimilarFLPs] = useState<FLP[]>([]);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
@@ -57,6 +60,12 @@ export default function SimilarProducts({
           console.log("Found similar packs:", similarPacks.length);
           setProductType("pack");
           setSimilarPacks(similarPacks);
+        } else if (flp) {
+          console.log("Fetching similar FLPs for:", flp.id);
+          const similarFLPs = await getSimilarFLPs(flp.id);
+          console.log("Found similar FLPs:", similarFLPs.length);
+          setProductType("flp");
+          setSimilarFLPs(similarFLPs);
         }
       } catch (error) {
         console.error("Error fetching similar products:", error);
@@ -66,7 +75,7 @@ export default function SimilarProducts({
     };
 
     getSimilarProducts();
-  }, [midi, pack]);
+  }, [midi, pack, flp]);
 
   // Loading state
   if (isLoading) {
@@ -125,8 +134,27 @@ export default function SimilarProducts({
     );
   }
 
+  // FLP products
+  if (productType === "flp" && similarFLPs.length > 0) {
+    return (
+      <section className="flex flex-col">
+        <h2 className="text-3xl font-bold text-white max-w-2xl mx-auto p-4">
+          Similar FLPs
+        </h2>
+        <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 flex flex-col gap-4 lg:flex-row">
+          <FLPGrid flps={similarFLPs} />
+        </div>
+      </section>
+    );
+  }
+
   // No similar products found
-  if (productType && similarMidis.length === 0 && similarPacks.length === 0) {
+  if (
+    productType &&
+    similarMidis.length === 0 &&
+    similarPacks.length === 0 &&
+    similarFLPs.length === 0
+  ) {
     return (
       <section className="flex flex-col gap-4 max-w-2xl mx-auto p-4">
         <h2 className="text-2xl font-bold text-white">Similar Products</h2>
