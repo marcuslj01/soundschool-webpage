@@ -23,7 +23,7 @@ function FLPCard({ flp, isOwned }: FLPCardProps) {
   return (
     <div className="w-full bg-gray-900 rounded-lg hover:scale-105 transition-all duration-300">
       <div className="mb-2">
-        <Link className="w-full h-fit" href={`/tutorial?flp=${flp.id}`}>
+        <Link className="w-full h-fit" href={`/flp?id=${flp.id}`}>
           <Image
             src={flp.image_url}
             alt={flp.name}
