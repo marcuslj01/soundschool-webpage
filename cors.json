@@ -3,6 +3,7 @@
     "origin": [
       "http://localhost:3000",
       "https://soundschool.vercel.app",
+      "https://soundschoolmidis.com",
       "https://www.soundschoolmidis.com"
     ],
     "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
