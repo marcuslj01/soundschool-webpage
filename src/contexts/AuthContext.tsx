@@ -163,7 +163,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error("Debug logging failed:", debugError);
         }
 
-        await signInWithRedirect(auth, googleProvider);
+        try {
+          console.log("About to call signInWithRedirect..."); // Debug
+          await signInWithRedirect(auth, googleProvider);
+          console.log("signInWithRedirect called successfully"); // Debug
+        } catch (redirectError) {
+          console.log("signInWithRedirect failed:", redirectError);
+
+          // Send redirect error debug info
+          try {
+            await fetch("/api/debug-auth", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "google_signin_redirect_error",
+                data: {
+                  error:
+                    redirectError instanceof Error
+                      ? redirectError.message
+                      : String(redirectError),
+                  errorCode:
+                    redirectError instanceof Error && "code" in redirectError
+                      ? redirectError.code
+                      : "unknown",
+                },
+              }),
+            });
+          } catch (debugError) {
+            console.error("Debug logging failed:", debugError);
+          }
+        }
       } else {
         console.log("Using signInWithPopup for desktop"); // Debug
         await signInWithPopup(auth, googleProvider);
