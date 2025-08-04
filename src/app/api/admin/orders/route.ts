@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAllOrders } from '@/lib/firestore/order';
+import { getAllOrdersServer } from '@/lib/firestore/order.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -33,10 +33,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const orders = await getAllOrders();
+    const orders = await getAllOrdersServer();
     
     // Convert Date objects to ISO strings for JSON serialization
-    const ordersWithFormattedDates = orders.map(order => ({
+    const ordersWithFormattedDates = orders.map((order: { created_at: Date | string | null }) => ({
       ...order,
       created_at: order.created_at instanceof Date 
         ? order.created_at.toISOString()

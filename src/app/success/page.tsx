@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { getOrder } from "@/lib/firestore/order";
+import { getOrderServer } from "@/lib/firestore/order.server";
 import OrderDetails from "@/components/sections/OrderDetails";
 import Link from "next/link";
 import ClearCartOnSuccess from "@/components/ClearCartOnSuccess";
@@ -51,7 +51,7 @@ export default async function SuccessPage({
     );
   }
 
-  const order = await getOrder(session.payment_intent as string);
+  const order = await getOrderServer(session.payment_intent as string);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-white">

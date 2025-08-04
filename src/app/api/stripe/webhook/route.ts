@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { db } from "@/lib/firebase";
-import { collection, addDoc, Timestamp, doc, getDoc, runTransaction, updateDoc } from "firebase/firestore";
+import { getFirestore } from 'firebase-admin/firestore';
 import { OrderItem } from "@/lib/types/orderItem";
 import { CartItem } from "@/lib/types/cartItem";
 import { Resend } from "resend";
@@ -35,14 +34,15 @@ export async function POST(req: NextRequest) {
       null;
     const cartItems = session.metadata?.cart ? JSON.parse(session.metadata.cart) as CartItem[] : [];
 
-    // Get full product data for each item
+    // Get full product data for each item using server-side SDK
+    const db = getFirestore();
     const orderItems: OrderItem[] = [];
     
     for (const cartItem of cartItems) {
       
       if (cartItem.type === "midi") {
         // Get product data from midifiles collection
-        const productDoc = await getDoc(doc(db, "midifiles", cartItem.id));
+        const productDoc = await db.collection("midifiles").doc(cartItem.id).get();
         const productData = productDoc.data();
         
         if (productData) {
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
         }
       } else if (cartItem.type === "pack") {
         // Get product data from packs collection
-        const productDoc = await getDoc(doc(db, "packs", cartItem.id));
+        const productDoc = await db.collection("packs").doc(cartItem.id).get();
         const productData = productDoc.data();
         
         if (productData) {
@@ -90,39 +90,39 @@ export async function POST(req: NextRequest) {
       customer_name: session.customer_details?.name || "",
       total_price: session.amount_total ? session.amount_total / 100 : 0,
       status: "paid",
-      created_at: Timestamp.now(),
+      created_at: new Date(),
       payment_id: session.payment_intent,
       orderItems: orderItems,
       userId: session.metadata?.userId || null,
       orderId: session.id,
     };
 
-    // Save order and get document ID
-    const orderRef = await addDoc(collection(db, "orders"), orderData);
+    // Save order and get document ID using server-side SDK
+    const orderRef = await db.collection("orders").add(orderData);
     const firestoreOrderId = orderRef.id;
 
     // Update orderData with correct orderId
-    await updateDoc(orderRef, { orderId: firestoreOrderId });
+    await orderRef.update({ orderId: firestoreOrderId });
 
     // Increment sales for each purchased item
     for (const item of orderItems) {
       if (item.type === "midi") {
-        const midiRef = doc(db, "midifiles", item.id);
+        const midiRef = db.collection("midifiles").doc(item.id);
         try {
-          await runTransaction(db, async (transaction) => {
+          await db.runTransaction(async (transaction) => {
             const midiDoc = await transaction.get(midiRef);
-            const currentSales = midiDoc.exists() && midiDoc.data().sales ? midiDoc.data().sales : 0;
+            const currentSales = midiDoc.exists && midiDoc.data()?.sales ? midiDoc.data()!.sales : 0;
             transaction.update(midiRef, { sales: currentSales + 1 });
           });
         } catch (err) {
           console.error(`Error updating sales for midi file ${item.id}:`, err);
         }
       } else if (item.type === "pack") {
-        const packRef = doc(db, "packs", item.id);
+        const packRef = db.collection("packs").doc(item.id);
         try {
-          await runTransaction(db, async (transaction) => {
+          await db.runTransaction(async (transaction) => {
             const packDoc = await transaction.get(packRef);
-            const currentSales = packDoc.exists() && packDoc.data().sales ? packDoc.data().sales : 0;
+            const currentSales = packDoc.exists && packDoc.data()?.sales ? packDoc.data()!.sales : 0;
             transaction.update(packRef, { sales: currentSales + 1 });
           });
         } catch (err) {
@@ -133,10 +133,10 @@ export async function POST(req: NextRequest) {
 
     // Add new files to user's owned files
     if (orderData.userId) {
-      const userRef = doc(db, "users", orderData.userId);
-      await runTransaction(db, async (transaction) => {
+      const userRef = db.collection("users").doc(orderData.userId);
+      await db.runTransaction(async (transaction) => {
         const userDoc = await transaction.get(userRef);
-        const currentOwnedFiles: OwnedFile[] = userDoc.exists() && userDoc.data().ownedFiles ? userDoc.data().ownedFiles : [];
+        const currentOwnedFiles: OwnedFile[] = userDoc.exists && userDoc.data()?.ownedFiles ? userDoc.data()!.ownedFiles : [];
         
         // Create a map of existing files to avoid duplicates
         const existingFilesMap = new Map(currentOwnedFiles.map((file: OwnedFile) => [file.id, file]));

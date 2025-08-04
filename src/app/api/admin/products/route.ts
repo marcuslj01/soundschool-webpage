@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { deletePack, getPacks } from '@/lib/firestore/pack';
-import { deleteMidi, getAllMidis } from '@/lib/firestore/midifiles';
-import { deleteFLP, getFLPs } from '@/lib/firestore/flp';
+import { deletePackServer, getPacksServer } from '@/lib/firestore/pack.server';
+import { deleteMidiServer, getAllMidisServer } from '@/lib/firestore/midifiles.server';
+import { deleteFLPServer, getFLPsServer } from '@/lib/firestore/flp.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -40,10 +40,10 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
 
     if (type === 'packs') {
-      const packs = await getPacks();
+      const packs = await getPacksServer();
       
       // Convert Firestore Timestamps to ISO strings for JSON serialization
-      const packsWithFormattedDates = packs.map(pack => ({
+      const packsWithFormattedDates = packs.map((pack: { created_at: Date | string | null }) => ({
         ...pack,
         created_at: pack.created_at instanceof Date 
           ? pack.created_at.toISOString() 
@@ -52,10 +52,10 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(packsWithFormattedDates);
     } else if (type === 'midis') {
-      const midis = await getAllMidis();
+      const midis = await getAllMidisServer();
       
       // Convert Firestore Timestamps to ISO strings for JSON serialization
-      const midisWithFormattedDates = midis.map(midi => ({
+      const midisWithFormattedDates = midis.map((midi: { created_at: Date | string | null }) => ({
         ...midi,
         created_at: midi.created_at instanceof Date 
           ? midi.created_at.toISOString() 
@@ -64,10 +64,10 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(midisWithFormattedDates);
     } else if (type === 'flps') {
-      const flps = await getFLPs();
+      const flps = await getFLPsServer();
       
       // Convert Firestore Timestamps to ISO strings for JSON serialization
-      const flpsWithFormattedDates = flps.map(flp => ({
+      const flpsWithFormattedDates = flps.map((flp: { created_at: Date | string | null }) => ({
         ...flp,
         created_at: flp.created_at instanceof Date 
           ? flp.created_at.toISOString() 
@@ -188,11 +188,14 @@ export async function DELETE(request: NextRequest) {
     let success = false;
     
     if (type === 'packs') {
-      success = await deletePack(productId);
+      await deletePackServer(productId);
+      success = true;
     } else if (type === 'midis') {
-      success = await deleteMidi(productId);
+      await deleteMidiServer(productId);
+      success = true;
     } else if (type === 'flps') {
-      success = await deleteFLP(productId);
+      await deleteFLPServer(productId);
+      success = true;
     } else {
       return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 });
     }
