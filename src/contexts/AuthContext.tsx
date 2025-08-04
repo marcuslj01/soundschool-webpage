@@ -50,9 +50,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        console.log("Initializing auth, checking for redirect result..."); // Debug
+
         // Handle redirect result FIRST (before onAuthStateChanged)
         const result = await getRedirectResult(auth);
+        console.log("Redirect result:", result); // Debug
+
         if (result?.user) {
+          console.log("Found redirect result user:", result.user.email); // Debug
           await createOrUpdateUser(result.user);
           const adminStatus = await checkAdminStatus(result.user);
           setIsAdmin(adminStatus);
@@ -64,8 +69,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("Error getting redirect result:", error);
       }
 
+      console.log("No redirect result, setting up onAuthStateChanged..."); // Debug
+
       // Only set up onAuthStateChanged if no redirect result
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        console.log("onAuthStateChanged triggered, user:", user?.email); // Debug
+
         if (user) {
           try {
             await createOrUpdateUser(user);
@@ -102,9 +111,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           navigator.userAgent
         );
 
+      console.log("Signing in with Google, isMobile:", isMobile); // Debug
+
       if (isMobile) {
+        console.log("Using signInWithRedirect for mobile"); // Debug
         await signInWithRedirect(auth, googleProvider);
       } else {
+        console.log("Using signInWithPopup for desktop"); // Debug
         await signInWithPopup(auth, googleProvider);
       }
     } catch (error) {
@@ -118,6 +131,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         if (error.code === "auth/unauthorized-domain") {
           console.error("Domain not authorized for Firebase Auth");
+          return;
+        }
+        if (error.code === "auth/popup-blocked") {
+          console.error("Popup blocked by browser");
           return;
         }
       }
