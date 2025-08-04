@@ -26,8 +26,13 @@ export default function EmailAuthForm({
   const [resetEmail, setResetEmail] = useState("");
   const [resetSent, setResetSent] = useState(false);
 
-  const { signInWithEmail, signUpWithEmail, resetPassword, updateUserInState } =
-    useAuth();
+  const {
+    signInWithEmail,
+    signUpWithEmail,
+    resetPassword,
+    updateUserInState,
+    refreshUser,
+  } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +72,9 @@ export default function EmailAuthForm({
           newsletter,
           marketing,
         });
+
+        // Refresh user data to ensure displayName is available
+        await refreshUser();
       } else {
         // Login
         await signInWithEmail(email, password);
