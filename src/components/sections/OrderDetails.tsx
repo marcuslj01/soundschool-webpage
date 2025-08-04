@@ -152,17 +152,16 @@ export default function OrderDetails({ order }: { order: Order }) {
                         item.originalPrice !== null && (
                           <p className="text-sm text-gray-400 mt-1">
                             <span className="line-through">
-                              ${item.originalPrice.toFixed(2)}
+                              ${item.originalPrice}
                             </span>
                             <span className="text-green-400 ml-2">
-                              You saved $
-                              {(item.originalPrice - item.price).toFixed(2)}!
+                              You saved ${item.originalPrice - item.price}!
                             </span>
                           </p>
                         )}
                     </div>
                     <p className="flex-none font-medium text-white text-sm lg:text-lg">
-                      ${item.price.toFixed(2)}
+                      ${item.price}
                     </p>
                     <button
                       onClick={() => handleDownload(item)}
