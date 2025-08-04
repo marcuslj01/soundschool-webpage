@@ -3,7 +3,8 @@ export interface OrderItem {
     type: "midi" | "pack";
     title: string;
     price: number;
+    originalPrice?: number | null;
+    isDiscounted?: boolean;
     previewUrl: string;
     downloadUrl: string;
-    // TODO: Add discounted boolean?
 }
