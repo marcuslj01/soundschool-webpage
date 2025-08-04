@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Badge from "@/components/ui/Badge";
 import FLPButton from "@/components/ui/FLPButton";
+import SimilarProducts from "@/components/sections/SimilarProducts";
 
 interface FLPPageProps {
   searchParams: Promise<{ id?: string }>;
@@ -130,6 +131,7 @@ export default async function FLPPage({ searchParams }: FLPPageProps) {
           </div>
         </div>
       </div>
+      <SimilarProducts flp={flp} />
     </div>
   );
 }
