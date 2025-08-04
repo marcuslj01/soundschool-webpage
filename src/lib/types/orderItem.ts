@@ -1,6 +1,6 @@
 export interface OrderItem {
     id: string;
-    type: "midi" | "pack";
+    type: "midi" | "pack" | "flp";
     title: string;
     price: number;
     originalPrice?: number | null;
