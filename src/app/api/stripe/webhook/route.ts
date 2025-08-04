@@ -110,6 +110,32 @@ export async function POST(req: NextRequest) {
         } else {
           console.log("No product data found for Pack ID:", cartItem.id); // Debug
         }
+      } else if (cartItem.type === "flp") {
+        // Get product data from flps collection
+        const productDoc = await db.collection("flps").doc(cartItem.id).get();
+        const productData = productDoc.data();
+        
+        console.log("FLP product data:", productData); // Debug
+        
+        if (productData) {
+          const actualPrice = cartItem.is_discounted && cartItem.discount_price ? cartItem.discount_price : cartItem.price;
+          
+          const orderItem: OrderItem = {
+            id: cartItem.id,
+            type: cartItem.type,
+            title: cartItem.title,
+            price: actualPrice,
+            originalPrice: cartItem.is_discounted ? cartItem.price : null,
+            isDiscounted: cartItem.is_discounted || false,
+            previewUrl: productData.preview_url,
+            downloadUrl: productData.download_url,
+          };
+          
+          orderItems.push(orderItem);
+          console.log("Added FLP order item:", orderItem); // Debug
+        } else {
+          console.log("No product data found for FLP ID:", cartItem.id); // Debug
+        }
       }
     }
 
@@ -157,6 +183,17 @@ export async function POST(req: NextRequest) {
           });
         } catch (err) {
           console.error(`Error updating sales for pack ${item.id}:`, err);
+        }
+      } else if (item.type === "flp") {
+        const flpRef = db.collection("flps").doc(item.id);
+        try {
+          await db.runTransaction(async (transaction) => {
+            const flpDoc = await transaction.get(flpRef);
+            const currentSales = flpDoc.exists && flpDoc.data()?.sales ? flpDoc.data()!.sales : 0;
+            transaction.update(flpRef, { sales: currentSales + 1 });
+          });
+        } catch (err) {
+          console.error(`Error updating sales for flp ${item.id}:`, err);
         }
       }
     }
