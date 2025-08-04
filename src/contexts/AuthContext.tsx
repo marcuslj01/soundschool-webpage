@@ -48,76 +48,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        console.log("Initializing auth, checking for redirect result..."); // Debug
-
-        // Handle redirect result FIRST (before onAuthStateChanged)
-        const result = await getRedirectResult(auth);
-        console.log("Redirect result:", result); // Debug
-
-        // Send debug info to server
-        try {
-          await fetch("/api/debug-auth", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "redirect_result_check",
-              data: {
-                hasResult: !!result,
-                hasUser: !!result?.user,
-                userEmail: result?.user?.email,
-              },
-            }),
-          });
-        } catch (debugError) {
-          console.error("Debug logging failed:", debugError);
-        }
-
+    // Handle redirect result
+    getRedirectResult(auth)
+      .then((result) => {
         if (result?.user) {
-          console.log("Found redirect result user:", result.user.email); // Debug
-          await createOrUpdateUser(result.user);
-          const adminStatus = await checkAdminStatus(result.user);
-          setIsAdmin(adminStatus);
-          setUser(result.user);
-          setLoading(false);
-          return; // Don't continue with onAuthStateChanged if we have a redirect result
+          createOrUpdateUser(result.user);
         }
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error("Error getting redirect result:", error);
-      }
-
-      console.log("No redirect result, setting up onAuthStateChanged..."); // Debug
-
-      // Only set up onAuthStateChanged if no redirect result
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        console.log("onAuthStateChanged triggered, user:", user?.email); // Debug
-
-        if (user) {
-          try {
-            await createOrUpdateUser(user);
-            const adminStatus = await checkAdminStatus(user);
-            setIsAdmin(adminStatus);
-
-            if (!user.displayName) {
-              console.log("User has no displayName, attempting to refresh...");
-              await user.getIdToken(true);
-              setUser({ ...user });
-            }
-          } catch (error) {
-            console.error("Error saving user to Firestore:", error);
-          }
-        } else {
-          setIsAdmin(false);
-        }
-        setUser(user);
-        setLoading(false);
       });
 
-      return unsubscribe;
-    };
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          await createOrUpdateUser(user);
+          // Check admin status
+          const adminStatus = await checkAdminStatus(user);
+          setIsAdmin(adminStatus);
 
-    initializeAuth();
+          // If user has no displayName, try to get it from Firestore
+          if (!user.displayName) {
+            console.log("User has no displayName, attempting to refresh...");
+            // Force a token refresh to get updated user data
+            await user.getIdToken(true);
+            // Update user state with refreshed data
+            setUser({ ...user });
+          }
+        } catch (error) {
+          console.error("Error saving user to Firestore:", error);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+      setUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
   }, []);
 
   // Google sign in
@@ -129,72 +97,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           navigator.userAgent
         );
 
-      console.log("Signing in with Google, isMobile:", isMobile); // Debug
-
-      // Send debug info to server
-      try {
-        await fetch("/api/debug-auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "google_signin_attempt",
-            data: { isMobile, userAgent: navigator.userAgent },
-          }),
-        });
-      } catch (debugError) {
-        console.error("Debug logging failed:", debugError);
-      }
-
-      // Use appropriate method based on device (best practices)
       if (isMobile) {
-        console.log("Using signInWithRedirect for mobile (best practice)"); // Debug
-
-        // Send redirect attempt debug info
-        try {
-          await fetch("/api/debug-auth", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "google_signin_redirect_attempt",
-              data: { method: "redirect" },
-            }),
-          });
-        } catch (debugError) {
-          console.error("Debug logging failed:", debugError);
-        }
-
-        try {
-          console.log("About to call signInWithRedirect..."); // Debug
-          await signInWithRedirect(auth, googleProvider);
-          console.log("signInWithRedirect called successfully"); // Debug
-        } catch (redirectError) {
-          console.log("signInWithRedirect failed:", redirectError);
-
-          // Send redirect error debug info
-          try {
-            await fetch("/api/debug-auth", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                action: "google_signin_redirect_error",
-                data: {
-                  error:
-                    redirectError instanceof Error
-                      ? redirectError.message
-                      : String(redirectError),
-                  errorCode:
-                    redirectError instanceof Error && "code" in redirectError
-                      ? redirectError.code
-                      : "unknown",
-                },
-              }),
-            });
-          } catch (debugError) {
-            console.error("Debug logging failed:", debugError);
-          }
-        }
+        await signInWithRedirect(auth, googleProvider);
       } else {
-        console.log("Using signInWithPopup for desktop"); // Debug
         await signInWithPopup(auth, googleProvider);
       }
     } catch (error) {
@@ -208,10 +113,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         if (error.code === "auth/unauthorized-domain") {
           console.error("Domain not authorized for Firebase Auth");
-          return;
-        }
-        if (error.code === "auth/popup-blocked") {
-          console.error("Popup blocked by browser");
           return;
         }
       }
