@@ -3,9 +3,16 @@ import { useEffect, useState } from "react";
 import { getCartItems } from "@/lib/cart";
 
 export function useCartCount() {
-  const [count, setCount] = useState(() => getCartItems().length);
+  const [count, setCount] = useState(() => {
+    // Only run on client side to avoid hydration mismatch
+    if (typeof window === 'undefined') return 0;
+    return getCartItems().length;
+  });
 
   useEffect(() => {
+    // Only run on client side to avoid hydration mismatch
+    if (typeof window === 'undefined') return;
+
     const update = () => setCount(getCartItems().length);
 
     // Listen for custom event

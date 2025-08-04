@@ -3,7 +3,9 @@ import { CartItem } from "./types/cartItem";
 const CART_KEY = "cartItems";
 
 function fireCartUpdated() {
-  window.dispatchEvent(new Event("cart-updated"));
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("cart-updated"));
+  }
 }
 
 // Get all cart items
@@ -21,7 +23,9 @@ export function addToCart(item: CartItem) {
   // Check if item already exists in cart
   if (!cartItems.find((i: CartItem) => i.id === item.id && i.type === item.type)) {
     cartItems.push(item);
-    localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+    if (typeof window !== "undefined") {
+      localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+    }
     fireCartUpdated();
   }
 }
@@ -30,7 +34,9 @@ export function addToCart(item: CartItem) {
 export function removeFromCart(id: string) {
   const cartItems = getCartItems();
   const updatedItems = cartItems.filter((i: CartItem) => i.id !== id);
-  localStorage.setItem(CART_KEY, JSON.stringify(updatedItems));
+  if (typeof window !== "undefined") {
+    localStorage.setItem(CART_KEY, JSON.stringify(updatedItems));
+  }
   fireCartUpdated();
 }
 
