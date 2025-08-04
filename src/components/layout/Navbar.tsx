@@ -45,6 +45,9 @@ function useScrollDirection() {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    // Only run on client side to avoid hydration mismatch
+    if (typeof window === "undefined") return;
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
@@ -93,9 +96,11 @@ export default function Navbar() {
   console.log("Is the user an admin?", isAdmin);
 
   const handleLogout = () => {
-    localStorage.removeItem("cartItems");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("cartItems");
+      window.location.href = "/";
+    }
     logout();
-    window.location.href = "/";
   };
 
   useEffect(() => {
@@ -109,7 +114,7 @@ export default function Navbar() {
 
   // Update cartItems when cart changes
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isMounted || typeof window === "undefined") return;
     const update = () => setCartItems(getCartItems());
     update();
     window.addEventListener("cart-updated", update);
@@ -123,6 +128,8 @@ export default function Navbar() {
 
   // Close dropdown when clicking outside of dropdown
   useEffect(() => {
+    if (typeof document === "undefined") return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (showCartDropdown && !target.closest(".cart-dropdown-container")) {
