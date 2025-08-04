@@ -1,8 +1,12 @@
 [
-    {
-      "origin": ["http://localhost:3000"],
-      "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
-      "maxAgeSeconds": 3600,
-      "responseHeader": ["Content-Type", "Authorization"]
-    }
-  ]
+  {
+    "origin": [
+      "http://localhost:3000",
+      "https://soundschool.vercel.app",
+      "https://www.soundschoolmidis.com"
+    ],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization"]
+  }
+]
