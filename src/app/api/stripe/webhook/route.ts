@@ -37,8 +37,13 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.type === "checkout.session.completed") {
-    console.log("Processing checkout.session.completed event");
     const session = event.data.object as Stripe.Checkout.Session;
+    
+    console.log("=== WEBHOOK PROCESSING START ===");
+    console.log("Timestamp:", new Date().toISOString());
+    console.log("Session ID:", session.id);
+    console.log("Payment Intent:", session.payment_intent);
+    console.log("Event created:", event.created);
     
     console.log("Full session object:", JSON.stringify(session, null, 2)); // Debug
     console.log("Session metadata:", session.metadata); // Debug

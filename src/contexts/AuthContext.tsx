@@ -56,6 +56,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await getRedirectResult(auth);
         console.log("Redirect result:", result); // Debug
 
+        // Send debug info to server
+        try {
+          await fetch("/api/debug-auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "redirect_result_check",
+              data: {
+                hasResult: !!result,
+                hasUser: !!result?.user,
+                userEmail: result?.user?.email,
+              },
+            }),
+          });
+        } catch (debugError) {
+          console.error("Debug logging failed:", debugError);
+        }
+
         if (result?.user) {
           console.log("Found redirect result user:", result.user.email); // Debug
           await createOrUpdateUser(result.user);
@@ -112,6 +130,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
 
       console.log("Signing in with Google, isMobile:", isMobile); // Debug
+
+      // Send debug info to server
+      try {
+        await fetch("/api/debug-auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "google_signin_attempt",
+            data: { isMobile, userAgent: navigator.userAgent },
+          }),
+        });
+      } catch (debugError) {
+        console.error("Debug logging failed:", debugError);
+      }
 
       if (isMobile) {
         console.log("Using signInWithRedirect for mobile"); // Debug
