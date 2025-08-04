@@ -40,22 +40,30 @@ export async function POST(req: NextRequest) {
     console.log("Processing checkout.session.completed event");
     const session = event.data.object as Stripe.Checkout.Session;
     
+    console.log("Full session object:", JSON.stringify(session, null, 2)); // Debug
+    console.log("Session metadata:", session.metadata); // Debug
+    
     const email =
       session.customer_email ||
       (session.customer_details && session.customer_details.email) ||
       null;
     const cartItems = session.metadata?.cart ? JSON.parse(session.metadata.cart) as CartItem[] : [];
 
+    console.log("Parsed cart items:", cartItems); // Debug
+
     // Get full product data for each item using server-side SDK
     const db = getFirestore();
     const orderItems: OrderItem[] = [];
     
     for (const cartItem of cartItems) {
+      console.log("Processing cart item:", cartItem); // Debug
       
       if (cartItem.type === "midi") {
         // Get product data from midifiles collection
         const productDoc = await db.collection("midifiles").doc(cartItem.id).get();
         const productData = productDoc.data();
+        
+        console.log("MIDI product data:", productData); // Debug
         
         if (productData) {
           const actualPrice = cartItem.is_discounted && cartItem.discount_price ? cartItem.discount_price : cartItem.price;
@@ -72,11 +80,16 @@ export async function POST(req: NextRequest) {
           };
           
           orderItems.push(orderItem);
+          console.log("Added MIDI order item:", orderItem); // Debug
+        } else {
+          console.log("No product data found for MIDI ID:", cartItem.id); // Debug
         }
       } else if (cartItem.type === "pack") {
         // Get product data from packs collection
         const productDoc = await db.collection("packs").doc(cartItem.id).get();
         const productData = productDoc.data();
+        
+        console.log("Pack product data:", productData); // Debug
         
         if (productData) {
           const actualPrice = cartItem.is_discounted && cartItem.discount_price ? cartItem.discount_price : cartItem.price;
@@ -93,9 +106,14 @@ export async function POST(req: NextRequest) {
           };
           
           orderItems.push(orderItem);
+          console.log("Added Pack order item:", orderItem); // Debug
+        } else {
+          console.log("No product data found for Pack ID:", cartItem.id); // Debug
         }
       }
     }
+
+    console.log("Final orderItems array:", orderItems); // Debug
     
     const orderData = {
       customer_email: email,
