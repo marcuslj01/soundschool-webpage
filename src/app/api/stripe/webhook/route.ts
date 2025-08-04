@@ -127,8 +127,8 @@ export async function POST(req: NextRequest) {
             price: actualPrice,
             originalPrice: cartItem.is_discounted ? cartItem.price : null,
             isDiscounted: cartItem.is_discounted || false,
-            previewUrl: productData.preview_url,
-            downloadUrl: productData.download_url,
+            previewUrl: productData.preview_url || "",
+            downloadUrl: productData.file_url || "",
           };
           
           orderItems.push(orderItem);
@@ -142,15 +142,15 @@ export async function POST(req: NextRequest) {
     console.log("Final orderItems array:", orderItems); // Debug
     
     const orderData = {
-      customer_email: email,
+      customer_email: email || "",
       customer_name: session.customer_details?.name || "",
       total_price: session.amount_total ? session.amount_total / 100 : 0,
       status: "paid",
       created_at: new Date(),
-      payment_id: session.payment_intent,
+      payment_id: session.payment_intent || "",
       orderItems: orderItems,
       userId: session.metadata?.userId || null,
-      orderId: session.id,
+      orderId: session.id || "",
     };
 
     // Save order and get document ID using server-side SDK
