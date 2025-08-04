@@ -78,7 +78,25 @@ export default function LoginPage() {
           {/* Google Authentication */}
           <div className="grid grid-cols-1 gap-4">
             <button
-              onClick={signInWithGoogle}
+              onClick={async () => {
+                console.log("Google button clicked!"); // Debug
+
+                // Send debug info to server
+                try {
+                  await fetch("/api/debug-auth", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      action: "google_button_clicked",
+                      data: { userAgent: navigator.userAgent },
+                    }),
+                  });
+                } catch (debugError) {
+                  console.error("Debug logging failed:", debugError);
+                }
+
+                await signInWithGoogle();
+              }}
               className="flex w-full items-center justify-center gap-3 rounded-md bg-white/5 px-3 py-2 text-sm font-semibold text-white ring-1 ring-white/10 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 transition-all duration-300 hover:cursor-pointer"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
