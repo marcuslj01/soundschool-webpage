@@ -51,7 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Handle redirect result
     getRedirectResult(auth)
       .then((result) => {
+        console.log("Redirect result received:", result); // Debug
         if (result?.user) {
+          console.log("Found user from redirect:", result.user.email); // Debug
           createOrUpdateUser(result.user);
         }
       })
@@ -60,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("onAuthStateChanged triggered, user:", user?.email); // Debug
       if (user) {
         try {
           await createOrUpdateUser(user);
@@ -92,12 +95,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     try {
       // Check if we're on mobile or Safari (which has stricter popup blocking)
+      // Use typeof window check to avoid hydration mismatch
       const isMobile =
+        typeof window !== "undefined" &&
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
         );
 
       const isSafari =
+        typeof window !== "undefined" &&
         /Safari/.test(navigator.userAgent) &&
         !/Chrome/.test(navigator.userAgent);
 
@@ -126,6 +132,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error(
             "Popup blocked by browser - this should not happen with redirect"
           );
+          return;
+        }
+        if (error.code === "auth/redirect-cancelled-by-user") {
+          console.log("User cancelled the redirect");
+          return;
+        }
+        if (error.code === "auth/redirect-operation-pending") {
+          console.log("Redirect operation already in progress");
           return;
         }
       }
