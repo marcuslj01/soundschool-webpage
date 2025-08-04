@@ -6,8 +6,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getUsersCount } from '@/lib/firestore/user';
-import { getOrdersCountAndRevenue } from '@/lib/firestore/order';
+import { getUsersCountServer } from '@/lib/firestore/user.server';
+import { getOrdersCountAndRevenueServer } from '@/lib/firestore/order.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -43,8 +43,8 @@ export async function GET(request: NextRequest) {
 
     // User is admin, fetch stats
     const [users, orders] = await Promise.all([
-      getUsersCount(),
-      getOrdersCountAndRevenue(),
+      getUsersCountServer(),
+      getOrdersCountAndRevenueServer(),
     ]);
 
     return NextResponse.json({

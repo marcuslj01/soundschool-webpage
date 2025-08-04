@@ -1,5 +1,6 @@
 // Server-side only Firebase Admin SDK operations
 import { getFirestore } from 'firebase-admin/firestore';
+import { Order } from '../types/order';
 
 export async function getOrdersByUserIdServer(userId: string) {
   const db = getFirestore();
@@ -14,4 +15,38 @@ export async function getOrdersByUserIdServer(userId: string) {
       created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
     };
   });
+}
+
+export async function getAllOrdersServer() {
+  const db = getFirestore();
+  const ordersCollection = db.collection("orders");
+  const ordersSnapshot = await ordersCollection.get();
+  
+  return ordersSnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      id: doc.id,
+      created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+    };
+  });
+}
+
+export async function getOrdersCountAndRevenueServer(): Promise<{ count: number, revenue: number }> {
+  const db = getFirestore();
+  const ordersCollection = db.collection("orders");
+  const ordersSnapshot = await ordersCollection.get();
+  
+  const orders = ordersSnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      id: doc.id,
+      created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+    } as Order;
+  });
+  
+  const count = orders.length;
+  const revenue = orders.reduce((acc, order) => acc + order.total_price, 0);
+  return { count, revenue };
 } 

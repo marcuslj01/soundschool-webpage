@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAllUsers } from '@/lib/firestore/user';
+import { getAllUsersServer } from '@/lib/firestore/user.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -35,11 +35,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all users from Firestore
-    const users = await getAllUsers();
+    const users = await getAllUsersServer();
     
     // Get custom claims for each user
     const usersWithClaims = await Promise.all(
-      users.map(async (user) => {
+      users.map(async (user: { uid: string; createdAt: Date | string | null; lastLoginAt: Date | string | null }) => {
         try {
           const userRecord = await auth().getUser(user.uid);
           
