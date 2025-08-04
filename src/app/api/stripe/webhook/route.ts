@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, Timestamp, doc, getDoc, runTransaction } from "firebase/firestore";
+import { collection, addDoc, Timestamp, doc, getDoc, runTransaction, updateDoc } from "firebase/firestore";
 import { OrderItem } from "@/lib/types/orderItem";
 import { CartItem } from "@/lib/types/cartItem";
 import { Resend } from "resend";
@@ -84,9 +84,15 @@ export async function POST(req: NextRequest) {
       payment_id: session.payment_intent,
       orderItems: orderItems,
       userId: session.metadata?.userId || null,
+      orderId: session.id,
     };
 
-    await addDoc(collection(db, "orders"), orderData);
+    // Save order and get document ID
+    const orderRef = await addDoc(collection(db, "orders"), orderData);
+    const firestoreOrderId = orderRef.id;
+
+    // Update orderData with correct orderId
+    await updateDoc(orderRef, { orderId: firestoreOrderId });
 
     // Increment sales for each purchased item
     for (const item of orderItems) {
@@ -171,7 +177,7 @@ export async function POST(req: NextRequest) {
               <li><strong>Email:</strong> ${orderData.customer_email}</li>
               <li><strong>Total:</strong> $${orderData.total_price}</li>
               <li><strong>Status:</strong> ${orderData.status}</li>
-              <li><strong>Order ID:</strong> ${orderData.payment_id}</li>
+              <li><strong>Order ID:</strong> ${firestoreOrderId}</li>
               </ul>
               <h3 style="color: #222; margin-bottom: 12px;">Your products</h3>
               <ul style="list-style: none; padding: 0;">
@@ -200,7 +206,7 @@ export async function POST(req: NextRequest) {
               <ul style="list-style: none; padding: 0; margin: 0 0 24px 0;">
                 <li><strong>Customer name:</strong> ${orderData.customer_name}</li>
                 <li><strong>Customer email:</strong> ${orderData.customer_email}</li>
-                <li><strong>Order ID:</strong> ${orderData.payment_id}</li>
+                <li><strong>Order ID:</strong> ${firestoreOrderId}</li> 
                 <li><strong>Status:</strong> ${orderData.status}</li>
                 <li><strong>Total:</strong> $${orderData.total_price}</li>
                 <li><strong>Products:</strong> ${orderItems.map((item) => item.title).join(", ")}</li>
