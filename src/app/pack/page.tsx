@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import PacksButtons from "@/components/ui/PacksButtons";
 import BackButton from "@/components/ui/BackButton";
 import Badge from "@/components/ui/Badge";
+import PlayButton from "@/components/ui/PlayButton";
 import SimilarProducts from "@/components/sections/SimilarProducts";
 
 interface PackPageProps {
@@ -71,6 +72,12 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                     ))}
                   </div>
                 </div>
+
+                {pack.preview_url && (
+                  <div className="mb-4">
+                    <PlayButton previewUrl={pack.preview_url} />
+                  </div>
+                )}
 
                 <h2 id="information-heading" className="sr-only">
                   pack information

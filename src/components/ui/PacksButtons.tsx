@@ -82,7 +82,7 @@ function PacksButtons({ pack }: PackButtonsProps) {
   }
 
   return (
-    <div className="max-w-sm">
+    <div className="w-full">
       {isAdded ? (
         <button
           className="bg-primary/20 text-white rounded-md w-full px-4 py-2 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
