@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.type === "checkout.session.completed") {
+    console.log("Processing checkout.session.completed event");
     const session = event.data.object as Stripe.Checkout.Session;
     
     const email =
@@ -45,14 +46,20 @@ export async function POST(req: NextRequest) {
         const productData = productDoc.data();
         
         if (productData) {
-          orderItems.push({
+          const actualPrice = cartItem.is_discounted && cartItem.discount_price ? cartItem.discount_price : cartItem.price;
+          
+          const orderItem: OrderItem = {
             id: cartItem.id,
             type: cartItem.type,
             title: cartItem.title,
-            price: cartItem.price,
+            price: actualPrice,
+            originalPrice: cartItem.is_discounted ? cartItem.price : null,
+            isDiscounted: cartItem.is_discounted || false,
             previewUrl: productData.preview_url,
             downloadUrl: productData.file_url,
-          });
+          };
+          
+          orderItems.push(orderItem);
         }
       } else if (cartItem.type === "pack") {
         // Get product data from packs collection
@@ -60,17 +67,20 @@ export async function POST(req: NextRequest) {
         const productData = productDoc.data();
         
         if (productData) {
-          const orderItem = {
+          const actualPrice = cartItem.is_discounted && cartItem.discount_price ? cartItem.discount_price : cartItem.price;
+          
+          const orderItem: OrderItem = {
             id: cartItem.id,
             type: cartItem.type,
             title: cartItem.title,
-            price: cartItem.price,
+            price: actualPrice,
+            originalPrice: cartItem.is_discounted ? cartItem.price : null,
+            isDiscounted: cartItem.is_discounted || false,
             previewUrl: productData.preview_url,
             downloadUrl: productData.download_url,
           };
           
           orderItems.push(orderItem);
-        } else {
         }
       }
     }

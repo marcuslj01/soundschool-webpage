@@ -147,9 +147,22 @@ export default function OrderDetails({ order }: { order: Order }) {
                       <h3 className="text-white font-semibold text-sm lg:text-lg">
                         {item.title}
                       </h3>
+                      {item.isDiscounted &&
+                        item.originalPrice &&
+                        item.originalPrice !== null && (
+                          <p className="text-sm text-gray-400 mt-1">
+                            <span className="line-through">
+                              ${item.originalPrice.toFixed(2)}
+                            </span>
+                            <span className="text-green-400 ml-2">
+                              You saved $
+                              {(item.originalPrice - item.price).toFixed(2)}!
+                            </span>
+                          </p>
+                        )}
                     </div>
                     <p className="flex-none font-medium text-white text-sm lg:text-lg">
-                      ${item.price}
+                      ${item.price.toFixed(2)}
                     </p>
                     <button
                       onClick={() => handleDownload(item)}
