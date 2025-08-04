@@ -49,4 +49,20 @@ export async function getOrdersCountAndRevenueServer(): Promise<{ count: number,
   const count = orders.length;
   const revenue = orders.reduce((acc, order) => acc + order.total_price, 0);
   return { count, revenue };
+}
+
+export async function getOrderServer(payment_id: string) {
+  const db = getFirestore();
+  const ordersCollection = db.collection("orders");
+  const querySnapshot = await ordersCollection.where("payment_id", "==", payment_id).get();
+  const doc = querySnapshot.docs[0];
+  
+  if (!doc) return null;
+  
+  const data = doc.data();
+  return {
+    ...data,
+    id: doc.id,
+    created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+  } as Order;
 } 

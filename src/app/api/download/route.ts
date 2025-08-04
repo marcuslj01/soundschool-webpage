@@ -1,11 +1,8 @@
 // /app/api/download/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getOwnedFiles } from "@/lib/firestore/user";
-import { getMidiById } from "@/lib/firestore/midifiles";
-import { getPack } from "@/lib/firestore/pack";
-import { getOrder } from "@/lib/firestore/order";
-import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+
+import { getOrderServer } from "@/lib/firestore/order.server";
+import { getFirestore } from 'firebase-admin/firestore';
 import { Order } from "@/lib/types/order";
 import { OrderItem } from "@/lib/types/orderItem";
 
@@ -22,33 +19,42 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Guest users must provide order information" }, { status: 400 });
     }
 
-    // Get file data first to verify it exists
+    // Get file data first to verify it exists using server-side SDK
+    const db = getFirestore();
     let downloadUrl: string;
     let fileName: string;
 
     if (fileType === "midi") {
-      const midi = await getMidiById(fileId);
-      if (!midi) {
+      const midiDoc = await db.collection("midifiles").doc(fileId).get();
+      if (!midiDoc.exists) {
         return NextResponse.json({ error: "File not found" }, { status: 404 });
       }
-      downloadUrl = midi.file_url;
-      fileName = midi.name;
+      const midiData = midiDoc.data()!;
+      downloadUrl = midiData.file_url;
+      fileName = midiData.name;
     } else if (fileType === "pack") {
-      const pack = await getPack(fileId);
-      if (!pack) {
+      const packDoc = await db.collection("packs").doc(fileId).get();
+      if (!packDoc.exists) {
         return NextResponse.json({ error: "File not found" }, { status: 404 });
       }
-      downloadUrl = pack.download_url;
-      fileName = pack.name;
+      const packData = packDoc.data()!;
+      downloadUrl = packData.download_url;
+      fileName = packData.name;
     } else {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }
 
     // For registered users, check if they own the file
     if (userId) {
-      const ownedFiles = await getOwnedFiles(userId);
+      const userDoc = await db.collection("users").doc(userId).get();
+      if (!userDoc.exists) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+      
+      const userData = userDoc.data()!;
+      const ownedFiles = userData.ownedFiles || [];
       const ownsFile = ownedFiles.some(
-        (file) => file.id === fileId && file.type === fileType
+        (file: { id: string; type: string }) => file.id === fileId && file.type === fileType
       );
 
       if (!ownsFile) {
@@ -59,20 +65,20 @@ export async function POST(req: NextRequest) {
       let order;
       
       if (orderId) {
-        // Get order by document ID
-        const orderDoc = await getDoc(doc(db, "orders", orderId));
-        if (!orderDoc.exists()) {
+        // Get order by document ID using server-side SDK
+        const orderDoc = await db.collection("orders").doc(orderId).get();
+        if (!orderDoc.exists) {
           return NextResponse.json({ error: "Order not found" }, { status: 404 });
         }
-        const data = orderDoc.data();
+        const data = orderDoc.data()!;
         order = {
           ...data,
           id: orderDoc.id,
           created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
         } as Order;
       } else if (paymentId) {
-        // Get order by payment_id
-        order = await getOrder(paymentId);
+        // Get order by payment_id using server-side function
+        order = await getOrderServer(paymentId);
       }
       
       if (!order) {
