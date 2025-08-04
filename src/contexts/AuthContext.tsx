@@ -27,6 +27,7 @@ interface AuthContextType {
   signUpWithEmail: (email: string, password: string) => Promise<UserCredential>;
   resetPassword: (email: string) => Promise<void>;
   updateUserInState: (updatedUser: User) => void;
+  refreshUser: () => Promise<void>;
 }
 
 // Define AuthContext with correct type
@@ -36,6 +37,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // Function to refresh user data
+  const refreshUser = async () => {
+    if (auth.currentUser) {
+      // Force a token refresh to get updated user data
+      await auth.currentUser.getIdToken(true);
+      setUser({ ...auth.currentUser });
+    }
+  };
 
   useEffect(() => {
     // Handle redirect result
@@ -56,6 +66,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Check admin status
           const adminStatus = await checkAdminStatus(user);
           setIsAdmin(adminStatus);
+
+          // If user has no displayName, try to get it from Firestore
+          if (!user.displayName) {
+            console.log("User has no displayName, attempting to refresh...");
+            // Force a token refresh to get updated user data
+            await user.getIdToken(true);
+            // Update user state with refreshed data
+            setUser({ ...user });
+          }
         } catch (error) {
           console.error("Error saving user to Firestore:", error);
         }
@@ -157,6 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUpWithEmail,
     resetPassword,
     updateUserInState,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
