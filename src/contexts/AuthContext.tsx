@@ -145,9 +145,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("Debug logging failed:", debugError);
       }
 
+      // Try popup first, fallback to redirect on mobile
       if (isMobile) {
-        console.log("Using signInWithRedirect for mobile"); // Debug
-        await signInWithRedirect(auth, googleProvider);
+        try {
+          console.log("Trying signInWithPopup on mobile"); // Debug
+          const result = await signInWithPopup(auth, googleProvider);
+          console.log("Popup successful on mobile:", result.user.email);
+
+          // Send success debug info
+          try {
+            await fetch("/api/debug-auth", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "google_signin_success",
+                data: { method: "popup", userEmail: result.user.email },
+              }),
+            });
+          } catch (debugError) {
+            console.error("Debug logging failed:", debugError);
+          }
+
+          return;
+        } catch (popupError) {
+          console.log("Popup failed on mobile, trying redirect:", popupError);
+
+          // Send fallback debug info
+          try {
+            await fetch("/api/debug-auth", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "google_signin_fallback",
+                data: {
+                  method: "redirect",
+                  error:
+                    popupError instanceof Error
+                      ? popupError.message
+                      : String(popupError),
+                },
+              }),
+            });
+          } catch (debugError) {
+            console.error("Debug logging failed:", debugError);
+          }
+
+          // Fallback to redirect
+          await signInWithRedirect(auth, googleProvider);
+        }
       } else {
         console.log("Using signInWithPopup for desktop"); // Debug
         await signInWithPopup(auth, googleProvider);
