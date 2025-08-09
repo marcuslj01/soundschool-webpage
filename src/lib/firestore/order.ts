@@ -1,7 +1,7 @@
 // get order from firestore based on payment_intent (payment_id)
 
 import { db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { Order } from "../types/order";
 
 export async function getOrder(payment_id: string) {
@@ -22,7 +22,11 @@ export async function getOrder(payment_id: string) {
 // Client-side version of getOrdersByUserId
 export async function getOrdersByUserId(userId: string) {
   const ordersCollection = collection(db, "orders");
-  const q = query(ordersCollection, where("userId", "==", userId));
+  const q = query(
+    ordersCollection,
+    where("userId", "==", userId),
+    orderBy("created_at", "desc")
+  );
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => {
     const data = doc.data();
