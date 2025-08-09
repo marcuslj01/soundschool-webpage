@@ -281,7 +281,7 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-400 mt-1">
                 {isEmailUser
                   ? "Your profile information is managed through your account settings."
-                  : "To change your profile picture or name, please update your Google account."}
+                  : "To change your name, please update your Google account."}
               </p>
             </div>
           </div>
