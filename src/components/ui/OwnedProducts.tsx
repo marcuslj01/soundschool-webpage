@@ -2,6 +2,7 @@
 
 import { Midi } from "@/lib/types/midi";
 import { Pack } from "@/lib/types/pack";
+import { FLP } from "@/lib/types/FLP";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import Badge from "./Badge";
@@ -238,7 +239,7 @@ export function OwnedPackCard({ pack }: OwnedPackCardProps) {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-lg bg-black/10 border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300 w-full">
+    <div className="group relative overflow-hidden rounded-lg bg-black/10 border border-black/10 opacity-95 hover:opacity-100 transition-all duration-300 w-full">
       <Link href={`/pack?id=${pack.id}`}>
         <div className="relative">
           <Image
@@ -279,11 +280,95 @@ export function OwnedPackCard({ pack }: OwnedPackCardProps) {
             e.stopPropagation();
             handleDownload();
           }}
-          className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700 transition-colors text-xs sm:text-sm"
+          className="text-gray-200 text-sm font-bold px-4 bg-green-600 hover:bg-green-700 hover:cursor-pointer transition-all duration-300 rounded-md py-2 flex items-center gap-2"
         >
           <ArrowDownTrayIcon className="w-4 h-4" />
           <span className="hidden sm:block">Download</span>
         </button>
+      </div>
+    </div>
+  );
+}
+
+interface OwnedFLPCardProps {
+  flp: FLP;
+}
+
+export function OwnedFLPCard({ flp }: OwnedFLPCardProps) {
+  const { user } = useAuth();
+
+  const handleDownload = async () => {
+    if (!user) return;
+
+    try {
+      const response = await fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.uid,
+          fileId: flp.id,
+          fileType: "flp",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Download failed");
+      }
+
+      const { downloadUrl, fileName } = await response.json();
+
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download file. Please try again.");
+    }
+  };
+
+  return (
+    <div className="w-full bg-gray-900 rounded-lg transition-all duration-300">
+      <div className="mb-2">
+        <Link className="w-full h-fit" href={`/flp?id=${flp.id}`}>
+          <Image
+            src={flp.image_url}
+            alt={flp.name}
+            width={500}
+            height={500}
+            className="w-full h-fit object-contain"
+          />
+        </Link>
+        <div className="flex flex-row justify-between px-3 pt-4 h-[80px]">
+          <h3 className="text-gray-200 font-bold line-clamp-2 text-md sm:text-lg">
+            {flp.name}
+          </h3>
+          <div className="px-2">
+            <Badge text="OWNED" style="indigo" />
+          </div>
+        </div>
+        <p className="text-sm font-bold px-3 text-gray-400 ">FLP</p>
+
+        <div className="flex flex-row justify-between p-3 ">
+          <div className="flex flex-row gap-2 max-w-3/4">
+            {flp.tags?.map((tag) => (
+              <Badge key={tag} text={tag} style="blue" />
+            ))}
+          </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleDownload();
+            }}
+            className="text-gray-200 text-sm font-bold px-4 bg-green-600 hover:bg-green-700 hover:cursor-pointer transition-all duration-300 rounded-md py-2 flex items-center gap-2"
+          >
+            <ArrowDownTrayIcon className="w-4 h-4" />
+            <span className="hidden sm:block">Download</span>
+          </button>
+        </div>
       </div>
     </div>
   );
