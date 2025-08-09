@@ -88,8 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe;
   }, []);
 
-  // Google sign-in removed temporarily
-
   // Email and password sign in
   const signInWithEmail = async (
     email: string,
