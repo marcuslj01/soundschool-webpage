@@ -3,25 +3,22 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
-  signInWithRedirect,
   getRedirectResult,
   signOut,
   onAuthStateChanged,
-  signInWithPopup,
   getIdTokenResult,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   UserCredential,
 } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { createOrUpdateUser } from "@/lib/firestore/user";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAdmin: boolean;
-  signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string) => Promise<UserCredential>;
@@ -91,60 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe;
   }, []);
 
-  // Google sign in
-  const signInWithGoogle = async () => {
-    try {
-      // Check if we're on mobile or Safari (which has stricter popup blocking)
-      // Use typeof window check to avoid hydration mismatch
-      const isMobile =
-        typeof window !== "undefined" &&
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
-
-      const isSafari =
-        typeof window !== "undefined" &&
-        /Safari/.test(navigator.userAgent) &&
-        !/Chrome/.test(navigator.userAgent);
-
-      // Use redirect for mobile OR Safari (to avoid popup blocking issues)
-      if (isMobile || isSafari) {
-        console.log("Using signInWithRedirect (mobile or Safari detected)");
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        console.log("Using signInWithPopup (desktop Chrome/Firefox)");
-        await signInWithPopup(auth, googleProvider);
-      }
-    } catch (error) {
-      console.error("Error signing in with Google:", error);
-
-      // Handle specific errors
-      if (error && typeof error === "object" && "code" in error) {
-        if (error.code === "auth/popup-closed-by-user") {
-          console.log("User closed the popup window");
-          return;
-        }
-        if (error.code === "auth/unauthorized-domain") {
-          console.error("Domain not authorized for Firebase Auth");
-          return;
-        }
-        if (error.code === "auth/popup-blocked") {
-          console.error(
-            "Popup blocked by browser - this should not happen with redirect"
-          );
-          return;
-        }
-        if (error.code === "auth/redirect-cancelled-by-user") {
-          console.log("User cancelled the redirect");
-          return;
-        }
-        if (error.code === "auth/redirect-operation-pending") {
-          console.log("Redirect operation already in progress");
-          return;
-        }
-      }
-    }
-  };
+  // Google sign-in removed temporarily
 
   // Email and password sign in
   const signInWithEmail = async (
@@ -197,7 +141,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     loading,
     isAdmin,
-    signInWithGoogle,
     logout,
     signInWithEmail,
     signUpWithEmail,
