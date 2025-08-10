@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { claimFiles } from "@/lib/firestore/user";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 export default function ClaimFilesButton() {
@@ -20,7 +19,20 @@ export default function ClaimFilesButton() {
     setMessage(null);
 
     try {
-      const result = await claimFiles(user.uid, user.email);
+      const response = await fetch("/api/claim-files", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to claim files");
+      }
+
+      const result = await response.json();
 
       if (result.success) {
         setMessageType("success");
