@@ -10,9 +10,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  signInWithRedirect,
+  signInWithPopup,
   UserCredential,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, googleProvider } from "@/lib/firebase";
 import { createOrUpdateUser } from "@/lib/firestore/user";
 
 interface AuthContextType {
@@ -22,6 +24,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string) => Promise<UserCredential>;
+  signInWithGoogle: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updateUserInState: (updatedUser: User) => void;
   refreshUser: () => Promise<void>;
@@ -45,18 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // Handle redirect result
-    getRedirectResult(auth)
-      .then((result) => {
-        console.log("Redirect result received:", result); // Debug
-        if (result?.user) {
-          console.log("Found user from redirect:", result.user.email); // Debug
-          createOrUpdateUser(result.user);
-        }
-      })
-      .catch((error) => {
-        console.error("Error getting redirect result:", error);
-      });
+    setLoading(true);
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       console.log("onAuthStateChanged triggered, user:", user?.email); // Debug
@@ -74,14 +66,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await user.getIdToken(true);
             // Update user state with refreshed data
             setUser({ ...user });
+          } else {
+            setUser(user);
           }
         } catch (error) {
           console.error("Error saving user to Firestore:", error);
+          setUser(user);
         }
       } else {
         setIsAdmin(false);
+        setUser(null);
       }
-      setUser(user);
       setLoading(false);
     });
 
@@ -105,6 +100,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     await createOrUpdateUser(result.user);
     return result;
+  };
+
+  // Google sign in
+  const signInWithGoogle = async (): Promise<void> => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("Google sign in successful:", result.user.email);
+      await createOrUpdateUser(result.user);
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+      throw error;
+    }
   };
 
   // Update user in state
@@ -142,6 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     signInWithEmail,
     signUpWithEmail,
+    signInWithGoogle,
     resetPassword,
     updateUserInState,
     refreshUser,
