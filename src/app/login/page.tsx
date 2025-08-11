@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import EmailAuthForm from "@/components/ui/EmailAuthForm";
+import GoogleSignInButton from "@/components/ui/GoogleSignInButton";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -61,6 +62,21 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          {/* Google Sign In */}
+          <div className="mb-6">
+            <GoogleSignInButton />
+          </div>
+
+          {/* Divider */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-600" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
+            </div>
+          </div>
+
           {/* Email/Password Authentication */}
           <div className="mb-8">
             <EmailAuthForm mode={authMode} onModeChange={setAuthMode} />
