@@ -1,14 +1,21 @@
+"use client";
+
 import React from "react";
 import { XMarkIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { Order } from "@/lib/types/order";
 import { OrderItem } from "@/lib/types/orderItem";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
 
 interface OrderViewProps {
   order: Order;
   onClose: () => void;
 }
 
-function OrderView({ order, onClose }: OrderViewProps) {
+export default function OrderView({ order, onClose }: OrderViewProps) {
+  const { user } = useAuth();
+  const [downloadingItems, setDownloadingItems] = useState<Set<string>>(new Set());
+
   const formatDate = (date: Date | string | null) => {
     if (!date) return "Unknown";
 
@@ -47,8 +54,67 @@ function OrderView({ order, onClose }: OrderViewProps) {
       return `/midi?id=${product.id}`;
     } else if (type === "pack") {
       return `/pack?id=${product.id}`;
+    } else if (type === "flp") {
+      return `/flp?id=${product.id}`;
     }
     return "#";
+  };
+
+  const handleDownload = async (item: OrderItem) => {
+    // Add item to downloading set
+    setDownloadingItems((prev) => new Set(prev).add(item.id));
+
+    try {
+      const requestBody: {
+        fileId: string;
+        fileType: string;
+        userId?: string;
+        orderId?: string;
+        paymentId?: string;
+      } = {
+        fileId: item.id,
+        fileType: item.type,
+      };
+
+      // For registered users, send userId
+      if (user) {
+        requestBody.userId = user.uid;
+      } else {
+        // For guest users, send order information
+        requestBody.orderId = order.id;
+        requestBody.paymentId = order.payment_id;
+      }
+
+      const response = await fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error("Download failed");
+      }
+
+      const { downloadUrl, fileName } = await response.json();
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download file. Please try again.");
+    } finally {
+      // Remove item from downloading set
+      setDownloadingItems((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(item.id);
+        return newSet;
+      });
+    }
   };
 
   return (
@@ -217,16 +283,23 @@ function OrderView({ order, onClose }: OrderViewProps) {
                         {formatPrice(item.price)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <a
-                          href={item.downloadUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-                          title="Download file"
+                        <button
+                          onClick={() => handleDownload(item)}
+                          disabled={downloadingItems.has(item.id)}
+                          className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded ${
+                            downloadingItems.has(item.id)
+                              ? "text-green-700 bg-green-100 cursor-not-allowed"
+                              : "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                          }`}
+                          title={downloadingItems.has(item.id) ? "Downloading..." : "Download file"}
                         >
-                          <ArrowDownTrayIcon className="w-3 h-3 mr-1" />
+                          {downloadingItems.has(item.id) ? (
+                            <div className="w-3 h-3 border-2 border-green-700 border-t-transparent rounded-full animate-spin mr-1" />
+                          ) : (
+                            <ArrowDownTrayIcon className="w-3 h-3 mr-1" />
+                          )}
                           Download
-                        </a>
+                        </button>
                         <a
                           href={handleProductLink(item, item.type)}
                           target="_blank"
@@ -278,5 +351,3 @@ function OrderView({ order, onClose }: OrderViewProps) {
     </div>
   );
 }
-
-export default OrderView;

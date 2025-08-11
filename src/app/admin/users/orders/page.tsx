@@ -1,21 +1,23 @@
 "use client";
 
+import { getOrdersByUserId } from "@/lib/firestore/order";
+import { useAuth } from "@/contexts/AuthContext";
 import { Order } from "@/lib/types/order";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { OrderItem } from "@/lib/types/orderItem";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import BackButton from "@/components/ui/BackButton";
-import { useAuth } from "@/contexts/AuthContext";
 import { useSearchParams } from "next/navigation";
 
 export default function UserOrdersPage() {
-  const { user: currentUser } = useAuth();
+  const { user } = useAuth();
   const searchParams = useSearchParams();
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingItems, setDownloadingItems] = useState<Set<string>>(new Set());
 
   // get userId from searchParams
   useEffect(() => {
@@ -27,27 +29,9 @@ export default function UserOrdersPage() {
 
   useEffect(() => {
     async function fetchOrders() {
-      if (userId && currentUser) {
+      if (userId && user) {
         try {
-          const token = await currentUser.getIdToken();
-
-          const response = await fetch(
-            `/api/admin/user-orders?userId=${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(
-              `Failed to fetch orders: ${response.status} ${errorText}`
-            );
-          }
-
-          const userOrders = await response.json();
+          const userOrders = await getOrdersByUserId(userId);
           setOrders(userOrders);
         } catch (error) {
           console.error("Error fetching orders:", error);
@@ -60,7 +44,64 @@ export default function UserOrdersPage() {
     }
 
     fetchOrders();
-  }, [userId, currentUser]);
+  }, [userId, user]);
+
+  const handleDownload = async (product: OrderItem, order: Order) => {
+    // Add item to downloading set
+    setDownloadingItems((prev) => new Set(prev).add(product.id));
+
+    try {
+      const requestBody: {
+        fileId: string;
+        fileType: string;
+        userId?: string;
+        orderId?: string;
+        paymentId?: string;
+      } = {
+        fileId: product.id,
+        fileType: product.type,
+      };
+
+      // For registered users, send userId
+      if (user) {
+        requestBody.userId = user.uid;
+      } else {
+        // For guest users, send order information
+        requestBody.orderId = order.id;
+        requestBody.paymentId = order.payment_id;
+      }
+
+      const response = await fetch("/api/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error("Download failed");
+      }
+
+      const { downloadUrl, fileName } = await response.json();
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download file. Please try again.");
+    } finally {
+      // Remove item from downloading set
+      setDownloadingItems((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(product.id);
+        return newSet;
+      });
+    }
+  };
 
   function handleProductLink(product: OrderItem, type: string) {
     if (type === "midi") {
@@ -242,15 +283,22 @@ export default function UserOrdersPage() {
                                 : "Product"}
                           </td>
                           <td className="py-6 sm:pr-8 sm:table-cell">
-                            <a
-                              href={product.downloadUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-2 transition-colors inline-flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300 hover:cursor-pointer"
-                              title="Download file"
+                            <button
+                              onClick={() => handleDownload(product, order)}
+                              disabled={downloadingItems.has(product.id)}
+                              className={`p-2 transition-colors inline-flex items-center justify-center rounded-md hover:cursor-pointer ${
+                                downloadingItems.has(product.id)
+                                  ? "bg-green-600/80 cursor-not-allowed"
+                                  : "bg-gray-200 hover:bg-gray-300"
+                              }`}
+                              title={downloadingItems.has(product.id) ? "Downloading..." : "Download file"}
                             >
-                              <ArrowDownTrayIcon className="w-4 h-4 text-black" />
-                            </a>
+                              {downloadingItems.has(product.id) ? (
+                                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <ArrowDownTrayIcon className="w-4 h-4 text-black" />
+                              )}
+                            </button>
                           </td>
                           <td className="py-6 text-right font-medium whitespace-nowrap">
                             <a

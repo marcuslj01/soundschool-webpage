@@ -12,6 +12,7 @@ import {
   browserLocalPersistence,
   indexedDBLocalPersistence,
   inMemoryPersistence,
+  signInWithPopup,
 } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -62,4 +63,4 @@ const googleProvider = new GoogleAuthProvider();
 // Optional UX improvement; does not affect Safari fix
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
-export { app, analytics, db, storage, auth, googleProvider };
+export { app, analytics, db, storage, auth, googleProvider, signInWithPopup };

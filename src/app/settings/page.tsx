@@ -265,6 +265,8 @@ export default function SettingsPage() {
                 src={user.photoURL}
                 alt="Profile picture"
                 className="size-20 sm:size-24 rounded-full bg-gray-800 object-cover mx-auto sm:mx-0"
+                width={96}
+                height={96}
               />
             ) : (
               <div className="size-20 sm:size-24 rounded-full bg-indigo-600 flex items-center justify-center mx-auto sm:mx-0">
