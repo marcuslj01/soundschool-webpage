@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { updateUserProfile } from "@/lib/firestore/user";
 import { updateProfile } from "firebase/auth";
@@ -8,11 +8,13 @@ import { updateProfile } from "firebase/auth";
 interface EmailAuthFormProps {
   mode: "login" | "register";
   onModeChange: (mode: "login" | "register") => void;
+  onResetPasswordChange?: (isResetMode: boolean) => void;
 }
 
 export default function EmailAuthForm({
   mode,
   onModeChange,
+  onResetPasswordChange,
 }: EmailAuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,11 +22,19 @@ export default function EmailAuthForm({
   const [displayName, setDisplayName] = useState("");
   const [newsletter, setNewsletter] = useState(false);
   const [marketing, setMarketing] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetSent, setResetSent] = useState(false);
+
+  // Notify parent component when reset password mode changes
+  useEffect(() => {
+    if (onResetPasswordChange) {
+      onResetPasswordChange(showResetPassword);
+    }
+  }, [showResetPassword, onResetPasswordChange]);
 
   const {
     signInWithEmail,
@@ -54,6 +64,11 @@ export default function EmailAuthForm({
         }
         if (password.length < 6) {
           setError("Password must be at least 6 characters long");
+          setLoading(false);
+          return;
+        }
+        if (!termsAccepted) {
+          setError("You must accept the Terms of Service to continue");
           setLoading(false);
           return;
         }
@@ -364,6 +379,28 @@ export default function EmailAuthForm({
               I want to receive marketing offers
             </label>
           </div>
+          <div className="flex items-start">
+            <input
+              id="terms"
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              required
+              className="h-4 w-4 mt-0.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <label htmlFor="terms" className="ml-2 block text-sm text-gray-100">
+              I have read and agree to the{" "}
+              <a
+                href="/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-400 hover:text-indigo-300 underline"
+              >
+                Terms of Service & Privacy Policy
+              </a>
+              <span className="text-red-400"> *</span>
+            </label>
+          </div>
         </div>
       )}
 
@@ -399,6 +436,7 @@ export default function EmailAuthForm({
             setDisplayName("");
             setNewsletter(false);
             setMarketing(false);
+            setTermsAccepted(false);
             setError("");
           }}
           className="font-semibold text-indigo-400 hover:text-indigo-300 hover:cursor-pointer"
