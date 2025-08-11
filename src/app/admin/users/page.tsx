@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface UserWithClaims {
   uid: string;
@@ -21,6 +22,9 @@ export default function Users() {
   const [users, setUsers] = useState<UserWithClaims[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<UserWithClaims | null>(null);
 
   const fetchUsers = async () => {
     try {
@@ -73,6 +77,43 @@ export default function Users() {
       console.error("Error setting admin status:", error);
     } finally {
       setUpdating(null);
+    }
+  };
+
+  const handleDeleteUser = async (targetUser: UserWithClaims) => {
+    setUserToDelete(targetUser);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    try {
+      setDeleting(userToDelete.uid);
+      const token = await currentUser?.getIdToken();
+      const response = await fetch("/api/admin/users", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ targetUserId: userToDelete.uid }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete user");
+      }
+
+      // Remove user from local state
+      setUsers(users.filter((user) => user.uid !== userToDelete.uid));
+      setShowDeleteModal(false);
+      setUserToDelete(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert(error instanceof Error ? error.message : "Failed to delete user");
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -221,6 +262,26 @@ export default function Users() {
                             "Make Admin"
                           )}
                         </button>
+                        <button
+                          onClick={() => handleDeleteUser(user)}
+                          disabled={
+                            deleting === user.uid ||
+                            user.uid === currentUser?.uid
+                          }
+                          className={`text-sm font-medium rounded-md px-3 py-1 ${
+                            user.uid === currentUser?.uid
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-red-600 hover:text-red-900 hover:bg-red-50"
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                          {deleting === user.uid ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mx-auto"></div>
+                          ) : user.uid === currentUser?.uid ? (
+                            "Current User"
+                          ) : (
+                            <TrashIcon className="h-4 w-4" />
+                          )}
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -230,6 +291,54 @@ export default function Users() {
           </div>
         </div>
       </div>
+
+      {showDeleteModal && userToDelete && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+          <div className="relative p-8 border w-full max-w-md max-h-full">
+            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+              <div className="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Delete User
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  data-modal-hide="delete-user-modal"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="p-6 space-y-6">
+                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  Are you sure you want to delete user &quot;
+                  {userToDelete.displayName}&quot;? This action cannot be
+                  undone.
+                </p>
+              </div>
+              <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+                <button
+                  onClick={confirmDeleteUser}
+                  disabled={deleting === userToDelete.uid}
+                  className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                >
+                  {deleting === userToDelete.uid ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mx-auto"></div>
+                  ) : (
+                    "Delete User"
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
