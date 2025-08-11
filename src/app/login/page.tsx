@@ -11,6 +11,7 @@ export default function LoginPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [isResetPasswordMode, setIsResetPasswordMode] = useState(false);
 
   useEffect(() => {
     if (user && !loading) {
@@ -62,25 +63,35 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          {/* Google Sign In */}
-          <div className="mb-6">
-            <GoogleSignInButton />
-          </div>
-
-          {/* Divider */}
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-600" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
-            </div>
-          </div>
-
           {/* Email/Password Authentication */}
           <div className="mb-8">
-            <EmailAuthForm mode={authMode} onModeChange={setAuthMode} />
+            <EmailAuthForm
+              mode={authMode}
+              onModeChange={setAuthMode}
+              onResetPasswordChange={setIsResetPasswordMode}
+            />
           </div>
+
+          {/* Only show Google Sign In for login, not for register or password reset */}
+          {authMode === "login" && !isResetPasswordMode && (
+            <>
+              {/* Divider */}
+              <div className="relative mb-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-600" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-gray-900 px-2 text-gray-400">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+              {/* Google Sign In */}
+              <div className="mb-6">
+                <GoogleSignInButton />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>

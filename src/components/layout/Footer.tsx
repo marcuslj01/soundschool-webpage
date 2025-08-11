@@ -7,8 +7,8 @@ const navigation = {
   support: [{ name: "Contact us", href: "/contact" }],
   company: [{ name: "About us", href: "/about" }],
   legal: [
-    { name: "Terms and conditions", href: "/terms" },
-    { name: "Refund policy", href: "/refunds" },
+    { name: "Terms of service", href: "/terms-of-service" },
+    { name: "Refund policy", href: "/terms-of-service#refund-policy" },
   ],
   social: [
     {
