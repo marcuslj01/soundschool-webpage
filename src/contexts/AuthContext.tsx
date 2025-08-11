@@ -3,14 +3,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
-  getRedirectResult,
   signOut,
   onAuthStateChanged,
   getIdTokenResult,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  signInWithRedirect,
   signInWithPopup,
   UserCredential,
 } from "firebase/auth";
