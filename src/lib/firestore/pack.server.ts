@@ -1,6 +1,7 @@
 // Server-side only Firebase Admin SDK operations
 import { getFirestore } from 'firebase-admin/firestore';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { PackInput } from '../types/pack';
 
 // Initialize Firebase Admin if not already initialized
 if (!getApps().length) {
@@ -10,6 +11,15 @@ if (!getApps().length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
+  });
+}
+
+export async function addPackServer(packFile: PackInput) {
+  const db = getFirestore();
+  const packsCollection = db.collection("packs");
+  await packsCollection.add({
+    ...packFile,
+    created_at: new Date(),
   });
 }
 
