@@ -13,6 +13,24 @@ if (!getApps().length) {
   });
 }
 
+export async function deleteUserServer(uid: string) {
+  const db = getFirestore();
+  
+  // Delete user's orders first
+  const ordersCollection = db.collection("orders");
+  const ordersQuery = ordersCollection.where("userId", "==", uid);
+  const ordersSnapshot = await ordersQuery.get();
+  
+  const orderDeletions = ordersSnapshot.docs.map(doc => doc.ref.delete());
+  await Promise.all(orderDeletions);
+  
+  // Then delete user document
+  const userRef = db.collection("users").doc(uid);
+  await userRef.delete();
+  
+  console.log(`Deleted user ${uid} and ${ordersSnapshot.docs.length} orders`);
+}
+
 export async function getUsersCountServer(): Promise<number> {
   const db = getFirestore();
   const usersCollection = db.collection("users");

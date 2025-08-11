@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAllUsersServer } from '@/lib/firestore/user.server';
+import { getAllUsersServer, deleteUserServer } from '@/lib/firestore/user.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -121,6 +121,50 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error setting admin status:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+} 
+
+// DELETE: Delete a user (admin only)
+export async function DELETE(request: NextRequest) {
+  try {
+    // Verify admin access
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await auth().verifyIdToken(token);
+    const userRecord = await auth().getUser(decodedToken.uid);
+    
+    if (!userRecord.customClaims?.admin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { targetUserId } = await request.json();
+    
+    if (!targetUserId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+
+    // Prevent admin from deleting themselves
+    if (targetUserId === decodedToken.uid) {
+      return NextResponse.json({ error: 'You cannot delete your own account' }, { status: 400 });
+    }
+
+    // Delete from Firestore first
+    await deleteUserServer(targetUserId);
+    
+    // Then delete from Firebase Auth
+    await auth().deleteUser(targetUserId);
+    
+    return NextResponse.json({ 
+      success: true, 
+      message: `User ${targetUserId} deleted successfully` 
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 
