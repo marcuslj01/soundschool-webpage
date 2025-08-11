@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
-import { addMidi } from '@/lib/firestore/midifiles';
+import { addMidiServer } from '@/lib/firestore/midifiles.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       is_discounted: formData.get('is_discounted') === 'true',
     };
 
-    await addMidi(midiData);
+    await addMidiServer(midiData);
 
     return NextResponse.json({ 
       success: true, 

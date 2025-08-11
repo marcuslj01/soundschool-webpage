@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
-import { addPack } from '@/lib/firestore/pack';
+import { addPackServer } from '@/lib/firestore/pack.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       sales: 0,
     };
 
-    await addPack(packData);
+    await addPackServer(packData);
 
     return NextResponse.json({ 
       success: true, 

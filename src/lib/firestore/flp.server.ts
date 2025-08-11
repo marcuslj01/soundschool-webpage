@@ -1,6 +1,7 @@
 // Server-side only Firebase Admin SDK operations
 import { getFirestore } from 'firebase-admin/firestore';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { FLPInput } from '../types/FLP';
 
 // Initialize Firebase Admin if not already initialized
 if (!getApps().length) {
@@ -10,6 +11,15 @@ if (!getApps().length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
+  });
+}
+
+export async function addFLPServer(flpFile: FLPInput) {
+  const db = getFirestore();
+  const flpsCollection = db.collection("flps");
+  await flpsCollection.add({
+    ...flpFile,
+    created_at: new Date(),
   });
 }
 
