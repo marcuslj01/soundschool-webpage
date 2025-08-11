@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
-import { addFLP } from '@/lib/firestore/flp';
+import { addFLPServer } from '@/lib/firestore/flp.server';
 
 // Function to extract YouTube video ID from various URL formats
 function extractYouTubeVideoId(url: string): string | null {
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
       sales: 0,
     };
 
-    await addFLP(flpData);
+    await addFLPServer(flpData);
 
     return NextResponse.json({ 
       message: 'FLP uploaded successfully',
