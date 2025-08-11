@@ -137,7 +137,7 @@ export default function TermsOfService() {
               </li>
               <li>
                 <strong>Resend:</strong> Handles email delivery for order
-                confirmations and notifications
+                confirmations, product downloads, and contact form submissions
               </li>
             </ul>
           </section>
