@@ -5,13 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface HeroProps {
-  title: string;
-  subtitle: string;
-  description: string;
   productImage: string;
   backgroundImage: string;
-  primaryButtonText: string;
-  secondaryButtonText: string;
   packLink: string;
 }
 
@@ -27,7 +22,7 @@ function Hero(props: HeroProps) {
   };
 
   return (
-    <div className="relative h-screen w-full">
+    <div className="relative h-[80vh] w-full">
       <Image
         src={props.backgroundImage}
         alt="Background image"
@@ -41,9 +36,9 @@ function Hero(props: HeroProps) {
       <div className="absolute inset-0 z-10 flex flex-col sm:flex-row sm:gap-10 justify-center items-center p-8">
         {/* Desktop view */}
         <div className="flex flex-col items-center sm:items-start justify-center min-h-1/4">
-          <h2 className="text-4xl text-gray-300 mb-1">{props.title}</h2>
+          <h2 className="text-4xl text-gray-300 mb-1">Welcome to</h2>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
-            {props.subtitle}
+            Soundschool
           </h1>
 
           {/* Blue line */}
@@ -51,21 +46,21 @@ function Hero(props: HeroProps) {
 
           <div className="sm:block hidden">
             <h3 className="text-2xl sm:text-3xl text-gray-300 font-bold">
-              {props.description}
+              Check out our biggest pack yet!
             </h3>
             <div className="flex flex-row gap-4 mt-8">
               <Link
                 className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer transition-all duration-300"
                 href={props.packLink}
               >
-                {props.primaryButtonText}
+                Read more
               </Link>
 
               <button
                 onClick={scrollToProducts}
                 className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-all duration-300"
               >
-                {props.secondaryButtonText}
+                Other products
               </button>
             </div>
           </div>
@@ -83,7 +78,7 @@ function Hero(props: HeroProps) {
         {/* Mobile view */}
         <div className="h-1/2 flex flex-col items-center justify-center sm:hidden mt-12">
           <h3 className="text-2xl text-gray-200 font-bold text-center">
-            {props.description}
+            Check out our biggest pack yet!
           </h3>
           <Image
             src={props.productImage}
@@ -97,14 +92,14 @@ function Hero(props: HeroProps) {
               className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer transition-all duration-300"
               href={props.packLink}
             >
-              {props.primaryButtonText}
+              Read more
             </Link>
 
             <button
               onClick={scrollToProducts}
               className="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-all duration-300"
             >
-              {props.secondaryButtonText}
+              Other products
             </button>
           </div>
         </div>
