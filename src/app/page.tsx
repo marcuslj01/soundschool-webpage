@@ -20,13 +20,8 @@ export default async function Home() {
   return (
     <main className="flex flex-col gap-4 w-full items-center">
       <Hero
-        title="Welcome to"
-        subtitle="Soundschool"
-        description="Check out our biggest pack yet!"
         productImage={latestPack?.image_url || ""}
         backgroundImage="/images/Hero.png"
-        primaryButtonText="Read more"
-        secondaryButtonText="Other products"
         packLink={`/pack?id=${latestPack?.id}`}
       />
 
