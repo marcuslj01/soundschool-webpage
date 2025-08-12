@@ -53,7 +53,7 @@ function Hero(props: HeroProps) {
                 className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer transition-all duration-300"
                 href={props.packLink}
               >
-                Read more
+                Explore our latest pack
               </Link>
 
               <button
