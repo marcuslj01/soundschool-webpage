@@ -24,7 +24,7 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
   return (
     <div
       key={product.id}
-      className="group relative overflow-hidden rounded-lg  bg-black/10 w-80 sm:w-96 md:w-[500px] border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300"
+      className="group relative overflow-hidden rounded-lg bg-black/10 w-full border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300"
     >
       <Link href={`/pack?id=${product.id}`}>
         <div className="relative">
@@ -33,12 +33,12 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
             src={product.image_url}
             width={500}
             height={500}
-            className="w-full h-64 sm:h-80 md:h-96 bg-gray-900 object-contain"
+            className="w-full h-64 sm:h-80 bg-gray-900 object-contain"
           />
         </div>
         <div className="p-4">
           <div className="flex flex-row justify-between relative">
-            <h3 className="text-lg lg:text-2xl font-medium text-white">
+            <h3 className="text-lg lg:text-2xl font-medium text-white max-w-3/4 truncate">
               <span aria-hidden="true" className="absolute inset-0" />
               {product.name}
             </h3>
@@ -55,7 +55,7 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
           </p>
           <div className="flex flex-row justify-between">
             <div className="space-y-2 flex flex-row justify-between">
-              <div className="flex flex-row gap-2 flex-wrap h-fit">
+              <div className="flex-row gap-2 flex-wrap h-fit hidden lg:flex">
                 {product.tags.map((tag) => (
                   <Badge key={tag} text={tag} style="blue" />
                 ))}

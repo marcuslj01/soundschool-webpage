@@ -30,12 +30,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
         <AuthProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <div className="min-h-screen w-full overflow-x-hidden">
+            <Navbar />
+            <main className="w-full">{children}</main>
+            <Footer />
+          </div>
         </AuthProvider>
       </body>
     </html>
