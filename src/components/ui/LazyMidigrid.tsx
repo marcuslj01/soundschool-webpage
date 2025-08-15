@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { motion, useInView } from "framer-motion";
 import MidiCard from "./MidiCard";
 import { Midi } from "@/lib/types/midi";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,6 +23,10 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
     initialData.length > 0 ? initialData[initialData.length - 1].id : null
   );
   const [error, setError] = useState<string | null>(null);
+
+  // Animation refs
+  const gridRef = useRef(null);
+  const isGridInView = useInView(gridRef, { once: true, margin: "-100px" });
 
   useEffect(() => {
     if (user) {
@@ -186,47 +191,73 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
         )}
       </div>
 
-      <div className="w-full flex flex-col items-center max-h-[80vh] overflow-y-auto py-4">
+      <div
+        ref={gridRef}
+        className="w-full flex flex-col items-center max-h-[80vh] overflow-y-auto py-4"
+      >
         <div className="flex flex-col gap-2 w-full mb-8">
           {midiFiles.map(
-            (file) =>
+            (file, index) =>
               !file.hidden && (
-                <MidiCard
+                <motion.div
                   key={file.id}
-                  id={file.id}
-                  title={file.name}
-                  date={
-                    file.created_at instanceof Date
-                      ? file.created_at.toISOString()
-                      : new Date(file.created_at).toISOString()
+                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                  animate={
+                    isGridInView
+                      ? { opacity: 1, y: 0, scale: 1 }
+                      : { opacity: 0, y: 50, scale: 0.95 }
                   }
-                  root={file.root}
-                  scale={file.scale}
-                  bpm={file.bpm}
-                  previewUrl={file.preview_url}
-                  isDiscounted={file.is_discounted || false}
-                  discountPrice={file.discount_price || file.price}
-                  price={file.price}
-                  isPlaying={currentlyPlaying === file.id}
-                  onPlay={() => setCurrentlyPlaying(file.id)}
-                  onPause={() => setCurrentlyPlaying(null)}
-                  isOwned={ownedFiles.some(
-                    (ownedFile) =>
-                      ownedFile.id === file.id && ownedFile.type === "midi"
-                  )}
-                />
+                  transition={{
+                    duration: 0.4,
+                    delay: index * 0.1,
+                    ease: "easeOut",
+                  }}
+                >
+                  <MidiCard
+                    id={file.id}
+                    title={file.name}
+                    date={
+                      file.created_at instanceof Date
+                        ? file.created_at.toISOString()
+                        : new Date(file.created_at).toISOString()
+                    }
+                    root={file.root}
+                    scale={file.scale}
+                    bpm={file.bpm}
+                    previewUrl={file.preview_url}
+                    isDiscounted={file.is_discounted || false}
+                    discountPrice={file.discount_price || file.price}
+                    price={file.price}
+                    isPlaying={currentlyPlaying === file.id}
+                    onPlay={() => setCurrentlyPlaying(file.id)}
+                    onPause={() => setCurrentlyPlaying(null)}
+                    isOwned={ownedFiles.some(
+                      (ownedFile) =>
+                        ownedFile.id === file.id && ownedFile.type === "midi"
+                    )}
+                  />
+                </motion.div>
               )
           )}
         </div>
 
         {/* Load More Button - only show when not searching */}
         {hasMore && !loading && !isInSearchMode && (
-          <button
+          <motion.button
             onClick={loadMore}
             className="px-6 py-3 bg-primary hover:bg-primary/80 hover:cursor-pointer text-white font-medium rounded-lg transition-colors mb-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={
+              isGridInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+            }
+            transition={{
+              duration: 0.8,
+              delay: midiFiles.length * 0.1,
+              ease: "easeOut",
+            }}
           >
             Load More MIDI Files
-          </button>
+          </motion.button>
         )}
 
         {/* Loading indicator */}
