@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { Pack } from "@/lib/types/pack";
 import PackCard from "./PackCard";
 import { OwnedFile } from "@/lib/types/ownedFile";
@@ -14,6 +15,8 @@ interface PackGridProps {
 function PackGrid({ products }: PackGridProps) {
   const { user } = useAuth();
   const [ownedFiles, setOwnedFiles] = useState<OwnedFile[]>([]);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   useEffect(() => {
     if (user) {
@@ -24,19 +27,33 @@ function PackGrid({ products }: PackGridProps) {
       fetchOwnedFiles();
     }
   }, [user]);
+
   return (
-    <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 flex flex-col gap-4 lg:flex-row">
+    <div
+      ref={ref}
+      className="mx-auto max-w-2xl px-4 sm:px-6 sm:max-w-7xl lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
       {products.map(
-        (product) =>
+        (product, index) =>
           !product.hidden && (
-            <PackCard
+            <motion.div
               key={product.id}
-              product={product}
-              isOwned={ownedFiles.some(
-                (ownedFile) =>
-                  ownedFile.id === product.id && ownedFile.type === "pack"
-              )}
-            />
+              initial={{ opacity: 0, y: 60 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+              transition={{
+                duration: 0.8,
+                delay: index * 0.15,
+                ease: "easeOut",
+              }}
+            >
+              <PackCard
+                product={product}
+                isOwned={ownedFiles.some(
+                  (ownedFile) =>
+                    ownedFile.id === product.id && ownedFile.type === "pack"
+                )}
+              />
+            </motion.div>
           )
       )}
     </div>

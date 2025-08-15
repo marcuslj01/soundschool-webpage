@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 function useRecaptchaV3(siteKey: string) {
   const [ready, setReady] = useState(false);
@@ -57,6 +58,15 @@ export default function Contact() {
   const formRef = useRef<HTMLFormElement>(null);
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
   const { ready, execute } = useRecaptchaV3(siteKey);
+
+  // Animation refs
+  const contentRef = useRef(null);
+  const formRef2 = useRef(null);
+  const isContentInView = useInView(contentRef, {
+    once: true,
+    margin: "-100px",
+  });
+  const isFormInView = useInView(formRef2, { once: true, margin: "-100px" });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -130,87 +140,83 @@ export default function Contact() {
   };
 
   return (
-    <div className="relative isolate bg-black min-h-screen">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
-        <div className="relative px-6 pt-24 pb-20 sm:pt-32 lg:static lg:px-8 lg:py-48">
-          <div className="mx-auto max-w-xl lg:mx-0 lg:max-w-lg">
-            <div className="absolute inset-y-0 left-0 -z-10 w-full overflow-hidden bg-black ring-1 ring-white/10 lg:w-1/2">
-              <svg
-                aria-hidden="true"
-                className="absolute inset-0 size-full mask-[radial-gradient(100%_100%_at_top_right,white,transparent)] stroke-white/10"
-              >
-                <defs>
-                  <pattern
-                    x="100%"
-                    y={-1}
-                    id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527"
-                    width={200}
-                    height={200}
-                    patternUnits="userSpaceOnUse"
-                  >
-                    <path d="M130 200V.5M.5 .5H200" fill="none" />
-                  </pattern>
-                </defs>
-                <rect
-                  width="100%"
-                  height="100%"
-                  strokeWidth={0}
-                  className="fill-black"
-                />
-                <svg
-                  x="100%"
-                  y={-1}
-                  className="overflow-visible fill-gray-800/20"
-                >
-                  <path d="M-470.5 0h201v201h-201Z" strokeWidth={0} />
-                </svg>
-                <rect
-                  fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)"
-                  width="100%"
-                  height="100%"
-                  strokeWidth={0}
-                />
-              </svg>
-              <div
-                aria-hidden="true"
-                className="absolute top-[calc(100%-13rem)] -left-56 block transform-gpu blur-3xl lg:top-[calc(50%-7rem)] lg:left-[max(-14rem,calc(100%-59rem))]"
-              >
-                <div
-                  style={{
-                    clipPath:
-                      "polygon(74.1% 56.1%, 100% 38.6%, 97.5% 73.3%, 85.5% 100%, 80.7% 98.2%, 72.5% 67.7%, 60.2% 37.8%, 52.4% 32.2%, 47.5% 41.9%, 45.2% 65.8%, 27.5% 23.5%, 0.1% 35.4%, 17.9% 0.1%, 27.6% 23.5%, 76.1% 2.6%, 74.1% 56.1%)",
-                  }}
-                  className="aspect-1155/678 w-288.75 bg-gradient-to-br from-primary to-purple-600 opacity-20"
-                />
+    <div className="relative isolate bg-black min-h-screen w-full overflow-hidden">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2 w-full">
+        <div
+          ref={contentRef}
+          className="relative px-6 pt-24 pb-20 sm:pt-32 lg:static lg:px-8 lg:py-48 w-full"
+        >
+          <div className="mx-auto max-w-xl lg:mx-0 lg:max-w-lg w-full">
+            <div className="absolute inset-y-0 left-0 -z-10 w-full h-full overflow-hidden bg-black ring-1 ring-white/10 lg:w-1/2">
+              {/* Simplified background with gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-900/20 via-transparent to-primary/10" />
+
+              {/* Decorative pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/20 to-purple-600/20 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-600/20 to-primary/20 rounded-full blur-2xl" />
               </div>
             </div>
-            <h2 className="text-4xl font-semibold tracking-tight text-pretty text-white sm:text-5xl">
+            <motion.h2
+              className="text-4xl font-semibold tracking-tight text-pretty text-white sm:text-5xl"
+              initial={{ opacity: 0, y: 30 }}
+              animate={
+                isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+              }
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            >
               Contact us
-            </h2>
-            <p className="mt-6 text-lg/8 text-gray-400">
+            </motion.h2>
+            <motion.p
+              className="mt-6 text-lg/8 text-gray-400"
+              initial={{ opacity: 0, y: 30 }}
+              animate={
+                isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+              }
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            >
               Have questions about our products or need help? Get in touch with
               us and we&apos;ll get back to you as soon as possible!
-            </p>
+            </motion.p>
           </div>
         </div>
-        <form
+        <motion.form
+          ref={formRef2}
           onSubmit={handleSubmit}
-          ref={formRef}
-          className="px-6 pt-20 pb-24 sm:pb-32 lg:px-8 lg:py-48"
+          className="px-6 pt-20 pb-24 sm:pb-32 lg:px-8 lg:py-48 w-full"
+          initial={{ opacity: 0, x: 50 }}
+          animate={isFormInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
+          <div className="mx-auto max-w-xl lg:mr-0 lg:max-w-lg w-full">
             {submitStatus.type === "error" && (
-              <div className="mb-6 p-4 rounded-md bg-red-900/50 border border-red-500 text-red-200">
+              <motion.div
+                className="mb-6 p-4 rounded-md bg-red-900/50 border border-red-500 text-red-200"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
                 {submitStatus.message}
-              </div>
+              </motion.div>
             )}
             {submitStatus.type === "success" && (
-              <div className="mb-6 p-4 rounded-md bg-green-900/50 border border-green-500 text-green-200">
+              <motion.div
+                className="mb-6 p-4 rounded-md bg-green-900/50 border border-green-500 text-green-200"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
                 {submitStatus.message}
-              </div>
+              </motion.div>
             )}
             <div className="grid grid-cols-1 gap-y-6">
-              <div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={
+                  isFormInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+                }
+                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+              >
                 <label
                   htmlFor="name"
                   className="block text-sm/6 font-semibold text-white"
@@ -227,9 +233,16 @@ export default function Contact() {
                     className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-primary"
                   />
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="sm:col-span-2">
+              <motion.div
+                className="sm:col-span-2"
+                initial={{ opacity: 0, y: 30 }}
+                animate={
+                  isFormInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+                }
+                transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+              >
                 <label
                   htmlFor="email"
                   className="block text-sm/6 font-semibold text-white"
@@ -246,8 +259,15 @@ export default function Contact() {
                     className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-primary"
                   />
                 </div>
-              </div>
-              <div className="sm:col-span-2">
+              </motion.div>
+              <motion.div
+                className="sm:col-span-2"
+                initial={{ opacity: 0, y: 30 }}
+                animate={
+                  isFormInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+                }
+                transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+              >
                 <label
                   htmlFor="message"
                   className="block text-sm/6 font-semibold text-white"
@@ -264,9 +284,16 @@ export default function Contact() {
                     defaultValue={""}
                   />
                 </div>
-              </div>
+              </motion.div>
             </div>
-            <div className="mt-8 flex justify-end">
+            <motion.div
+              className="mt-8 flex justify-end"
+              initial={{ opacity: 0, y: 30 }}
+              animate={
+                isFormInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+              }
+              transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+            >
               <button
                 type="submit"
                 disabled={isSubmitting || !ready}
@@ -274,9 +301,9 @@ export default function Contact() {
               >
                 {isSubmitting ? "Sending..." : "Send message"}
               </button>
-            </div>
+            </motion.div>
           </div>
-        </form>
+        </motion.form>
       </div>
     </div>
   );
