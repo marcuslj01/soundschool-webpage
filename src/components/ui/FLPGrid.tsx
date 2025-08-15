@@ -26,7 +26,7 @@ function FLPGrid({ flps }: FLPGridProps) {
   }, [user]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl xl:max-w-7xl mx-auto p-4">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 sm:max-w-7xl lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {flps.map((flp) => (
         <FLPCard
           key={flp.id}

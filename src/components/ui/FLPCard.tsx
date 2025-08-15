@@ -51,7 +51,7 @@ function FLPCard({ flp, isOwned }: FLPCardProps) {
         <p className="text-sm font-bold px-3 text-gray-400 ">FLP</p>
 
         <div className="flex flex-row justify-between p-3 ">
-          <div className="flex flex-row gap-2 max-w-3/4">
+          <div className="flex-row gap-2 max-w-3/4 hidden lg:flex">
             {flp.tags?.map((tag) => (
               <Badge key={tag} text={tag} style="blue" />
             ))}

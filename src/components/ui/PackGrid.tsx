@@ -25,7 +25,7 @@ function PackGrid({ products }: PackGridProps) {
     }
   }, [user]);
   return (
-    <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 flex flex-col gap-4 lg:flex-row">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 sm:max-w-7xl lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {products.map(
         (product) =>
           !product.hidden && (
