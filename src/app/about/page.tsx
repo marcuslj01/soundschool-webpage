@@ -1,5 +1,8 @@
 "use client";
 
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+
 const features = [
   {
     title: "High-Quality Resources",
@@ -64,173 +67,272 @@ const features = [
 ];
 
 export default function AboutPage() {
+  const heroRef = useRef(null);
+  const statsRef = useRef(null);
+  const missionRef = useRef(null);
+  const ctaRef = useRef(null);
+
+  const isHeroInView = useInView(heroRef, { once: true, margin: "-100px" });
+  const isStatsInView = useInView(statsRef, { once: true, margin: "-100px" });
+  const isMissionInView = useInView(missionRef, {
+    once: true,
+    margin: "-100px",
+  });
+  const isCtaInView = useInView(ctaRef, { once: true, margin: "-100px" });
+
   return (
-    <main className="flex flex-col gap-4 w-full items-center text-white min-h-screen mt-20">
+    <main className="flex flex-col gap-6 w-full items-center text-white min-h-screen mt-16 sm:mt-20 px-4 sm:px-6">
       {/* Hero section */}
-      <div className="flex flex-col gap-4 w-full items-center text-white py-16 px-4">
+      <motion.div
+        ref={heroRef}
+        className="flex flex-col gap-6 w-full items-center text-white py-8 sm:py-16"
+        initial={{ opacity: 0, y: 50 }}
+        animate={isHeroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="text-center max-w-4xl">
-          <h1 className="text-2xl font-bold text-white sm:text-4xl mb-4">
+          <motion.h1
+            className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl mb-4 sm:mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={
+              isHeroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+            }
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          >
             We are <span className="text-primary">SoundSchool</span>
-          </h1>
-          <p className="text-gray-300 text-center max-w-2xl mx-auto">
+          </motion.h1>
+          <motion.p
+            className="text-gray-300 text-center max-w-2xl mx-auto text-base sm:text-lg leading-relaxed"
+            initial={{ opacity: 0, y: 30 }}
+            animate={
+              isHeroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+            }
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+          >
             Your digital home for professional music production resources. We
             offer high-quality MIDI files, FLP files, and packs that help
             producers and artists create amazing music.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
+          </motion.p>
+          <motion.div
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8 justify-center"
+            initial={{ opacity: 0, y: 30 }}
+            animate={
+              isHeroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+            }
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          >
             <a
               href="/midis"
-              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer transition-all duration-300"
+              className="bg-primary text-white px-6 py-3 sm:px-8 sm:py-3 rounded-lg hover:bg-primary/80 hover:cursor-pointer transition-all duration-300 text-center font-medium"
             >
               Explore MIDI Files
             </a>
             <a
               href="/flps"
-              className="border-2 border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black hover:cursor-pointer transition-all duration-300"
+              className="border-2 border-white text-white px-6 py-3 sm:px-8 sm:py-3 rounded-lg hover:bg-white hover:text-black hover:cursor-pointer transition-all duration-300 text-center font-medium"
             >
               View FLP Files
             </a>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats section */}
-      <div className="flex flex-col gap-4 w-full items-center text-white py-16 px-4">
+      <motion.div
+        ref={statsRef}
+        className="flex flex-col gap-6 w-full items-center text-white py-8 sm:py-16"
+        initial={{ opacity: 0, y: 50 }}
+        animate={isStatsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="text-center max-w-4xl">
-          <h2 className="text-2xl font-bold text-white sm:text-4xl mb-4">
+          <motion.h2
+            className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl mb-4 sm:mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={
+              isStatsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+            }
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          >
             Helping producers create amazing music
-          </h2>
-          <p className="text-gray-300 text-center max-w-2xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-gray-300 text-center max-w-2xl mx-auto text-base sm:text-lg leading-relaxed"
+            initial={{ opacity: 0, y: 30 }}
+            animate={
+              isStatsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
+            }
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+          >
             SoundSchool is dedicated to giving producers and artists the best
             resources to realize their musical visions.
-          </p>
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Mission section */}
-      <div className="flex flex-col gap-12 w-full items-center text-white py-16 px-4 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
-          <div className="bg-gray-900/50 rounded-lg p-8 border border-gray-800">
-            <h2 className="text-2xl font-bold text-white sm:text-3xl mb-6">
+      <motion.div
+        ref={missionRef}
+        className="flex flex-col gap-8 sm:gap-12 w-full items-center text-white py-8 sm:py-16 max-w-7xl"
+        initial={{ opacity: 0, y: 50 }}
+        animate={isMissionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 w-full">
+          <motion.div
+            className="bg-gray-900/50 rounded-lg p-6 sm:p-8 border border-gray-800"
+            initial={{ opacity: 0, x: -50 }}
+            animate={
+              isMissionInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }
+            }
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          >
+            <h2 className="text-xl font-bold text-white sm:text-2xl lg:text-3xl mb-4 sm:mb-6">
               Our Mission
             </h2>
-            <p className="text-gray-300 mb-8">
+            <p className="text-gray-300 mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
               We believe that all producers deserve access to professional
               resources that can help them develop their art. SoundSchool is
               built on the principle of making music production accessible to
               everyone.
             </p>
-            <div className="space-y-6">
-              {features.map((feature) => (
-                <div key={feature.title} className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary border border-primary/30">
+            <div className="space-y-4 sm:space-y-6">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  className="flex items-start gap-3 sm:gap-4"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={
+                    isMissionInView
+                      ? { opacity: 1, x: 0 }
+                      : { opacity: 0, x: -30 }
+                  }
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.4 + index * 0.1,
+                    ease: "easeOut",
+                  }}
+                >
+                  <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary/20 text-primary border border-primary/30 flex-shrink-0">
                     {feature.icon}
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-base sm:text-lg font-semibold text-white mb-1">
                       {feature.title}
                     </h3>
-                    <p className="mt-1 text-gray-400">{feature.description}</p>
+                    <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
+                      {feature.description}
+                    </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-gray-900/50 rounded-lg p-8 border border-gray-800">
-            <h2 className="text-2xl font-bold text-white sm:text-3xl mb-6">
+          <motion.div
+            className="bg-gray-900/50 rounded-lg p-6 sm:p-8 border border-gray-800"
+            initial={{ opacity: 0, x: 50 }}
+            animate={
+              isMissionInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }
+            }
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+          >
+            <h2 className="text-xl font-bold text-white sm:text-2xl lg:text-3xl mb-4 sm:mb-6">
               Why Choose SoundSchool?
             </h2>
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/20 text-green-400">
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <span className="text-gray-300">
-                  Professional quality resources
-                </span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/20 text-green-400">
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <span className="text-gray-300">Instant download access</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/20 text-green-400">
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <span className="text-gray-300">
-                  Regular new content updates
-                </span>
-              </div>
+            <div className="space-y-4 sm:space-y-6">
+              {[
+                "Professional quality resources",
+                "Instant download access",
+                "Regular new content updates",
+              ].map((item, index) => (
+                <motion.div
+                  key={item}
+                  className="flex items-center gap-3 sm:gap-4"
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={
+                    isMissionInView
+                      ? { opacity: 1, x: 0 }
+                      : { opacity: 0, x: 30 }
+                  }
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.6 + index * 0.1,
+                    ease: "easeOut",
+                  }}
+                >
+                  <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-green-600/20 text-green-400 flex-shrink-0">
+                    <svg
+                      className="h-4 w-4 sm:h-5 sm:w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm sm:text-base text-gray-300">
+                    {item}
+                  </span>
+                </motion.div>
+              ))}
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* CTA section */}
-      <div className="flex flex-col gap-4 w-full items-center text-white py-16 px-4">
-        <div className="bg-gray-900/50 rounded-lg p-8 border border-gray-800 max-w-4xl text-center">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl mb-4">
+      <motion.div
+        ref={ctaRef}
+        className="flex flex-col gap-6 w-full items-center text-white py-8 sm:py-16"
+        initial={{ opacity: 0, y: 50 }}
+        animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="bg-gray-900/50 rounded-lg p-6 sm:p-8 border border-gray-800 max-w-4xl text-center w-full">
+          <motion.h2
+            className="text-xl font-bold text-white sm:text-2xl lg:text-3xl mb-4 sm:mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          >
             Ready to take your music production to the next level?
-          </h2>
-          <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+          >
             Explore our library of professional MIDI files, FLP files, and packs
             today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          </motion.p>
+          <motion.div
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          >
             <a
               href="/midis"
-              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer transition-all duration-300"
+              className="bg-primary text-white px-6 py-3 sm:px-8 sm:py-3 rounded-lg hover:bg-primary/80 hover:cursor-pointer transition-all duration-300 text-center font-medium"
             >
               Explore MIDI Files
             </a>
             <a
               href="/flps"
-              className="border-2 border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black hover:cursor-pointer transition-all duration-300"
+              className="border-2 border-white text-white px-6 py-3 sm:px-8 sm:py-3 rounded-lg hover:bg-white hover:text-black hover:cursor-pointer transition-all duration-300 text-center font-medium"
             >
               View FLP Files
             </a>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </main>
   );
 }
