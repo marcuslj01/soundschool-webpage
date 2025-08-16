@@ -17,6 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 import { User } from "firebase/auth";
 import Image from "next/image";
+import Link from "next/link";
 
 // Helper function to get initials from display name
 const getInitials = (displayName: string | null): string => {
@@ -281,9 +282,20 @@ export default function SettingsPage() {
                 {isEmailUser ? "Email & Password Account" : "Google Account"}
               </p>
               <p className="text-sm text-gray-400 mt-1">
-                {isEmailUser
-                  ? "Your profile information is managed through your account settings."
-                  : "To change your name, please update your Google account."}
+                {isEmailUser ? (
+                  <span>
+                    To change your information, please{" "}
+                    <Link
+                      className="hover:underline text-gray-300 inline-block"
+                      href="/contact"
+                    >
+                      contact support.
+                    </Link>
+                    .
+                  </span>
+                ) : (
+                  "To change your name, please update your Google account."
+                )}
               </p>
             </div>
           </div>
