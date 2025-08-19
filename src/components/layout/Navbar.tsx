@@ -313,12 +313,15 @@ export default function Navbar() {
                       aria-hidden="true"
                       className="size-6"
                     />
+                    <span className="text-white text-sm hidden sm:block ml-2">
+                      Hi, {user.displayName?.split(" ")[0]}!
+                    </span>
                   </MenuButton>
                   <MenuItems
                     transition
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                   >
-                    <p className="text-gray-700 text-sm px-4 py-2 font-bold">
+                    <p className="text-gray-700 text-sm px-4 py-2 font-bold block sm:hidden">
                       Hi, {user.displayName}!
                     </p>
                     <MenuItem>
