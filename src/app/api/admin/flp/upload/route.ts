@@ -4,6 +4,15 @@ import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
 import { addFLPServer } from '@/lib/firestore/flp.server';
 
+// Function to sanitize filename for safe storage
+function sanitizeFilename(filename: string): string {
+  return filename
+    .replace(/[#%&{}\\<>*?/$!'":@+`|=]/g, '_') // Replace problematic characters with underscore
+    .replace(/\s+/g, '_') // Replace spaces with underscore
+    .replace(/__+/g, '_') // Replace multiple underscores with single
+    .replace(/^_+|_+$/g, ''); // Remove leading/trailing underscores
+}
+
 // Function to extract YouTube video ID from various URL formats
 function extractYouTubeVideoId(url: string): string | null {
   const patterns = [
@@ -103,7 +112,10 @@ export async function POST(request: NextRequest) {
     const bucket = storage.bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!);
 
     // Upload ZIP file
-    const zipFileName = `flps/${Date.now()}_${file.name}`;
+    const sanitizedZipName = sanitizeFilename(file.name);
+    const zipFileName = `flps/${Date.now()}_${sanitizedZipName}`;
+    console.log('Uploading ZIP file:', zipFileName);
+    
     const zipFileBuffer = Buffer.from(await file.arrayBuffer());
     await bucket.file(zipFileName).save(zipFileBuffer, {
       metadata: { contentType: 'application/zip' }

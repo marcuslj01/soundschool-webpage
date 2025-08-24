@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     
     const midiFilesCollection = collection(db, "midifiles");
     
-    let q = query(midiFilesCollection, orderBy("created_at", "desc"), limit(limitCount));
+    let q = query(midiFilesCollection, orderBy("name", "desc"), limit(limitCount));
     
     // If we have a lastId, start after that document
     if (lastId) {
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       if (lastDocSnap.exists()) {
         q = query(
           midiFilesCollection,
-          orderBy("created_at", "desc"),
+          orderBy("name", "desc"),
           startAfter(lastDocSnap),
           limit(limitCount)
         );

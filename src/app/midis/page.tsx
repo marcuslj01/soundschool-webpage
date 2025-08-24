@@ -2,6 +2,8 @@ import React from "react";
 import LazyMidigrid from "@/components/ui/LazyMidigrid";
 import { getMidi } from "@/lib/firestore/midifiles";
 
+export const revalidate = 300; // Cache for 5 minutes
+
 export default async function MidiPage() {
   const midiFiles = await getMidi(10); // Initial load of 10 MIDI files on server
 
