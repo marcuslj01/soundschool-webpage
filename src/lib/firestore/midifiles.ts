@@ -13,11 +13,10 @@ export async function addMidi(midiFile: MidiInput) {
 
 export async function getMidi(limitCount?: number) {
     const midiFilesCollection = collection(db, "midifiles");
-    let q = query(midiFilesCollection, orderBy("created_at", "desc"));
+    let q = query(midiFilesCollection, orderBy("name", "desc"));
     
     if (limitCount) {
-        q = query(midiFilesCollection, orderBy("created_at", "desc"), limit(limitCount)); 
-        // May also use orderBy("name", "desc") 
+        q = query(midiFilesCollection, orderBy("name", "desc"), limit(limitCount)); 
     }
     
     const snapshot = await getDocs(q);
@@ -84,7 +83,7 @@ export async function deleteMidi(id: string): Promise<boolean> {
 // Get latest MIDI files for homepage (cached)
 export async function getLatestMidiFiles(count: number = 10) {
     const midiFilesCollection = collection(db, "midifiles");
-    const q = query(midiFilesCollection, orderBy("created_at", "desc"), limit(count));
+    const q = query(midiFilesCollection, orderBy("name", "desc"), limit(count));
     
     const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => {
