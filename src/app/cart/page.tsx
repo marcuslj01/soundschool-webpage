@@ -197,7 +197,7 @@ export default function Cart() {
         </div>
       )}
 
-      <main className="mx-auto max-w-7xl px-4 pt-24 pb-24 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 pt-24 pb-32 sm:px-6 lg:px-8 md:pb-24">
         <div className="mb-8">
           <BackButton />
           <div className="mt-6 flex items-center gap-3">
@@ -220,65 +220,6 @@ export default function Cart() {
           className="md:grid md:grid-cols-12 md:gap-8"
           onSubmit={handleCheckout}
         >
-          {/* Order summary - First on mobile, second on desktop */}
-          <section
-            aria-labelledby="summary-heading"
-            className="md:col-span-4 md:order-2"
-          >
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 md:sticky md:top-8">
-              <h2
-                id="summary-heading"
-                className="text-xl font-bold text-white mb-6 flex items-center gap-2"
-              >
-                <ShoppingBagIcon className="h-5 w-5 text-primary" />
-                Order Summary
-              </h2>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-gray-300">Subtotal</span>
-                  <span className="text-white font-semibold">
-                    ${subtotalPrice.toFixed(2)}
-                  </span>
-                </div>
-
-                <div className="border-t border-gray-600 pt-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-white">Total</span>
-                    <span className="text-2xl font-bold text-primary">
-                      ${totalPrice.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8">
-                {cartItems.length > 0 ? (
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-primary to-primary/80 text-white py-4 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] focus:ring-4 focus:ring-primary/20 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none hover:cursor-pointer"
-                  >
-                    {isLoading ? "Processing..." : "Proceed to Checkout"}
-                  </button>
-                ) : (
-                  <div className="text-center">
-                    <p className="text-gray-400 mb-4">
-                      Add some items to get started
-                    </p>
-                    <Link
-                      href="/"
-                      className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary/90 transition-all duration-300 font-medium"
-                    >
-                      <ShoppingBagIcon className="h-4 w-4" />
-                      Browse items
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-
           {/* Cart items - Second on mobile, first on desktop */}
           <section
             aria-labelledby="cart-heading"
@@ -361,6 +302,65 @@ export default function Cart() {
                 ))}
               </div>
             )}
+          </section>
+
+          {/* Order summary - First on mobile, second on desktop */}
+          <section
+            aria-labelledby="summary-heading"
+            className="md:col-span-4 md:order-2"
+          >
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 fixed bottom-0 left-0 right-0 z-40 md:sticky md:top-8 md:z-auto">
+              <h2
+                id="summary-heading"
+                className="text-xl font-bold text-white mb-6 flex items-center gap-2"
+              >
+                <ShoppingBagIcon className="h-5 w-5 text-primary" />
+                Order Summary
+              </h2>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-gray-300">Subtotal</span>
+                  <span className="text-white font-semibold">
+                    ${subtotalPrice.toFixed(2)}
+                  </span>
+                </div>
+
+                <div className="border-t border-gray-600 pt-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold text-white">Total</span>
+                    <span className="text-2xl font-bold text-primary">
+                      ${totalPrice.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8">
+                {cartItems.length > 0 ? (
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-primary to-primary/80 text-white py-4 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] focus:ring-4 focus:ring-primary/20 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none hover:cursor-pointer"
+                  >
+                    {isLoading ? "Processing..." : "Proceed to Checkout"}
+                  </button>
+                ) : (
+                  <div className="text-center">
+                    <p className="text-gray-400 mb-4">
+                      Add some items to get started
+                    </p>
+                    <Link
+                      href="/"
+                      className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary/90 transition-all duration-300 font-medium"
+                    >
+                      <ShoppingBagIcon className="h-4 w-4" />
+                      Browse items
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
           </section>
         </form>
       </main>
