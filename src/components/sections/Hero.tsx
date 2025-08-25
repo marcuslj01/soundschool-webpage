@@ -70,7 +70,7 @@ function Hero(props: HeroProps) {
 
         {/* Product image with animation */}
         <motion.div
-          className="sm:block hidden"
+          className="sm:block hidden w-1/3"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -78,8 +78,8 @@ function Hero(props: HeroProps) {
           <Image
             src={props.productImage}
             alt="Picture of the product"
-            width={400}
-            height={400}
+            width={500}
+            height={500}
             className="w-full h-full object-contain"
           />
         </motion.div>
