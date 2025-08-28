@@ -1,4 +1,4 @@
-export const revalidate = 3600; // Cache for 1 hour
+export const revalidate = 300; // Cache for 5 minutes
 
 import React from "react";
 import Link from "next/link";
