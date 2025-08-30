@@ -61,12 +61,10 @@ export default async function Home() {
         >
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white sm:text-4xl mb-4">
-              Latest Music Production Resources
+              Latest Resources
             </h1>
             <p className="text-gray-300 text-center max-w-2xl">
-              Discover our newest music production resources - professional MIDI
-              files, FLP projects, and sample packs to elevate your music
-              production
+              Discover our newest music production resources
             </p>
           </div>
 
