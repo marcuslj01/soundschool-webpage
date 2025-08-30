@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
-import { getAllMidiFiles } from '@/lib/firestore/midifiles'
-import { getAllPacks } from '@/lib/firestore/pack'
-import { getAllFLPs } from '@/lib/firestore/flp'
+import { getAllMidis } from '@/lib/firestore/midifiles'
+import { getPacks } from '@/lib/firestore/pack'
+import { getFLPs } from '@/lib/firestore/flp'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://soundschoolmidis.com'
@@ -53,9 +53,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // Dynamic product pages
-  const midiFiles = await getAllMidiFiles()
-  const packs = await getAllPacks()
-  const flps = await getAllFLPs()
+  const midiFiles = await getAllMidis()
+  const packs = await getPacks()
+  const flps = await getFLPs()
 
   const midiPages = midiFiles.map((midi) => ({
     url: `${baseUrl}/midi?id=${midi.id}`,
