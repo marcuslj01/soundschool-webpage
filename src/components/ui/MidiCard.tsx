@@ -147,7 +147,11 @@ function MidiCard({
         >
           {isPlaying ? (
             <div className="relative w-full h-full flex items-center justify-center ">
-              <svg className="absolute w-full h-full" viewBox="0 0 100 100">
+              <svg
+                className="absolute w-full h-full"
+                viewBox="0 0 100 100"
+                style={{ transform: "rotate(-90deg)" }}
+              >
                 <circle
                   cx="50"
                   cy="50"
@@ -155,6 +159,7 @@ function MidiCard({
                   stroke="#2563eb"
                   strokeWidth="5"
                   fill="none"
+                  strokeLinecap="round"
                   style={{
                     strokeDasharray: 2 * Math.PI * 48,
                     strokeDashoffset: (1 - progress) * 2 * Math.PI * 48,
