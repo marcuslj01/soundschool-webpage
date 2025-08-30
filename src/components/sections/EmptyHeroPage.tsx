@@ -10,13 +10,13 @@ export default function EmptyHeroPage() {
       <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
 
       {/* Blurred blue spotlights */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-0">
         {/* Top left spotlight */}
         <motion.div
-          className="absolute -top-20 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
+          className="absolute -top-20 -left-20 w-96 h-96 bg-primary/40 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.1, 1],
-            opacity: [0.2, 0.3, 0.2],
+            opacity: [0.4, 0.6, 0.4],
           }}
           transition={{
             duration: 4,
@@ -27,10 +27,10 @@ export default function EmptyHeroPage() {
 
         {/* Top right spotlight */}
         <motion.div
-          className="absolute -top-32 -right-32 w-80 h-80 bg-blue-500/15 rounded-full blur-3xl"
+          className="absolute -top-32 -right-32 w-80 h-80 bg-blue-500/35 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.15, 0.25, 0.15],
+            opacity: [0.35, 0.55, 0.35],
           }}
           transition={{
             duration: 5,
@@ -42,10 +42,10 @@ export default function EmptyHeroPage() {
 
         {/* Bottom center spotlight */}
         <motion.div
-          className="absolute -bottom-40 left-1/2 transform -translate-x-1/2 w-72 h-72 bg-primary/10 rounded-full blur-3xl"
+          className="absolute -bottom-40 left-1/2 transform -translate-x-1/2 w-72 h-72 bg-primary/30 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.15, 1],
-            opacity: [0.1, 0.2, 0.1],
+            opacity: [0.3, 0.5, 0.3],
           }}
           transition={{
             duration: 6,
@@ -57,10 +57,10 @@ export default function EmptyHeroPage() {
 
         {/* Center left spotlight */}
         <motion.div
-          className="absolute top-1/2 -left-16 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl"
+          className="absolute top-1/2 -left-16 w-64 h-64 bg-blue-400/30 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.1, 1],
-            opacity: [0.1, 0.15, 0.1],
+            opacity: [0.3, 0.45, 0.3],
           }}
           transition={{
             duration: 4.5,
@@ -72,10 +72,10 @@ export default function EmptyHeroPage() {
 
         {/* Center right spotlight */}
         <motion.div
-          className="absolute top-1/3 -right-20 w-56 h-56 bg-primary/15 rounded-full blur-3xl"
+          className="absolute top-1/3 -right-20 w-56 h-56 bg-primary/35 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.25, 1],
-            opacity: [0.15, 0.25, 0.15],
+            opacity: [0.35, 0.55, 0.35],
           }}
           transition={{
             duration: 5.5,
