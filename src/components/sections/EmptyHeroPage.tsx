@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export default function EmptyHeroPage() {
   return (
-    <div className="w-full min-h-[60vh] flex flex-col items-center justify-center relative overflow-hidden bg-black pt-20 pb-4">
+    <div className="w-full min-h-[70vh] flex flex-col items-center justify-center relative overflow-hidden bg-black pt-20 pb-4">
       {/* Dark background */}
       <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
 
