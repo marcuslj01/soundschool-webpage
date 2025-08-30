@@ -33,7 +33,7 @@ function HomeMidiGrid({ midiFiles }: HomeMidiGridProps) {
   return (
     <div
       ref={ref}
-      className="w-full flex flex-col items-center max-h-96 overflow-y-scroll"
+      className="w-full flex flex-col items-center max-h-144 overflow-y-scroll"
     >
       <div className="flex flex-col gap-2 w-full">
         {midiFiles.map(
@@ -43,9 +43,7 @@ function HomeMidiGrid({ midiFiles }: HomeMidiGridProps) {
                 key={file.id}
                 initial={{ opacity: 0, y: 50 }}
                 animate={
-                  isInView
-                    ? { opacity: 1, y: 0 }
-                    : { opacity: 0, y: 50 }
+                  isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }
                 }
                 transition={{
                   duration: 0.8,
