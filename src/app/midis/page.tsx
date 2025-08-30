@@ -8,7 +8,7 @@ export default async function MidiPage() {
   const midiFiles = await getMidi(10); // Initial load of 10 MIDI files on server
 
   return (
-    <div className="flex flex-col gap-4 w-full items-center text-white min-h-screen mt-20">
+    <div className="flex flex-col gap-4 w-full items-center text-white min-h-screen mt-30">
       <h2 className="text-2xl font-bold text-white sm:text-4xl" id="midis">
         Our midi files!
       </h2>
