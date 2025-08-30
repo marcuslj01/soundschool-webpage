@@ -3,6 +3,7 @@ export const revalidate = 300; // Cache for 5 minutes
 import React from "react";
 import Link from "next/link";
 import Hero from "@/components/sections/Hero";
+import EmptyHeroPage from "@/components/sections/EmptyHeroPage";
 import { getLatestPack } from "@/lib/firestore/pack";
 import { getLatestPacks } from "@/lib/firestore/pack";
 import { getLatestMidiFiles } from "@/lib/firestore/midifiles";
@@ -19,11 +20,16 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col gap-4 w-full items-center">
-      <Hero
-        productImage={latestPack?.image_url || ""}
-        backgroundImage="/images/Hero.png"
-        packLink={`/pack?id=${latestPack?.id}`}
-      />
+      {/* Hero Section */}
+      {latestPack ? (
+        <Hero
+          productImage={latestPack.image_url}
+          backgroundImage="/images/Hero.png"
+          packLink={`/pack?id=${latestPack.id}`}
+        />
+      ) : (
+        <EmptyHeroPage />
+      )}
 
       {/* Products Overview Section */}
       <div

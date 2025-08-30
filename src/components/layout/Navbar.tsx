@@ -30,6 +30,7 @@ const navigation = [
   { name: "Midi files", href: "/midis", current: false },
   { name: "Packs", href: "/packs", current: false },
   { name: "FLPs", href: "/flps", current: false },
+  { name: "Contact", href: "/contact", current: false },
 ];
 
 function classNames(...classes: string[]) {
