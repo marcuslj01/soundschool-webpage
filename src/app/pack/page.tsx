@@ -83,7 +83,6 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   pack information
                 </h2>
                 <div className="text-gray-300 mt-4">
-                  <p className="text-gray-300 font-bold mb-2">Description</p>
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
