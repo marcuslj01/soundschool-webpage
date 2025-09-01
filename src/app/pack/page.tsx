@@ -9,6 +9,8 @@ import Badge from "@/components/ui/Badge";
 import PlayButton from "@/components/ui/PlayButton";
 import SimilarProducts from "@/components/sections/SimilarProducts";
 
+export const revalidate = 60; // Cache for 1 minute
+
 interface PackPageProps {
   searchParams: Promise<{ id?: string }>;
 }
