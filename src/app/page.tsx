@@ -2,9 +2,9 @@ export const revalidate = 300; // Cache for 5 minutes
 
 import React from "react";
 import Link from "next/link";
-import Hero from "@/components/sections/Hero";
+// import Hero from "@/components/sections/Hero";
 import EmptyHeroPage from "@/components/sections/EmptyHeroPage";
-import { getLatestPack } from "@/lib/firestore/pack";
+// import { getLatestPack } from "@/lib/firestore/pack";
 import { getLatestPacks } from "@/lib/firestore/pack";
 import { getLatestMidiFiles } from "@/lib/firestore/midifiles";
 import { getLatestFLPs } from "@/lib/firestore/flp";
@@ -13,7 +13,7 @@ import PackGrid from "@/components/ui/PackGrid";
 import FLPGrid from "@/components/ui/FLPGrid";
 
 export default async function Home() {
-  const latestPack = await getLatestPack();
+  // const latestPack = await getLatestPack();
   const latestPacks = await getLatestPacks(3);
   const latestMidiFiles = await getLatestMidiFiles(10);
   const latestFLPs = await getLatestFLPs(3);
@@ -44,15 +44,7 @@ export default async function Home() {
       />
       <main className="flex flex-col gap-4 w-full items-center">
         {/* Hero Section */}
-        {latestPack ? (
-          <Hero
-            productImage={latestPack.image_url}
-            backgroundImage="/images/Hero.png"
-            packLink={`/pack?id=${latestPack.id}`}
-          />
-        ) : (
-          <EmptyHeroPage />
-        )}
+        <EmptyHeroPage />
 
         {/* Products Overview Section */}
         <div
