@@ -9,6 +9,8 @@ import Badge from "@/components/ui/Badge";
 import PlayButton from "@/components/ui/PlayButton";
 import SimilarProducts from "@/components/sections/SimilarProducts";
 
+export const revalidate = 60; // Cache for 1 minute
+
 interface PackPageProps {
   searchParams: Promise<{ id?: string }>;
 }
@@ -83,7 +85,6 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   pack information
                 </h2>
                 <div className="text-gray-300 mt-4">
-                  <p className="text-gray-300 font-bold mb-2">Description</p>
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{

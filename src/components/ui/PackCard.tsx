@@ -38,7 +38,7 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
         </div>
         <div className="p-4">
           <div className="flex flex-row justify-between relative">
-            <h3 className="text-lg lg:text-2xl font-medium text-white max-w-3/4 truncate">
+            <h3 className="text-md font-medium text-white max-w-3/4 truncate">
               <span aria-hidden="true" className="absolute inset-0" />
               {product.name}
             </h3>
@@ -50,12 +50,12 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
               isNew && <Badge text="NEW!" style="yellow" />
             )}
           </div>
-          <p className="text-sm text-gray-500 font-bold">
+          <p className="text-sm text-gray-500 font-bold mb-2">
             {product.file_count} high quality {product.type}s
           </p>
           <div className="flex flex-row justify-between">
             <div className="space-y-2 flex flex-row justify-between">
-              <div className="flex-row gap-2 flex-wrap h-fit hidden lg:flex">
+              <div className="flex-row gap-2 flex-wrap h-fit hidden lg:flex max-w-full truncate">
                 {product.tags.map((tag) => (
                   <Badge key={tag} text={tag} style="blue" />
                 ))}

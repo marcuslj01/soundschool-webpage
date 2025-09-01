@@ -1,6 +1,8 @@
 import PackGrid from "@/components/ui/PackGrid";
 import { getPacks } from "@/lib/firestore/pack";
 
+export const revalidate = 360; // Cache for 1 minute
+
 export default async function PacksPage() {
   const packs = await getPacks();
 
