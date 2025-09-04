@@ -84,14 +84,20 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
                     <p className="text-gray-300 font-bold">Genre</p>
                     <p className="text-gray-300">{midi.genre}</p>
                   </div>
-                  <div className="flex flex-col gap-2">
+
+                  {/* <div className="flex flex-col gap-2">
                     <p className="text-gray-300 font-bold">VST</p>
                     <p className="text-gray-300">{midi.vst}</p>
-                  </div>
-                  <div className="flex flex-col gap-2">
+                    </div>
+                    <div className="flex flex-col gap-2">
                     <p className="text-gray-300 font-bold">Preset</p>
                     <p className="text-gray-300">{midi.preset}</p>
-                  </div>
+                    </div> */}
+                </div>
+                <div className="w-full mt-4">
+                  <p className="text-gray-300 font-bold">
+                    Preset information will be available after purchasing.
+                  </p>
                 </div>
               </div>
             </div>
