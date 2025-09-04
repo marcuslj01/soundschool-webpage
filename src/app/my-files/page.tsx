@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/OwnedProducts";
 import ClaimFilesButton from "@/components/ui/ClaimFilesButton";
 import { getFLP } from "@/lib/firestore/flp";
+import MidiInfoModal from "@/components/ui/MidiInfoModal";
 
 export default function MyFilesPage() {
   const { user } = useAuth();
@@ -22,6 +23,13 @@ export default function MyFilesPage() {
   const [ownedPacks, setOwnedPacks] = useState<Pack[]>([]);
   const [ownedFLPs, setOwnedFLPs] = useState<FLP[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [midi, setMidi] = useState<Midi>();
+
+  const handleInfoOpen = () => {
+    console.log("isInfoOpen", isInfoOpen);
+    setIsInfoOpen(!isInfoOpen);
+  };
 
   useEffect(() => {
     const fetchOwnedFiles = async () => {
@@ -82,6 +90,11 @@ export default function MyFilesPage() {
 
   return (
     <div className="min-h-screen flex flex-col mt-32 gap-8 px-4 sm:px-6 lg:px-8">
+      {isInfoOpen && midi && (
+        <div className="bg-black/80 w-full h-full fixed inset-0 z-50 flex items-center justify-center mx-auto">
+          <MidiInfoModal midi={midi} onClose={handleInfoOpen} />
+        </div>
+      )}
       <div className="max-w-7xl mx-auto w-full">
         <h1 className="text-4xl font-bold text-white mb-8">My Files</h1>
 
@@ -98,7 +111,12 @@ export default function MyFilesPage() {
             {ownedMidis.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-scroll max-h-[50vh]">
                 {ownedMidis.map((midi) => (
-                  <OwnedMidiCard key={midi.id} midi={midi} />
+                  <OwnedMidiCard
+                    key={midi.id}
+                    midi={midi}
+                    onInfoOpen={handleInfoOpen}
+                    setMidi={setMidi}
+                  />
                 ))}
               </div>
             ) : (

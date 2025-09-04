@@ -7,14 +7,20 @@ import Image from "next/image";
 import React, { useRef, useState } from "react";
 import Badge from "./Badge";
 import Link from "next/link";
-import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface OwnedMidiCardProps {
   midi: Midi;
+  onInfoOpen: () => void;
+  setMidi: (midi: Midi) => void;
 }
 
-export function OwnedMidiCard({ midi }: OwnedMidiCardProps) {
+export function OwnedMidiCard({
+  midi,
+  onInfoOpen,
+  setMidi,
+}: OwnedMidiCardProps) {
   const { user } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -181,7 +187,16 @@ export function OwnedMidiCard({ midi }: OwnedMidiCardProps) {
       {/* Download Button */}
       <div className="flex flex-col justify-end gap-2 flex-shrink-0">
         <div className="flex flex-row gap-2 justify-end items-center">
-          <Badge text="OWNED" style="indigo" />
+          <button
+            onClick={() => {
+              onInfoOpen();
+              setMidi(midi);
+            }}
+            className="text-primary text-sm font-bold hover:cursor-pointer hover:text-primary/80 transition-all duration-300 rounded-md flex items-center gap-2 "
+          >
+            View details
+            <ArrowRightIcon className="w-4 h-4" />
+          </button>
         </div>
         <div className="flex flex-row justify-end">
           <button
