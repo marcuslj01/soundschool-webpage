@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
 import UploadModal from "@/components/ui/UploadModal";
@@ -20,7 +20,7 @@ export default function Products() {
   );
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const token = await currentUser?.getIdToken();
 
@@ -47,24 +47,36 @@ export default function Products() {
 
       if (packsResponse.ok) {
         const packsData = await packsResponse.json();
-        setPacks(packsData);
+        // Sort packs alphabetically by name (Z-A)
+        const sortedPacks = packsData.sort((a: Pack, b: Pack) =>
+          b.name.localeCompare(a.name, "no", { sensitivity: "base" })
+        );
+        setPacks(sortedPacks);
       }
 
       if (midisResponse.ok) {
         const midisData = await midisResponse.json();
-        setMidis(midisData);
+        // Sort midis alphabetically by name (Z-A)
+        const sortedMidis = midisData.sort((a: Midi, b: Midi) =>
+          b.name.localeCompare(a.name, "no", { sensitivity: "base" })
+        );
+        setMidis(sortedMidis);
       }
 
       if (flpsResponse.ok) {
         const flpsData = await flpsResponse.json();
-        setFlps(flpsData);
+        // Sort FLPs alphabetically by name (Z-A)
+        const sortedFlps = flpsData.sort((a: FLP, b: FLP) =>
+          b.name.localeCompare(a.name, "no", { sensitivity: "base" })
+        );
+        setFlps(sortedFlps);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
 
   // Delete product
   const handleDelete = async (type: "packs" | "midis" | "flps", id: string) => {
@@ -91,13 +103,31 @@ export default function Products() {
       );
 
       if (response.ok) {
-        // Remove from local state
+        // Remove from local state and maintain alphabetical order (Z-A)
         if (type === "packs") {
-          setPacks((prev) => prev.filter((pack) => pack.id !== id));
+          setPacks((prev) =>
+            prev
+              .filter((pack) => pack.id !== id)
+              .sort((a, b) =>
+                b.name.localeCompare(a.name, "no", { sensitivity: "base" })
+              )
+          );
         } else if (type === "midis") {
-          setMidis((prev) => prev.filter((midi) => midi.id !== id));
+          setMidis((prev) =>
+            prev
+              .filter((midi) => midi.id !== id)
+              .sort((a, b) =>
+                b.name.localeCompare(a.name, "no", { sensitivity: "base" })
+              )
+          );
         } else if (type === "flps") {
-          setFlps((prev) => prev.filter((flp) => flp.id !== id));
+          setFlps((prev) =>
+            prev
+              .filter((flp) => flp.id !== id)
+              .sort((a, b) =>
+                b.name.localeCompare(a.name, "no", { sensitivity: "base" })
+              )
+          );
         }
       } else {
         const errorData = await response.json();
@@ -133,7 +163,7 @@ export default function Products() {
     if (currentUser) {
       fetchProducts();
     }
-  }, [currentUser]);
+  }, [currentUser, fetchProducts]);
 
   if (loading) {
     return (
