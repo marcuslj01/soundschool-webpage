@@ -169,8 +169,14 @@ export function OwnedMidiCard({
 
       {/* Text section */}
       <div className="flex flex-col gap-1 flex-1 min-w-0">
-        <Link href={`/midi?id=${midi.id}`} className="hover:cursor-pointer">
-          <h1 className="font-semibold text-sm sm:text-lg transition-colors hover:text-blue-400">
+        <button
+          className="hover:cursor-pointer"
+          onClick={() => {
+            onInfoOpen();
+            setMidi(midi);
+          }}
+        >
+          <h1 className="font-semibold text-sm sm:text-lg transition-colors hover:text-blue-400 text-left">
             {midi.name}
           </h1>
 
@@ -181,7 +187,7 @@ export function OwnedMidiCard({
             <Badge text={midi.root + " " + midi.scale} style="gray" />
             <Badge text={midi.bpm + " BPM"} style="gray" />
           </div>
-        </Link>
+        </button>
       </div>
 
       {/* Download Button */}
