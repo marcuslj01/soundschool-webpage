@@ -116,8 +116,8 @@ export default function EmptyHeroPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
           >
-            Discover premium MIDI files, sample packs, and FLP projects to
-            elevate your music production
+            Discover premium MIDI files, packs, and FLPs to elevate your music
+            production
           </motion.p>
 
           {/* Call to action buttons - mobile first */}
