@@ -20,10 +20,10 @@ export default function CookieBanner() {
       >
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
-            <h3 className="text-white font-semibold mb-2">
+            <h3 className="text-white font-semibold mb-2 text-sm">
               We use cookies to improve your experience
             </h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
               We use cookies for analytics to understand how you use our site,
               authentication to keep you logged in, and to remember your
               shopping cart. You can choose to accept or decline non-essential
@@ -31,7 +31,7 @@ export default function CookieBanner() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <div className="flex flex-row gap-2 sm:gap-3">
             <button
               onClick={declineCookies}
               className="px-4 py-2 text-sm text-gray-300 hover:text-white border border-gray-600 rounded-md hover:border-gray-500 transition-colors"
