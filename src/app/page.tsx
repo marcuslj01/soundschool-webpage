@@ -81,13 +81,13 @@ export default async function Home() {
             <section className="w-full max-w-7xl">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-white">
-                  Latest Sample Packs
+                  Latest MIDI Packs
                 </h2>
                 <Link
                   href="/packs"
                   className="text-primary hover:text-primary/80 transition-colors"
                 >
-                  View all packs →
+                  View all MIDI packs →
                 </Link>
               </div>
               <PackGrid products={latestPacks} />
