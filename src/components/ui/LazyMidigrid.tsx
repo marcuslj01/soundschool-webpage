@@ -148,7 +148,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   }, [loadMore, loading, hasMore, isInSearchMode]);
 
   return (
-    <div className="w-full flex flex-col items-center sm:p-4 rounded-lg sm:max-w-5xl mb-8">
+    <div className="w-full flex flex-col items-center sm:p-4 rounded-lg sm:max-w-4xl mb-8">
       {/* TODO: Implement limited time offer */}
       {/* <h1 className="text-lg font-bold text-center bg-indigo-600 text-white p-2 w-full shadow-xl">
         Limited time: Buy 2 get 1 free!
