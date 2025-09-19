@@ -98,7 +98,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
       setError(null);
 
       const params = new URLSearchParams({
-        limit: "2",
+        limit: "10",
       });
 
       if (lastId) {
@@ -135,7 +135,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
           loadMore();
         }
       },
-      { threshold: 0.1, rootMargin: "100px" }
+      { threshold: 0, rootMargin: "200px" }
     );
 
     if (loadingRef.current) {
@@ -201,15 +201,11 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
               !file.hidden && (
                 <motion.div
                   key={file.id}
-                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                  animate={
-                    isGridInView
-                      ? { opacity: 1, y: 0, scale: 1 }
-                      : { opacity: 0, y: 50, scale: 0.95 }
-                  }
+                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{
-                    duration: 0.4,
-                    delay: index * 0.1,
+                    duration: 0.2,
+                    delay: index < 10 ? index * 0.05 : 0,
                     ease: "easeOut",
                   }}
                 >
