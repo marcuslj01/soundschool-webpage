@@ -67,7 +67,7 @@ export default async function Home() {
                 Latest MIDI Files
               </h2>
               <Link
-                href="/midis"
+                href="/midi"
                 className="text-primary hover:text-primary/80 transition-colors"
               >
                 View all MIDI files →
