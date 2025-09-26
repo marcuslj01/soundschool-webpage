@@ -250,7 +250,7 @@ export async function POST(req: NextRequest) {
           from: "Soundschool <noreply@soundschoolmidis.com>",
           to: "schoolsound18@gmail.com",
           bcc: ["marcus.l.jakobsen@gmail.com", "philipljung04@gmail.com"],
-          subject: `New sale of $${orderData.total_price}`,
+          subject: `New sale of $${orderData.total_price}!`,
           html: `
             <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 24px; border-radius: 8px; max-width: 600px; margin: auto;">
               <h2 style="color: #6366f1;">You have a new sale!</h2>
