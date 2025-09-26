@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported as isAnalyticsSupported, Analytics } from "firebase/analytics";
+import { getAnalytics, isSupported as isAnalyticsSupported } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getFirestore } from "firebase/firestore";
@@ -30,37 +30,19 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize analytics only after cookie consent
-let analytics: Analytics | undefined;
-
-// Function to initialize analytics (called after consent)
-const initializeAnalytics = () => {
-  if (typeof window === "undefined" || analytics) return;
-  
+// Only initialize analytics in browser environment and when supported
+let analytics;
+if (typeof window !== "undefined") {
+  // Some browsers (Safari Private Mode, iOS) don't support Analytics. Guard it.
   isAnalyticsSupported()
     .then((supported) => {
       if (supported) {
         analytics = getAnalytics(app);
-        console.log("Analytics initialized after cookie consent");
       }
     })
     .catch(() => {
       // No-op: analytics not supported in this environment
     });
-};
-
-// Check if user has already consented and initialize analytics if so
-if (typeof window !== "undefined") {
-  // Use setTimeout to ensure this runs after hydration
-  setTimeout(() => {
-    const savedConsent = localStorage.getItem("cookie-consent");
-    if (savedConsent === "accepted") {
-      initializeAnalytics();
-    }
-  }, 0);
-  
-  // Listen for cookie consent events
-  window.addEventListener("cookie-consent-accepted", initializeAnalytics);
 }
 
 const db = getFirestore(app);
