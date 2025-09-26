@@ -4,6 +4,10 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
+import CookieBanner from "@/components/ui/CookieBanner";
+import ClientOnly from "@/components/ui/ClientOnly";
+import HtmlWrapper from "@/components/ui/HtmlWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,17 +88,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        suppressHydrationWarning
       >
-        <AuthProvider>
-          <div className="min-h-screen w-full overflow-x-hidden">
-            <Navbar />
-            <main className="w-full">{children}</main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <CookieConsentProvider>
+          <AuthProvider>
+            <HtmlWrapper />
+            <div className="min-h-screen w-full overflow-x-hidden">
+              <Navbar />
+              <main className="w-full">{children}</main>
+              <Footer />
+              <ClientOnly>
+                <CookieBanner />
+              </ClientOnly>
+            </div>
+          </AuthProvider>
+        </CookieConsentProvider>
       </body>
     </html>
   );
