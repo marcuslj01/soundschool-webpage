@@ -24,7 +24,7 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
   return (
     <div
       key={product.id}
-      className="group relative overflow-hidden rounded-lg bg-black/10 w-full border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300"
+      className="group relative overflow-hidden rounded-lg bg-gray-700/10 w-full border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300"
     >
       <Link href={`/pack?id=${product.id}`}>
         <div className="relative">
@@ -54,13 +54,6 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
             {product.file_count} high quality {product.type}s
           </p>
           <div className="flex flex-row justify-between">
-            <div className="space-y-2 flex flex-row justify-between">
-              <div className="flex-row gap-2 flex-wrap h-fit hidden lg:flex max-w-full truncate">
-                {product.tags.map((tag) => (
-                  <Badge key={tag} text={tag} style="blue" />
-                ))}
-              </div>
-            </div>
             {!product.is_discounted ? (
               <p className="text-gray-200 text-lg font-bold">
                 ${product.price}
@@ -75,6 +68,13 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
                 </span>
               </p>
             )}
+          </div>
+          <div className="space-y-2 flex flex-row justify-between mt-2 ">
+            <div className="flex-row gap-2 flex-wrap h-fit hidden lg:flex max-w-full truncate">
+              {product.tags.map((tag) => (
+                <Badge key={tag} text={tag} style="blue" />
+              ))}
+            </div>
           </div>
         </div>
       </Link>
