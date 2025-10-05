@@ -19,7 +19,7 @@ export default async function PacksPage() {
       </h2>
       {featuredPacks.length > 0 && (
         <>
-          <h2 className="text-2xl font-bold">Bestsellers</h2>
+          <h2 className="text-2xl font-bold">Most popular</h2>
           <PackGrid products={featuredPacks} />
         </>
       )}
