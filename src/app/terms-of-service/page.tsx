@@ -71,7 +71,7 @@ export default function TermsOfService() {
               </li>
               <li>
                 <strong>Analytics Data:</strong> Website usage statistics (via
-                Firebase Analytics)
+                Firebase Analytics and Meta Pixel)
               </li>
             </ul>
 
@@ -134,6 +134,11 @@ export default function TermsOfService() {
               <li>
                 <strong>Firebase Analytics:</strong> Provides website usage
                 analytics and performance monitoring
+              </li>
+              <li>
+                <strong>Meta Pixel:</strong> Tracks website visits and user
+                interactions for advertising purposes, conversion measurement,
+                and audience building. Only loads after you consent to cookies.
               </li>
               <li>
                 <strong>Resend:</strong> Handles email delivery for order
@@ -275,6 +280,14 @@ export default function TermsOfService() {
               <li>
                 <strong>Firebase Analytics Cookies:</strong> Website usage
                 statistics and performance monitoring
+              </li>
+              <li>
+                <strong>Meta Pixel Cookies:</strong> Tracks website visits, page
+                views, and user interactions for advertising and analytics. Used
+                to measure ad effectiveness and build custom audiences. May use
+                email addresses and phone numbers for advanced matching to
+                improve tracking accuracy. Only loads after you consent to
+                cookies.
               </li>
               <li>
                 <strong>Google reCAPTCHA Cookies:</strong> Security verification

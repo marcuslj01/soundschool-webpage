@@ -8,6 +8,7 @@ import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
 import CookieBanner from "@/components/ui/CookieBanner";
 import ClientOnly from "@/components/ui/ClientOnly";
 import HtmlWrapper from "@/components/ui/HtmlWrapper";
+import MetaPixel from "@/components/ui/MetaPixel";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -96,6 +97,7 @@ export default function RootLayout({
         <CookieConsentProvider>
           <AuthProvider>
             <HtmlWrapper />
+            <MetaPixel />
             <div className="min-h-screen w-full overflow-x-hidden">
               <Navbar />
               <main className="w-full">{children}</main>
