@@ -13,6 +13,7 @@ import BackButton from "@/components/ui/BackButton";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { getOwnedFiles } from "@/lib/firestore/user";
+import { trackInitiateCheckout } from "@/lib/metaPixel";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -89,6 +90,18 @@ export default function Cart() {
       const data = await response.json();
 
       if (data.url) {
+        // Track InitiateCheckout event for Meta Pixel
+        trackInitiateCheckout(
+          cartItems.map((item) => ({
+            id: item.id,
+            name: item.title,
+            price: item.is_discounted
+              ? item.discount_price || item.price
+              : item.price,
+          })),
+          subtotalPrice
+        );
+
         window.location.href = data.url; // Send user to Stripe Checkout
       } else {
         alert("Something went wrong with payment. Please try again!");
