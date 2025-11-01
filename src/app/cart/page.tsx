@@ -92,14 +92,16 @@ export default function Cart() {
       if (data.url) {
         // Track InitiateCheckout event for Meta Pixel
         trackInitiateCheckout(
-          cartItems.map(item => ({
+          cartItems.map((item) => ({
             id: item.id,
             name: item.title,
-            price: item.is_discounted ? item.discount_price || item.price : item.price,
+            price: item.is_discounted
+              ? item.discount_price || item.price
+              : item.price,
           })),
           subtotalPrice
         );
-        
+
         window.location.href = data.url; // Send user to Stripe Checkout
       } else {
         alert("Something went wrong with payment. Please try again!");
