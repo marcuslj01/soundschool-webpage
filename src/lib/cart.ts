@@ -1,4 +1,5 @@
 import { CartItem } from "./types/cartItem";
+import { trackAddToCart } from "./metaPixel";
 
 const CART_KEY = "cartItems";
 
@@ -27,6 +28,13 @@ export function addToCart(item: CartItem) {
       localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
     }
     fireCartUpdated();
+    
+    // Track AddToCart event for Meta Pixel
+    trackAddToCart({
+      id: item.id,
+      name: item.title,
+      price: item.is_discounted ? item.discount_price || item.price : item.price,
+    });
   }
 }
 
