@@ -275,7 +275,7 @@ export default function Cart() {
                           <div className="flex-1">
                             <h3 className="text-lg font-semibold text-white group-hover:text-primary transition-colors duration-200">
                               <Link
-                                href={`/pack?id=${cartItems.id}`}
+                                href={`/${cartItems.type}?id=${cartItems.id}`}
                                 className="hover:underline"
                               >
                                 {cartItems.title}
