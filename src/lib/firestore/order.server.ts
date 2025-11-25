@@ -32,7 +32,10 @@ export async function getOrdersByUserIdServer(userId: string) {
 export async function getAllOrdersServer() {
   const db = getFirestore();
   const ordersCollection = db.collection("orders");
-  const ordersSnapshot = await ordersCollection.get();
+  // Sort by created_at descending (newest first)
+  const ordersSnapshot = await ordersCollection
+    .orderBy("created_at", "desc")
+    .get();
   
   return ordersSnapshot.docs.map((doc) => {
     const data = doc.data();
