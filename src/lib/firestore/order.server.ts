@@ -1,5 +1,5 @@
 // Server-side only Firebase Admin SDK operations
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { Order } from '../types/order';
 
@@ -32,7 +32,10 @@ export async function getOrdersByUserIdServer(userId: string) {
 export async function getAllOrdersServer() {
   const db = getFirestore();
   const ordersCollection = db.collection("orders");
-  const ordersSnapshot = await ordersCollection.get();
+  // Sort by created_at descending (newest first)
+  const ordersSnapshot = await ordersCollection
+    .orderBy("created_at", "desc")
+    .get();
   
   return ordersSnapshot.docs.map((doc) => {
     const data = doc.data();
@@ -77,4 +80,40 @@ export async function getOrderServer(payment_id: string) {
     id: doc.id,
     created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
   } as Order;
+}
+
+export async function getMonthlyOrdersStatsServer(month: Date): Promise<{ count: number, revenue: number }> {
+  const db = getFirestore();
+  const ordersCollection = db.collection("orders");
+  
+  // Get start and end of the month
+  const startOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
+  const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0, 23, 59, 59, 999);
+  
+  // Convert to Firestore Timestamps
+  const startTimestamp = Timestamp.fromDate(startOfMonth);
+  const endTimestamp = Timestamp.fromDate(endOfMonth);
+  
+  // Query orders within the month range
+  const querySnapshot = await ordersCollection
+    .where("created_at", ">=", startTimestamp)
+    .where("created_at", "<=", endTimestamp)
+    .get();
+  
+  const orders = querySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      id: doc.id,
+      created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+    } as Order;
+  });
+  
+  // Filter to only include paid orders
+  const paidOrders = orders.filter(order => order.status === "paid" && !order.refunded);
+  
+  const count = paidOrders.length;
+  const revenue = paidOrders.reduce((acc, order) => acc + order.total_price, 0);
+  
+  return { count, revenue };
 } 

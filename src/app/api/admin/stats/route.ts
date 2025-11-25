@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getUsersCountServer } from '@/lib/firestore/user.server';
-import { getOrdersCountAndRevenueServer } from '@/lib/firestore/order.server';
+import { getOrdersCountAndRevenueServer, getMonthlyOrdersStatsServer } from '@/lib/firestore/order.server';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -42,15 +42,44 @@ export async function GET(request: NextRequest) {
     }
 
     // User is admin, fetch stats
-    const [users, orders] = await Promise.all([
+    const now = new Date();
+    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    
+    const [users, orders, currentMonthStats, previousMonthStats] = await Promise.all([
       getUsersCountServer(),
       getOrdersCountAndRevenueServer(),
+      getMonthlyOrdersStatsServer(currentMonth),
+      getMonthlyOrdersStatsServer(previousMonth),
     ]);
+
+    // Calculate percentage change for orders and revenue
+    const ordersChange = previousMonthStats.count === 0
+      ? (currentMonthStats.count > 0 ? 100 : 0)
+      : ((currentMonthStats.count - previousMonthStats.count) / previousMonthStats.count) * 100;
+    
+    const revenueChange = previousMonthStats.revenue === 0
+      ? (currentMonthStats.revenue > 0 ? 100 : 0)
+      : ((currentMonthStats.revenue - previousMonthStats.revenue) / previousMonthStats.revenue) * 100;
 
     return NextResponse.json({
       users,
       orders: orders.count,
       revenue: orders.revenue,
+      monthly: {
+        current: {
+          orders: currentMonthStats.count,
+          revenue: currentMonthStats.revenue,
+        },
+        previous: {
+          orders: previousMonthStats.count,
+          revenue: previousMonthStats.revenue,
+        },
+        change: {
+          orders: Math.round(ordersChange * 100) / 100,
+          revenue: Math.round(revenueChange * 100) / 100,
+        },
+      },
     });
   } catch (error) {
     console.error('Error fetching admin stats:', error);
