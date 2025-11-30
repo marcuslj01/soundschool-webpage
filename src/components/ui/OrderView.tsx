@@ -14,7 +14,9 @@ interface OrderViewProps {
 
 export default function OrderView({ order, onClose }: OrderViewProps) {
   const { user } = useAuth();
-  const [downloadingItems, setDownloadingItems] = useState<Set<string>>(new Set());
+  const [downloadingItems, setDownloadingItems] = useState<Set<string>>(
+    new Set()
+  );
 
   const formatDate = (date: Date | string | null) => {
     if (!date) return "Unknown";
@@ -76,9 +78,15 @@ export default function OrderView({ order, onClose }: OrderViewProps) {
         fileType: item.type,
       };
 
-      // For registered users, send userId
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      // For registered users, send userId and auth token
       if (user) {
         requestBody.userId = user.uid;
+        const token = await user.getIdToken();
+        headers.Authorization = `Bearer ${token}`;
       } else {
         // For guest users, send order information
         requestBody.orderId = order.id;
@@ -87,7 +95,7 @@ export default function OrderView({ order, onClose }: OrderViewProps) {
 
       const response = await fetch("/api/download", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(requestBody),
       });
 
@@ -291,7 +299,11 @@ export default function OrderView({ order, onClose }: OrderViewProps) {
                               ? "text-green-700 bg-green-100 cursor-not-allowed"
                               : "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
                           }`}
-                          title={downloadingItems.has(item.id) ? "Downloading..." : "Download file"}
+                          title={
+                            downloadingItems.has(item.id)
+                              ? "Downloading..."
+                              : "Download file"
+                          }
                         >
                           {downloadingItems.has(item.id) ? (
                             <div className="w-3 h-3 border-2 border-green-700 border-t-transparent rounded-full animate-spin mr-1" />
