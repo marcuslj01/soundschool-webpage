@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getOrderServer } from "@/lib/firestore/order.server";
 import { getFirestore } from 'firebase-admin/firestore';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { auth } from 'firebase-admin';
 import { Order } from "@/lib/types/order";
 import { OrderItem } from "@/lib/types/orderItem";
 
@@ -62,6 +63,31 @@ export async function POST(req: NextRequest) {
       fileName = flpData.name;
     } else {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+    }
+
+    // Check if user is admin (if userId is provided and auth token is present)
+    let isAdmin = false;
+    if (userId) {
+      const authHeader = req.headers.get('authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await auth().verifyIdToken(token);
+          const userRecord = await auth().getUser(decodedToken.uid);
+          isAdmin = !!userRecord.customClaims?.admin;
+        } catch (error) {
+          // If token verification fails, continue with normal ownership check
+          console.error("Token verification failed:", error);
+        }
+      }
+    }
+
+    // If user is admin, skip ownership/order verification
+    if (isAdmin) {
+      return NextResponse.json({ 
+        downloadUrl,
+        fileName 
+      });
     }
 
     // For registered users, check if they own the file
