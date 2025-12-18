@@ -3,6 +3,7 @@ import { getOrderServer } from "@/lib/firestore/order.server";
 import OrderDetails from "@/components/sections/OrderDetails";
 import Link from "next/link";
 import ClearCartOnSuccess from "@/components/ClearCartOnSuccess";
+import TrackPurchase from "@/components/TrackPurchase";
 
 export default async function SuccessPage({
   searchParams,
@@ -75,7 +76,22 @@ export default async function SuccessPage({
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-white">
       <ClearCartOnSuccess />
-      {order && <OrderDetails order={order} />}
+      {order && (
+        <>
+          <TrackPurchase
+            orderId={order.id}
+            items={order.orderItems.map((item) => ({
+              id: item.id,
+              name: item.title,
+              price: item.price,
+              quantity: 1,
+            }))}
+            total={order.total_price}
+            currency="USD"
+          />
+          <OrderDetails order={order} />
+        </>
+      )}
     </div>
   );
 }
