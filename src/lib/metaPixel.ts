@@ -92,6 +92,7 @@ export function trackPurchase(
       value: total,
       currency: currency || "USD",
       num_items: totalQuantity,
+      eventID: transactionId,
     });
   } catch (error) {
     console.error("Meta Pixel Purchase error:", error);
