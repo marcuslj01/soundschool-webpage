@@ -6,6 +6,66 @@ import { OrderItem } from "@/lib/types/orderItem";
 import { CartItem } from "@/lib/types/cartItem";
 import { Resend } from "resend";
 import { OwnedFile } from "@/lib/types/ownedFile";
+import crypto from "crypto";
+
+// Meta Conversions API
+async function sendMetaConversionEvent(data: {
+  email: string | null;
+  value: number;
+  currency: string;
+  contentIds: string[];
+  contentNames: string[];
+  orderId: string;
+}) {
+  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+  const accessToken = process.env.META_CONVERSIONS_API_TOKEN;
+
+  if (!pixelId || !accessToken) {
+    console.log("Meta CAPI: Missing pixelId or accessToken, skipping");
+    return;
+  }
+
+  // SHA256 hash
+  const hashedEmail = data.email
+    ? crypto.createHash("sha256").update(data.email.toLowerCase().trim()).digest("hex")
+    : null;
+
+  const eventData = {
+    data: [
+      {
+        event_name: "Purchase",
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: data.orderId,
+        action_source: "website",
+        user_data: {
+          ...(hashedEmail && { em: [hashedEmail] }),
+        },
+        custom_data: {
+          currency: data.currency,
+          value: data.value,
+          content_ids: data.contentIds,
+          content_names: data.contentNames,
+          content_type: "product",
+        },
+      },
+    ],
+  };
+
+  try {
+    const response = await fetch(
+      `https://graph.facebook.com/v18.0/${pixelId}/events?access_token=${accessToken}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventData),
+      }
+    );
+    const result = await response.json();
+    console.log("Meta CAPI response:", result);
+  } catch (error) {
+    console.error("Meta CAPI error:", error);
+  }
+}
 
 if (!getApps().length) {
   initializeApp({
@@ -269,13 +329,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Send to Meta Conversions API when order complete
+    await sendMetaConversionEvent({
+      email: email,
+      value: orderData.total_price,
+      currency: "USD",
+      contentIds: orderItems.map((item) => item.id),
+      contentNames: orderItems.map((item) => item.title),
+      orderId: firestoreOrderId,
+    });
+
     // Delete intent when order is complete
     if (intentId) {
       try {
         await db.collection("checkout_intents").doc(intentId).delete();
       } catch (e) {
         console.error("Error deleting checkout intent:", e);
-
       }
     }
   }
