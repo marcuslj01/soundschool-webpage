@@ -27,7 +27,7 @@ export default function TrackPurchase({
     if (tracked.current) return;
     tracked.current = true;
     trackPurchase(orderId, items, total, currency);
-  });
+  }, [orderId, items, total, currency]);
 
   return null;
 }
