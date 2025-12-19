@@ -9,14 +9,17 @@ import { OwnedFile } from "@/lib/types/ownedFile";
 import crypto from "crypto";
 
 // Meta Conversions API
-async function sendMetaConversionEvent(data: {
-  email: string | null;
-  value: number;
-  currency: string;
-  contentIds: string[];
-  contentNames: string[];
-  orderId: string;
-}) {
+async function sendMetaConversionEvent(
+  data: {
+    email: string | null;
+    value: number;
+    currency: string;
+    contentIds: string[];
+    contentNames: string[];
+    orderId: string;
+  },
+  req?: NextRequest
+) {
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
   const accessToken = process.env.META_CONVERSIONS_API_TOKEN;
 
@@ -25,12 +28,37 @@ async function sendMetaConversionEvent(data: {
     return;
   }
 
-  // SHA256 hash
+  // SHA256 hash email
   const hashedEmail = data.email
     ? crypto.createHash("sha256").update(data.email.toLowerCase().trim()).digest("hex")
     : null;
 
-  const eventData = {
+  // Get client IP and user agent if available
+  const clientIpAddress = req?.headers.get("x-forwarded-for")?.split(",")[0] || 
+                          req?.headers.get("x-real-ip") || 
+                          null;
+  const userAgent = req?.headers.get("user-agent") || null;
+
+  const eventData: {
+    data: Array<{
+      event_name: string;
+      event_time: number;
+      event_id: string;
+      action_source: string;
+      user_data: {
+        em?: string[];
+        client_ip_address?: string;
+        client_user_agent?: string;
+      };
+      custom_data: {
+        currency: string;
+        value: number;
+        content_ids: string[];
+        content_names: string[];
+        content_type: string;
+      };
+    }>;
+  } = {
     data: [
       {
         event_name: "Purchase",
@@ -39,6 +67,8 @@ async function sendMetaConversionEvent(data: {
         action_source: "website",
         user_data: {
           ...(hashedEmail && { em: [hashedEmail] }),
+          ...(clientIpAddress && { client_ip_address: clientIpAddress }),
+          ...(userAgent && { client_user_agent: userAgent }),
         },
         custom_data: {
           currency: data.currency,
@@ -62,6 +92,10 @@ async function sendMetaConversionEvent(data: {
     );
     const result = await response.json();
     console.log("Meta CAPI response:", result);
+    
+    if (!response.ok) {
+      console.error("Meta CAPI error response:", result);
+    }
   } catch (error) {
     console.error("Meta CAPI error:", error);
   }
@@ -330,14 +364,17 @@ export async function POST(req: NextRequest) {
     }
 
     // Send to Meta Conversions API when order complete
-    await sendMetaConversionEvent({
-      email: email,
-      value: orderData.total_price,
-      currency: "USD",
-      contentIds: orderItems.map((item) => item.id),
-      contentNames: orderItems.map((item) => item.title),
-      orderId: firestoreOrderId,
-    });
+    await sendMetaConversionEvent(
+      {
+        email: email,
+        value: orderData.total_price,
+        currency: "USD",
+        contentIds: orderItems.map((item) => item.id),
+        contentNames: orderItems.map((item) => item.title),
+        orderId: firestoreOrderId,
+      },
+      req
+    );
 
     // Delete intent when order is complete
     if (intentId) {
