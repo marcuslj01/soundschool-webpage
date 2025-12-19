@@ -19,15 +19,26 @@ export function trackAddToCart(item: {
   price: number;
   currency?: string;
 }) {
-  if (typeof window === "undefined" || !window.fbq) return;
+  if (typeof window === "undefined") {
+    console.warn("Meta Pixel: window is undefined");
+    return;
+  }
+  
+  if (!window.fbq) {
+    console.warn("Meta Pixel: fbq is not available. Pixel may not be loaded yet or cookie consent not given.");
+    return;
+  }
   
   try {
-    window.fbq("track", "AddToCart", {
+    const eventData = {
       content_name: item.name,
       content_ids: [item.id],
       value: item.price,
       currency: item.currency || "USD",
-    });
+    };
+    
+    console.log("Meta Pixel: Tracking AddToCart event", eventData);
+    window.fbq("track", "AddToCart", eventData);
   } catch (error) {
     console.error("Meta Pixel AddToCart error:", error);
   }
