@@ -10,6 +10,7 @@ export default async function PacksPage() {
     (pack) => pack.type === "midi" && !pack.is_featured
   );
   const samplePacks = packs.filter((pack) => pack.type === "sample");
+  const presetPacks = packs.filter((pack) => pack.type === "preset");
   const featuredPacks = packs.filter((pack) => pack.is_featured);
 
   return (
@@ -35,6 +36,12 @@ export default async function PacksPage() {
         <>
           <h2 className="text-2xl font-bold">Sample Packs</h2>
           <PackGrid products={samplePacks} />
+        </>
+      )}
+      {presetPacks.length > 0 && (
+        <>
+          <h2 className="text-2xl font-bold">Preset Packs</h2>
+          <PackGrid products={presetPacks} />
         </>
       )}
     </div>

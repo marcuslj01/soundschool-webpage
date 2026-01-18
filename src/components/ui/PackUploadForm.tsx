@@ -235,6 +235,7 @@ function PackUploadForm({ onClose, onBack }: PackUploadFormProps) {
               </option>
               <option value="midi">Midi Pack</option>
               <option value="sample">Sample Pack</option>
+              <option value="preset">Preset Pack</option>
             </select>
             <input
               type="text"
