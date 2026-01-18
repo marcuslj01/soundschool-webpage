@@ -1,7 +1,7 @@
 // Interface for a pack of midi files or samples
 export interface PackInput {
     name: string;
-    type: "midi" | "sample" | null;
+    type: "midi" | "sample" | "preset" | null;
     description: string;
     price: number;
     discount_price: number;

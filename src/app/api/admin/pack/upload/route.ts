@@ -23,23 +23,23 @@ export async function POST(request: NextRequest) {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const token = authHeader.split('Bearer ')[1];
     const decodedToken = await auth().verifyIdToken(token);
     const userRecord = await auth().getUser(decodedToken.uid);
-    
+
     if (!userRecord.customClaims?.admin) {
       return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
     }
 
     // Parse form data
     const formData = await request.formData();
-    
+
     // Validate files (server-side)
     const file = formData.get('file') as File;
     const preview = formData.get('preview') as File;
     const image = formData.get('image') as File;
-    
+
     if (!file || !preview || !image) {
       return NextResponse.json({ error: 'Missing required files' }, { status: 400 });
     }
@@ -48,11 +48,11 @@ export async function POST(request: NextRequest) {
     const maxFileSize = 100 * 1024 * 1024; // 100MB for ZIP
     const maxPreviewSize = 10 * 1024 * 1024; // 10MB for audio
     const maxImageSize = 5 * 1024 * 1024; // 5MB for image
-    
+
     if (file.size > maxFileSize) {
       return NextResponse.json({ error: 'ZIP file too large (max 100MB)' }, { status: 400 });
     }
-    
+
     if (preview.size > maxPreviewSize) {
       return NextResponse.json({ error: 'Preview too large (max 10MB)' }, { status: 400 });
     }
@@ -63,10 +63,10 @@ export async function POST(request: NextRequest) {
 
     // Validate ZIP file type
     const validZipExtensions = ['.zip'];
-    const isValidZipExtension = validZipExtensions.some(ext => 
+    const isValidZipExtension = validZipExtensions.some(ext =>
       file.name.toLowerCase().endsWith(ext)
     );
-    
+
     if (!isValidZipExtension) {
       return NextResponse.json({ error: 'Invalid ZIP file type' }, { status: 400 });
     }
@@ -74,12 +74,12 @@ export async function POST(request: NextRequest) {
     // Validate audio file type
     const validAudioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave'];
     const validAudioExtensions = ['.mp3', '.wav'];
-    
+
     const isValidAudioType = validAudioTypes.includes(preview.type);
-    const isValidAudioExtension = validAudioExtensions.some(ext => 
+    const isValidAudioExtension = validAudioExtensions.some(ext =>
       preview.name.toLowerCase().endsWith(ext)
     );
-    
+
     if (!isValidAudioType && !isValidAudioExtension) {
       return NextResponse.json({ error: 'Invalid audio file type' }, { status: 400 });
     }
@@ -87,12 +87,12 @@ export async function POST(request: NextRequest) {
     // Validate image file type
     const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     const validImageExtensions = ['.jpg', '.jpeg', '.png'];
-    
+
     const isValidImageType = validImageTypes.includes(image.type);
-    const isValidImageExtension = validImageExtensions.some(ext => 
+    const isValidImageExtension = validImageExtensions.some(ext =>
       image.name.toLowerCase().endsWith(ext)
     );
-    
+
     if (!isValidImageType && !isValidImageExtension) {
       return NextResponse.json({ error: 'Invalid image file type' }, { status: 400 });
     }
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
     // Save to Firestore
     const packData = {
       name: formData.get('name') as string,
-      type: formData.get('type') as "midi" | "sample",
+      type: formData.get('type') as "midi" | "sample" | "preset",
       description: formData.get('description') as string,
       price: Number(formData.get('price')),
       discount_price: Number(formData.get('discount_price')),
@@ -149,15 +149,15 @@ export async function POST(request: NextRequest) {
 
     await addPackServer(packData);
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Pack uploaded successfully' 
+    return NextResponse.json({
+      success: true,
+      message: 'Pack uploaded successfully'
     });
 
   } catch (error) {
     console.error('Upload error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error' 
+    return NextResponse.json({
+      error: 'Internal server error'
     }, { status: 500 });
   }
 } 
