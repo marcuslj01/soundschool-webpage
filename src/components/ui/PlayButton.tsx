@@ -1,14 +1,16 @@
 "use client";
 
 import { PlayIcon, PauseIcon } from "@heroicons/react/24/outline";
+import { AudioWaveform } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface PlayButtonProps {
   previewUrl: string;
   className?: string;
+  name: string;
 }
 
-function PlayButton({ previewUrl, className = "" }: PlayButtonProps) {
+function PlayButton({ previewUrl, name }: PlayButtonProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
@@ -38,22 +40,37 @@ function PlayButton({ previewUrl, className = "" }: PlayButtonProps) {
   };
 
   return (
-    <button
-      className={`w-full bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600 hover:cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 ${className}`}
-      onClick={handlePlayPause}
-    >
+    <div>
       {isPlaying ? (
         <>
-          <PauseIcon className="w-4 h-4" />
-          <span>Pause Preview</span>
+          <button
+            key={name}
+            onClick={handlePlayPause}
+            className="flex flex-col items-center justify-center bg-white/10 rounded-lg p-4 hover:cursor-pointer hover:bg-gray-100/20 transition-all duration-300 transform hover:scale-105"
+          >
+            <AudioWaveform className="w-8 h-8 m-2" />
+            <div className="flex flex-row items-center justify-center">
+              <PauseIcon className="w-4 h-4 mr-2" />
+              <span className="text-white text-sm">{name}</span>
+            </div>
+          </button>
         </>
       ) : (
         <>
-          <PlayIcon className="w-4 h-4" />
-          <span>Play Preview</span>
+          <button
+            key={name}
+            onClick={handlePlayPause}
+            className="flex flex-col items-center justify-center bg-white/10 rounded-lg p-4 hover:cursor-pointer hover:bg-gray-100/20 transition-all duration-300 transform hover:scale-105"
+          >
+            <AudioWaveform className="w-8 h-8 m-2" />
+            <div className="flex flex-row items-center justify-center">
+              <PlayIcon className="w-4 h-4 mr-2" />
+              <span className="text-white text-sm">{name}</span>
+            </div>
+          </button>
         </>
       )}
-    </button>
+    </div>
   );
 }
 
