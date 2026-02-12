@@ -107,7 +107,6 @@ export async function deletePack(id: string): Promise<boolean> {
 // Get similar packs based on genre and tags
 export async function getSimilarPacks(id: string): Promise<Pack[]> {
     try {
-        console.log("getSimilarPacks called with id:", id);
         
         // Get the current pack
         const packDoc = await getDoc(doc(db, "packs", id));
@@ -120,12 +119,6 @@ export async function getSimilarPacks(id: string): Promise<Pack[]> {
         const packGenre = packData?.genre;
         const packTags = packData?.tags || [];
         
-        console.log("Current pack data:", {
-            id,
-            genre: packGenre,
-            tags: packTags,
-            hidden: packData?.hidden
-        });
         
         // Check if pack is hidden
         if (packData?.hidden) {
@@ -150,7 +143,6 @@ export async function getSimilarPacks(id: string): Promise<Pack[]> {
         // Priority 1: Same genre and matching tags (only if both exist)
         if (packGenre && packTags.length > 0) {
             try {
-                console.log("Trying genre + tags query...");
                 const sameGenreAndTagsQuery = query(
                     packCollection, 
                     where("genre", "==", packGenre),
@@ -159,7 +151,6 @@ export async function getSimilarPacks(id: string): Promise<Pack[]> {
                 );
                 const sameGenreAndTagsSnapshot = await getDocs(sameGenreAndTagsQuery);
                 
-                console.log("Found", sameGenreAndTagsSnapshot.size, "packs with same genre");
                 
                 const sameGenreAndTagsPacks: Pack[] = [];
                 sameGenreAndTagsSnapshot.forEach((docSnapshot) => {
@@ -169,7 +160,6 @@ export async function getSimilarPacks(id: string): Promise<Pack[]> {
                             packTags.includes(tag)
                         ) || [];
                         
-                        console.log(`Pack ${docSnapshot.id} has ${matchingTags.length} matching tags`);
                         
                         // Only include if there are matching tags
                         if (matchingTags.length > 0) {
@@ -182,12 +172,10 @@ export async function getSimilarPacks(id: string): Promise<Pack[]> {
                     }
                 });
                 
-                console.log("Packs with matching tags:", sameGenreAndTagsPacks.length);
                 
                 // If we have more than 3, randomize and take 3
                 if (sameGenreAndTagsPacks.length >= 3) {
                     const result = shuffleAndTake(sameGenreAndTagsPacks, 3);
-                    console.log("Returning 3 packs with genre + tags match");
                     return result;
                 }
                 

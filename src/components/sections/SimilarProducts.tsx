@@ -49,21 +49,15 @@ export default function SimilarProducts({
       setIsLoading(true);
       try {
         if (midi) {
-          console.log("Fetching similar MIDIs for:", midi.id);
           const similarMidis = await getSimilarMidis(midi.id);
-          console.log("Found similar MIDIs:", similarMidis.length);
           setProductType("midi");
           setSimilarMidis(similarMidis);
         } else if (pack) {
-          console.log("Fetching similar packs for:", pack.id);
           const similarPacks = await getSimilarPacks(pack.id);
-          console.log("Found similar packs:", similarPacks.length);
           setProductType("pack");
           setSimilarPacks(similarPacks);
         } else if (flp) {
-          console.log("Fetching similar FLPs for:", flp.id);
           const similarFLPs = await getSimilarFLPs(flp.id);
-          console.log("Found similar FLPs:", similarFLPs.length);
           setProductType("flp");
           setSimilarFLPs(similarFLPs);
         }
@@ -114,7 +108,7 @@ export default function SimilarProducts({
             onPause={() => setCurrentlyPlaying(null)}
             isOwned={ownedFiles.some(
               (ownedFile) =>
-                ownedFile.id === file.id && ownedFile.type === "midi"
+                ownedFile.id === file.id && ownedFile.type === "midi",
             )}
           />
         ))}

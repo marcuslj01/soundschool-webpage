@@ -202,6 +202,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   key={file.name}
                   previewUrl={file.url}
                   name={file.name}
+                  type="pack"
                 />
               ))}
             </div>
