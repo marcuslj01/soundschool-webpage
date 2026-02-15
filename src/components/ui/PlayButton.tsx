@@ -49,7 +49,7 @@ function PlayButton({ previewUrl, name, type }: PlayButtonProps) {
               <button
                 key={name}
                 onClick={handlePlayPause}
-                className="flex flex-col items-center justify-center bg-blue-700 rounded-lg p-4 hover:cursor-pointer hover:bg-blue-800 transition-all duration-300 transform hover:scale-105"
+                className="flex flex-col items-center justify-center bg-gray-600 rounded-lg p-4 hover:cursor-pointer hover:bg-gray-500 transition-all duration-300 transform hover:scale-105"
               >
                 <AudioWaveform className="w-8 h-8 m-2" />
                 <div className="flex flex-row items-center justify-center">
