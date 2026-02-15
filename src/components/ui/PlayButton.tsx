@@ -49,12 +49,12 @@ function PlayButton({ previewUrl, name, type }: PlayButtonProps) {
               <button
                 key={name}
                 onClick={handlePlayPause}
-                className="flex flex-col items-center justify-center bg-white/10 rounded-lg p-4 hover:cursor-pointer hover:bg-gray-100/20 transition-all duration-300 transform hover:scale-105"
+                className="flex flex-col items-center justify-center bg-blue-700 rounded-lg p-4 hover:cursor-pointer hover:bg-blue-800 transition-all duration-300 transform hover:scale-105"
               >
                 <AudioWaveform className="w-8 h-8 m-2" />
                 <div className="flex flex-row items-center justify-center">
                   <PauseIcon className="w-4 h-4 mr-2" />
-                  <span className="text-white text-sm">{name}</span>
+                  <span className="text-white lg:text-sm text-xs">{name}</span>
                 </div>
               </button>
             </>
@@ -68,7 +68,7 @@ function PlayButton({ previewUrl, name, type }: PlayButtonProps) {
                 <AudioWaveform className="w-8 h-8 m-2" />
                 <div className="flex flex-row items-center justify-center">
                   <PlayIcon className="w-4 h-4 mr-2" />
-                  <span className="text-white text-sm">{name}</span>
+                  <span className="text-white lg:text-sm text-xs">{name}</span>
                 </div>
               </button>
             </>
@@ -85,7 +85,7 @@ function PlayButton({ previewUrl, name, type }: PlayButtonProps) {
               >
                 <div className="flex flex-row items-center justify-center">
                   <PauseIcon className="w-4 h-4 mr-2" />
-                  <span className="text-white text-sm">{name}</span>
+                  <span className="text-white lg:text-sm text-xs">{name}</span>
                 </div>
               </button>
             </div>
@@ -98,7 +98,7 @@ function PlayButton({ previewUrl, name, type }: PlayButtonProps) {
               >
                 <div className="flex flex-row items-center justify-center">
                   <PlayIcon className="w-4 h-4 mr-2" />
-                  <span className="text-white text-sm">{name}</span>
+                  <span className="text-white lg:text-sm text-xs">{name}</span>
                 </div>
               </button>
             </div>

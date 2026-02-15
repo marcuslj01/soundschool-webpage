@@ -9,7 +9,7 @@ import Badge from "@/components/ui/Badge";
 import PlayButton from "@/components/ui/PlayButton";
 import SimilarProducts from "@/components/sections/SimilarProducts";
 import { getYouTubeEmbedUrl } from "@/utils/youtube";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, CheckCircleIcon } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 360; // Cache for 1 minute
@@ -64,55 +64,68 @@ export default async function PackPage({ searchParams }: PackPageProps) {
     notFound();
   }
 
-  const youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  const youtubeUrl = "https://www.youtube.com/watch?v=VTJpTBKh5HU";
   const embedUrl = getYouTubeEmbedUrl(youtubeUrl);
 
   // If the pack is Megapack, show a special page
   if (pack.id === "Woj0XGPxSMyXueiBDyoZ") {
     return (
       <>
-        <div className="bg-gradient-to-t from-black to-blue-400">
+        <div className="bg-linear-to-t to-black from-gray-900">
           <div className="mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
             <div className="mb-8">
               <BackButton />
               {/* hero section */}
-              <div className="mt-4 grid grid-cols-2 gap-4 ">
+              <div className="mt-4 sm:grid sm:grid-cols-2 flex flex-col items-center justify-center gap-4">
                 {/* left side image */}
-                <div>
+                <div className="w-full shrink-0 flex items-start justify-center">
                   <Image
                     alt={`Image of ${pack.name}`}
                     src={pack.image_url}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="w-full h-auto"
+                    width={600}
+                    height={400}
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] lg:max-h-[60vh] object-contain"
                   />
                 </div>
                 {/* right side text */}
-                <div className="flex flex-col pt-16 max-w-sm">
-                  <h2 className="text-gray-300 text-xl">Soundschool</h2>
-                  <h1 className="text-4xl font-bold tracking-tight text-white sm:text-7xl">
+                <div className="flex flex-col p-8 sm:pt-8 lg:pt-12 max-w-sm">
+                  <h2 className="text-gray-300 lg:text-xl text-base italic">
+                    Soundschool
+                  </h2>
+                  <h1 className="text-5xl font-bold tracking-tight text-white lg:text-7xl">
                     Megapack
                   </h1>
-                  <h3 className="text-gray-300 text-3xl mt-4">
+                  <h3 className="text-gray-300 lg:text-3xl text-xl mt-4">
                     Inspired by artists like <b>Avicii</b>, <b>Martin Garrix</b>
                     , <b>Alan Walker</b>, <b>Kygo</b> and more.
                   </h3>
-
-                  <div className="flex flex-col items-center gap-2 w-fit rounded-lg mt-8">
+                  {/* <div className="flex flex-col items-left gap-2 w-fit rounded-lg mt-8">
                     <p className="text-gray-300 text-2xl">250</p>
                     <p className="text-gray-500 text-md">Chord progreesions</p>
-                  </div>
-
+                  </div> */}
+                  {pack.is_discounted && (
+                    <div className="inline-block mt-4">
+                      <Badge text="Limited Time Offer!" style="green" />
+                    </div>
+                  )}
                   {/* price and buy now button */}
-                  <div className="flex align-bottom mt-8 flex-row gap-10">
-                    <div className="flex flex-row gap-2">
-                      <p className="text-gray-400 text-2xl line-through">
-                        ${pack.price}
-                      </p>
-                      <p className="text-green-400 text-2xl">
-                        ${pack.discount_price}
-                      </p>
+                  <div className="flex mt-4 flex-row gap-10">
+                    <div className="flex flex-row flex-nowrap items-center gap-2">
+                      {pack.is_discounted ? (
+                        <>
+                          <p className="text-gray-400 text-xl line-through">
+                            ${pack.price}
+                          </p>
+                          <p className="text-green-400 text-2xl">
+                            ${pack.discount_price}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-white text-2xl">${pack.price}</p>
+                        </>
+                      )}
                     </div>
                     <div className="w-full">
                       <PacksButtons // hide the add to cart button for the megapack to avoid confusion
@@ -134,9 +147,9 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               <div className="flex flex-row justify-center">
                 <a
                   href="#video-section"
-                  className="text-white flex flex-row items-center gap-2"
+                  className="text-white flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg"
                 >
-                  Read more below
+                  Read more
                   <ArrowDown className="w-4 h-4" />
                 </a>
               </div>
@@ -146,34 +159,44 @@ export default async function PackPage({ searchParams }: PackPageProps) {
 
         {/* Video section */}
         <section id="video-section" className="bg-gray-900 flex justify-center">
-          <div className="p-16 max-w-7xl grid sm:grid-cols-5 gap-16">
-            <div className="col-span-2">
+          <div className="p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
+            <div className="lg:col-span-2 col-span-1">
               <h1 className="text-4xl text-white text-left font-bold">
                 The Megapack
               </h1>
-              <h2 className="text-gray-200 text-2xl mt-4 italic font-bold">
+              <h2 className="text-gray-200 text-2xl mt-4 italic font-bold text-left">
                 Our biggest pack yet
               </h2>
-              <div className="text-gray-300 text-xl mt-8">
-                <p>
-                  The Megapack is a collection of 250 high-quality MIDI chord
-                  progressions made for a variety of genres. The pack is
-                  designed to help producers work faster and stay creative, with
-                  clean, ready-to-use MIDI progressions that fit any project.
-                </p>
-                <ul className="list-disc list-inside mt-4">
-                  <li>
-                    250 MIDI files with BPM Created by the Soundschool team
-                  </li>
-                  <li>Works with all major DAWs</li>
-                  <li>Easy to edit and customize</li>
-                  <li>Designed to boost your creativity</li>
-                  <li>Perfect for producers of all levels</li>
-                </ul>
-              </div>
+
+              {/* desktop list */}
+              <ul className="list-none flex-1 flex-col gap-2 hidden lg:block text-gray-300 text-xl mt-8 ">
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  250 MIDI files including BPM
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Works with all major DAWs
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Easy to edit and customize
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Designed to boost your creativity
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Perfect for producers of all levels
+                </li>
+              </ul>
             </div>
-            <div className="col-span-3 sm:mt-16">
+            <div className="lg:col-span-3 col-span-1 flex flex-col justify-center items-center">
               {/* video */}
+              <p className="text-gray-300 text-xl mb-4 text-center italic font-bold mt-8 lg:mt-0">
+                Check out the video below to see the pack in action!
+              </p>
               <div className="relative w-full h-0 pb-[56.25%]">
                 <iframe
                   src={embedUrl}
@@ -183,20 +206,45 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   className="absolute top-0 left-0 w-full h-full rounded-lg"
                 />
               </div>
+
+              {/* mobile list */}
+              <ul className="list-none check-circle flex flex-col gap-2 lg:hidden text-gray-300 text-xl mt-8">
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  250 MIDI files including BPM
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Works with all major DAWs
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Easy to edit and customize
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Designed to boost your creativity
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Perfect for producers of all levels
+                </li>
+              </ul>
             </div>
           </div>
         </section>
 
         {/* Preview section */}
-        <section className="bg-gradient-to-b from-blue-800 to-blue-900 flex justify-center">
-          <div className="p-16 max-w-7xl">
-            <h1 className="text-4xl text-white text-center font-bold">
-              What&apos;s included?
+        <section className="flex justify-center bg-gray-800">
+          {/* bg-gradient-to-b from-blue-800 to-blue-900 */}
+          <div className="px-8 py-16 max-w-7xl flex flex-col items-center justify-center">
+            <h1 className="sm:text-4xl text-3xl text-white text-center font-bold">
+              Listen for yourself
             </h1>
-            <h2 className="text-gray-300 text-xl mt-4 italic font-bold">
-              Check out some of the MIDI files included in the pack!
+            <h2 className="text-gray-300 text-xl mt-4 italic font-bold text-center">
+              250 MIDI files ready to use in your next project.
             </h2>
-            <div className="grid grid-cols-3 gap-4 mt-8 text-white text-2xl font-bold">
+            <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
               {previewFiles.map((file) => (
                 <PlayButton
                   key={file.name}
@@ -206,8 +254,40 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 />
               ))}
             </div>
+            <p></p>
           </div>
         </section>
+
+        {/* CTA section */}
+        <div className="bg-gray-900">
+          <div className="px-6 py-24 sm:py-32 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">
+                Boost your productivity. Start using the Megapack today.
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-gray-300">
+                The Megapack is a collection of 250 high-quality MIDI chord
+                progressions made for a variety of genres. The pack is designed
+                to help producers work faster and stay creative, with clean,
+                ready-to-use MIDI progressions that fit any project.
+              </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6">
+                <PacksButtons // hide the add to cart button for the megapack to avoid confusion
+                  pack={{
+                    id: pack.id,
+                    name: pack.name,
+                    price: pack.price,
+                    type: pack.type || "midi",
+                    discount_price: pack.discount_price,
+                    is_discounted: pack.is_discounted,
+                    hideAddToCart: true,
+                    color: "white",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* FAQ */}
         <section className="bg-gray-900 flex justify-center">
@@ -216,7 +296,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             <h2 className="text-gray-300 text-xl mt-4 italic font-bold">
               Frequently asked questions about the Megapack
             </h2>
-            <div className="grid grid-cols-3 gap-x-16 gap-y-8 mt-8 text-white text-2xl">
+            <div className="grid lg:grid-cols-3 grid-cols-1 gap-x-16 gap-y-8 mt-8 text-white text-2xl">
               <div>
                 <h3 className="text-white text-xl font-bold">
                   How do I use the MIDI files?

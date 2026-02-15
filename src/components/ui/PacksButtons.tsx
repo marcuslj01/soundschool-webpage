@@ -26,6 +26,7 @@ interface PackButtonsProps {
     discount_price?: number;
     is_discounted?: boolean;
     hideAddToCart?: boolean; // If true, only show the buy now button
+    color?: string;
   };
 }
 
@@ -287,16 +288,29 @@ function PacksButtons({ pack }: PackButtonsProps) {
           </button>
         ) : (
           <div className="flex flex-col gap-2">
-            <button
-              className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
-              onClick={handleBuyNow}
-              disabled={isLoading}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <p>{isLoading ? "Processing..." : "Buy Now"}</p>
-                <CreditCardIcon className="w-4 h-4" />
-              </div>
-            </button>
+            {pack.color === "white" ? (
+              <button
+                className="w-full bg-gray-100 text-black px-4 py-2 rounded-md hover:bg-white/80 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                onClick={handleBuyNow}
+                disabled={isLoading}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <p>{isLoading ? "Processing..." : "Buy Now"}</p>{" "}
+                  <CreditCardIcon className="w-4 h-4" />
+                </div>
+              </button>
+            ) : (
+              <button
+                className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                onClick={handleBuyNow}
+                disabled={isLoading}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <p>{isLoading ? "Processing..." : "Buy Now"}</p>
+                  <CreditCardIcon className="w-4 h-4" />
+                </div>
+              </button>
+            )}
             {!pack.hideAddToCart && (
               <button
                 className="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer hover:scale-102 transition-all duration-300"
