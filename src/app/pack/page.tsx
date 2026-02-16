@@ -17,27 +17,27 @@ export const revalidate = 360; // Cache for 1 minute
 const previewFiles = [
   {
     name: "Midi 062",
-    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1769026609450_Chord_Progression_290_-_preview.mp3?alt=media",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756726183434_ReelAudio-77002.mp3?alt=media",
   },
   {
     name: "Midi 196",
-    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1769026609450_Chord_Progression_290_-_preview.mp3?alt=media",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756726291803_ReelAudio-19660.mp3?alt=media",
   },
   {
-    name: "Midi 198",
-    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1769026609450_Chord_Progression_290_-_preview.mp3?alt=media",
+    name: "Midi 248",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1758481483459_Chord_Progression_248_-_Preview.wav?alt=media",
   },
   {
-    name: "Midi 199",
-    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1769026609450_Chord_Progression_290_-_preview.mp3?alt=media",
+    name: "Midi 231",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756035512888_ReelAudio-12353.mp3?alt=media",
   },
   {
-    name: "Midi 200",
-    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1769026609450_Chord_Progression_290_-_preview.mp3?alt=media",
+    name: "Midi 242",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1757714497212_Chord_Progression_242_preview.mp3?alt=media",
   },
   {
-    name: "Midi 201",
-    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1769026609450_Chord_Progression_290_-_preview.mp3?alt=media",
+    name: "Midi 228",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756041687835_ReelAudio-68904.mp3?alt=media",
   },
 ];
 interface PackPageProps {
