@@ -293,15 +293,15 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         <section className="bg-gray-900 flex justify-center">
           <div className="p-16 max-w-7xl">
             <h1 className="text-4xl text-white text-left font-bold">FAQ</h1>
-            <h2 className="text-gray-300 text-xl mt-4 italic font-bold">
+            <h2 className="text-gray-300 sm:text-xl text-base mt-4 italic font-bold">
               Frequently asked questions about the Megapack
             </h2>
             <div className="grid lg:grid-cols-3 grid-cols-1 gap-x-16 gap-y-8 mt-8 text-white text-2xl">
               <div>
-                <h3 className="text-white text-xl font-bold">
+                <h3 className="text-white sm:text-xl text-base font-bold">
                   How do I use the MIDI files?
                 </h3>
-                <p className="text-gray-300 text-xl mt-4">
+                <p className="text-gray-300 sm:text-xl text-base mt-4">
                   You can use the MIDI files in your DAW by importing them into
                   your project, either by dragging and dropping the files into
                   your project or by using the import function in your DAW. If
@@ -316,20 +316,20 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 </p>
               </div>
               <div>
-                <h3 className="text-white text-xl font-bold">
+                <h3 className="text-white sm:text-xl text-base font-bold">
                   Can I use the MIDI files in my songs?
                 </h3>
-                <p className="text-gray-300 text-xl mt-4">
+                <p className="text-gray-300 sm:text-xl text-base mt-4">
                   Yes, you can use the MIDI files in your songs! We recommend
                   using them as a starting point for your own MIDI files, but
                   you are free to use them as you wish.
                 </p>
               </div>
               <div>
-                <h3 className="text-white text-xl font-bold">
+                <h3 className="text-white sm:text-xl text-base font-bold">
                   Why should I use MIDI files instead of samples?
                 </h3>
-                <p className="text-gray-300 text-xl mt-4">
+                <p className="text-gray-300 sm:text-xl text-base mt-4">
                   MIDI files give you much more flexibility than samples.
                   Instead of being locked into a specific sound, you can easily
                   change the instrument, tempo, key, and arrangement to match
@@ -339,7 +339,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 </p>
               </div>
             </div>
-            <p className="text-gray-300 text-2xl mt-16 text-center font-bold">
+            <p className="text-gray-300 sm:text-2xl text-base mt-16 text-center font-bold">
               Other questions? Contact us{" "}
               <Link
                 href="/contact"
