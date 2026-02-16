@@ -14,7 +14,7 @@ export default function BackButton() {
   return (
     <button
       onClick={handleGoBack}
-      className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:cursor-pointer"
+      className="flex items-center gap-2 text-gray-200 hover:text-white transition-colors duration-200 hover:cursor-pointer"
     >
       <ArrowLeftIcon className="w-5 h-5" />
       <span className="text-sm font-medium">Back</span>

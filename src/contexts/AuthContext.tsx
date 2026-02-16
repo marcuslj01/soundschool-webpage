@@ -49,7 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("onAuthStateChanged triggered, user:", user?.email); // Debug
       if (user) {
         try {
           await createOrUpdateUser(user);
@@ -84,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Email and password sign in
   const signInWithEmail = async (
     email: string,
-    password: string
+    password: string,
   ): Promise<void> => {
     const result = await signInWithEmailAndPassword(auth, email, password);
     await createOrUpdateUser(result.user);
@@ -93,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Email and password sign up
   const signUpWithEmail = async (
     email: string,
-    password: string
+    password: string,
   ): Promise<UserCredential> => {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     await createOrUpdateUser(result.user);

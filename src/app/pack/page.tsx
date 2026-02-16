@@ -8,9 +8,38 @@ import BackButton from "@/components/ui/BackButton";
 import Badge from "@/components/ui/Badge";
 import PlayButton from "@/components/ui/PlayButton";
 import SimilarProducts from "@/components/sections/SimilarProducts";
+import { getYouTubeEmbedUrl } from "@/utils/youtube";
+import { ArrowDown, CheckCircleIcon } from "lucide-react";
+import Link from "next/link";
 
 export const revalidate = 360; // Cache for 1 minute
 
+const previewFiles = [
+  {
+    name: "Midi 062",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756726183434_ReelAudio-77002.mp3?alt=media",
+  },
+  {
+    name: "Midi 196",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756726291803_ReelAudio-19660.mp3?alt=media",
+  },
+  {
+    name: "Midi 248",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1758481483459_Chord_Progression_248_-_Preview.wav?alt=media",
+  },
+  {
+    name: "Midi 231",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756035512888_ReelAudio-12353.mp3?alt=media",
+  },
+  {
+    name: "Midi 242",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1757714497212_Chord_Progression_242_preview.mp3?alt=media",
+  },
+  {
+    name: "Midi 228",
+    url: "https://firebasestorage.googleapis.com/v0/b/soundschool-db.firebasestorage.app/o/previews%2F1756041687835_ReelAudio-68904.mp3?alt=media",
+  },
+];
 interface PackPageProps {
   searchParams: Promise<{ id?: string }>;
 }
@@ -33,6 +62,302 @@ export default async function PackPage({ searchParams }: PackPageProps) {
 
   if (!pack) {
     notFound();
+  }
+
+  const youtubeUrl = "https://www.youtube.com/watch?v=VTJpTBKh5HU";
+  const embedUrl = getYouTubeEmbedUrl(youtubeUrl);
+
+  // If the pack is Megapack, show a special page
+  if (pack.id === "Woj0XGPxSMyXueiBDyoZ") {
+    return (
+      <>
+        <div className="bg-linear-to-t to-black from-gray-900">
+          <div className="mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
+            <div className="mb-8">
+              <BackButton />
+              {/* hero section */}
+              <div className="mt-4 sm:grid sm:grid-cols-2 flex flex-col items-center justify-center gap-4">
+                {/* left side image */}
+                <div className="w-full shrink-0 flex items-start justify-center">
+                  <Image
+                    alt={`Image of ${pack.name}`}
+                    src={pack.image_url}
+                    width={600}
+                    height={400}
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] lg:max-h-[60vh] object-contain"
+                  />
+                </div>
+                {/* right side text */}
+                <div className="flex flex-col p-8 sm:pt-8 lg:pt-12 max-w-sm">
+                  <h2 className="text-gray-300 lg:text-xl text-base italic">
+                    Soundschool
+                  </h2>
+                  <h1 className="text-5xl font-bold tracking-tight text-white lg:text-7xl">
+                    Megapack
+                  </h1>
+                  <h3 className="text-gray-300 lg:text-3xl text-xl mt-4">
+                    Inspired by artists like <b>Avicii</b>, <b>Martin Garrix</b>
+                    , <b>Alan Walker</b>, <b>Kygo</b> and more.
+                  </h3>
+                  {/* <div className="flex flex-col items-left gap-2 w-fit rounded-lg mt-8">
+                    <p className="text-gray-300 text-2xl">250</p>
+                    <p className="text-gray-500 text-md">Chord progreesions</p>
+                  </div> */}
+                  {pack.is_discounted && (
+                    <div className="inline-block mt-4">
+                      <Badge text="Limited Time Offer!" style="green" />
+                    </div>
+                  )}
+                  {/* price and buy now button */}
+                  <div className="flex mt-4 flex-row gap-10">
+                    <div className="flex flex-row flex-nowrap items-center gap-2">
+                      {pack.is_discounted ? (
+                        <>
+                          <p className="text-gray-400 text-xl line-through">
+                            ${pack.price}
+                          </p>
+                          <p className="text-green-400 text-2xl">
+                            ${pack.discount_price}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-white text-2xl">${pack.price}</p>
+                        </>
+                      )}
+                    </div>
+                    <div className="w-full">
+                      <PacksButtons // hide the add to cart button for the megapack to avoid confusion
+                        pack={{
+                          id: pack.id,
+                          name: pack.name,
+                          price: pack.price,
+                          type: pack.type || "midi",
+                          discount_price: pack.discount_price,
+                          is_discounted: pack.is_discounted,
+                          hideAddToCart: true,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-row justify-center">
+                <a
+                  href="#video-section"
+                  className="text-white flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg"
+                >
+                  Read more
+                  <ArrowDown className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Video section */}
+        <section id="video-section" className="bg-gray-900 flex justify-center">
+          <div className="p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
+            <div className="lg:col-span-2 col-span-1">
+              <h1 className="text-4xl text-white text-left font-bold">
+                The Megapack
+              </h1>
+              <h2 className="text-gray-200 text-2xl mt-4 italic font-bold text-left">
+                Our biggest pack yet
+              </h2>
+
+              {/* desktop list */}
+              <ul className="list-none flex-1 flex-col gap-2 hidden lg:block text-gray-300 text-xl mt-8 ">
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  250 MIDI files including BPM
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Works with all major DAWs
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Easy to edit and customize
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Designed to boost your creativity
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Perfect for producers of all levels
+                </li>
+              </ul>
+            </div>
+            <div className="lg:col-span-3 col-span-1 flex flex-col justify-center items-center">
+              {/* video */}
+              <p className="text-gray-300 text-xl mb-4 text-center italic font-bold mt-8 lg:mt-0">
+                Check out the video below to see the pack in action!
+              </p>
+              <div className="relative w-full h-0 pb-[56.25%]">
+                <iframe
+                  src={embedUrl}
+                  title={pack.name}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg"
+                />
+              </div>
+
+              {/* mobile list */}
+              <ul className="list-none check-circle flex flex-col gap-2 lg:hidden text-gray-300 text-xl mt-8">
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  250 MIDI files including BPM
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Works with all major DAWs
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Easy to edit and customize
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Designed to boost your creativity
+                </li>
+                <li>
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  Perfect for producers of all levels
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Preview section */}
+        <section className="flex justify-center bg-gray-800">
+          {/* bg-gradient-to-b from-blue-800 to-blue-900 */}
+          <div className="px-8 py-16 max-w-7xl flex flex-col items-center justify-center">
+            <h1 className="sm:text-4xl text-3xl text-white text-center font-bold">
+              Listen for yourself
+            </h1>
+            <h2 className="text-gray-300 text-xl mt-4 italic font-bold text-center">
+              250 MIDI files ready to use in your next project.
+            </h2>
+            <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
+              {previewFiles.map((file) => (
+                <PlayButton
+                  key={file.name}
+                  previewUrl={file.url}
+                  name={file.name}
+                  type="pack"
+                />
+              ))}
+            </div>
+            <p></p>
+          </div>
+        </section>
+
+        {/* CTA section */}
+        <div className="bg-gray-900">
+          <div className="px-6 py-24 sm:py-32 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">
+                Boost your productivity. Start using the Megapack today.
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-gray-300">
+                The Megapack is a collection of 250 high-quality MIDI chord
+                progressions made for a variety of genres. The pack is designed
+                to help producers work faster and stay creative, with clean,
+                ready-to-use MIDI progressions that fit any project.
+              </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6">
+                <PacksButtons // hide the add to cart button for the megapack to avoid confusion
+                  pack={{
+                    id: pack.id,
+                    name: pack.name,
+                    price: pack.price,
+                    type: pack.type || "midi",
+                    discount_price: pack.discount_price,
+                    is_discounted: pack.is_discounted,
+                    hideAddToCart: true,
+                    color: "white",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <section className="bg-gray-900 flex justify-center">
+          <div className="p-16 max-w-7xl">
+            <h1 className="text-4xl text-white text-left font-bold">FAQ</h1>
+            <h2 className="text-gray-300 text-xl mt-4 italic font-bold">
+              Frequently asked questions about the Megapack
+            </h2>
+            <div className="grid lg:grid-cols-3 grid-cols-1 gap-x-16 gap-y-8 mt-8 text-white text-2xl">
+              <div>
+                <h3 className="text-white text-xl font-bold">
+                  How do I use the MIDI files?
+                </h3>
+                <p className="text-gray-300 text-xl mt-4">
+                  You can use the MIDI files in your DAW by importing them into
+                  your project, either by dragging and dropping the files into
+                  your project or by using the import function in your DAW. If
+                  you need any help, please feel free to{" "}
+                  <Link
+                    href="/contact"
+                    className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                  >
+                    contact us.
+                  </Link>
+                  .
+                </p>
+              </div>
+              <div>
+                <h3 className="text-white text-xl font-bold">
+                  Can I use the MIDI files in my songs?
+                </h3>
+                <p className="text-gray-300 text-xl mt-4">
+                  Yes, you can use the MIDI files in your songs! We recommend
+                  using them as a starting point for your own MIDI files, but
+                  you are free to use them as you wish.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-white text-xl font-bold">
+                  Why should I use MIDI files instead of samples?
+                </h3>
+                <p className="text-gray-300 text-xl mt-4">
+                  MIDI files give you much more flexibility than samples.
+                  Instead of being locked into a specific sound, you can easily
+                  change the instrument, tempo, key, and arrangement to match
+                  your track. This makes it easier to make the idea your own,
+                  experiment with different sounds, and adapt the progression to
+                  any genre or style.{" "}
+                </p>
+              </div>
+            </div>
+            <p className="text-gray-300 text-2xl mt-16 text-center font-bold">
+              Other questions? Contact us{" "}
+              <Link
+                href="/contact"
+                className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
+              >
+                here
+              </Link>
+              .
+            </p>
+          </div>
+        </section>
+
+        {/* similar products section*/}
+        <section className="m-8">
+          <SimilarProducts pack={pack} />
+        </section>
+      </>
+    );
   }
 
   return (
@@ -75,11 +400,11 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   </div>
                 </div>
 
-                {pack.preview_url && (
+                {/* {pack.preview_url && (
                   <div className="mb-4">
                     <PlayButton previewUrl={pack.preview_url} />
                   </div>
-                )}
+                )} */}
 
                 <h2 id="information-heading" className="sr-only">
                   pack information
