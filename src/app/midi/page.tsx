@@ -57,7 +57,11 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <PlayButton previewUrl={midi.preview_url} />
+                  <PlayButton
+                    previewUrl={midi.preview_url}
+                    name={midi.name}
+                    type="midi"
+                  />
                 </div>
 
                 <h2 id="information-heading" className="sr-only">

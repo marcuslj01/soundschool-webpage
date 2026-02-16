@@ -25,6 +25,8 @@ interface PackButtonsProps {
     type: string;
     discount_price?: number;
     is_discounted?: boolean;
+    hideAddToCart?: boolean; // If true, only show the buy now button
+    color?: string;
   };
 }
 
@@ -41,8 +43,9 @@ function PacksButtons({ pack }: PackButtonsProps) {
         const ownedFiles = await getOwnedFiles(user.uid);
         setIsOwned(
           ownedFiles.some(
-            (ownedFile) => ownedFile.id === pack.id && ownedFile.type === "pack"
-          )
+            (ownedFile) =>
+              ownedFile.id === pack.id && ownedFile.type === "pack",
+          ),
         );
       };
       fetchOwnedFiles();
@@ -83,7 +86,7 @@ function PacksButtons({ pack }: PackButtonsProps) {
 
       const ownedFiles = await getOwnedFiles(user.uid);
       const isItemOwned = ownedFiles.some(
-        (ownedFile) => ownedFile.id === pack.id && ownedFile.type === "pack"
+        (ownedFile) => ownedFile.id === pack.id && ownedFile.type === "pack",
       );
 
       if (isItemOwned) {
@@ -118,14 +121,18 @@ function PacksButtons({ pack }: PackButtonsProps) {
 
       if (data.url) {
         // Track InitiateCheckout event for Meta Pixel
-        const price = pack.is_discounted ? pack.discount_price || pack.price : pack.price;
+        const price = pack.is_discounted
+          ? pack.discount_price || pack.price
+          : pack.price;
         trackInitiateCheckout(
-          [{
-            id: pack.id,
-            name: pack.name,
-            price: price,
-          }],
-          price
+          [
+            {
+              id: pack.id,
+              name: pack.name,
+              price: price,
+            },
+          ],
+          price,
         );
 
         window.location.href = data.url; // Send user to Stripe Checkout
@@ -238,7 +245,7 @@ function PacksButtons({ pack }: PackButtonsProps) {
                   // Save current page for redirect after login
                   sessionStorage.setItem(
                     "redirectAfterLogin",
-                    window.location.pathname + window.location.search
+                    window.location.pathname + window.location.search,
                   );
                 }}
               >
@@ -259,40 +266,8 @@ function PacksButtons({ pack }: PackButtonsProps) {
 
       <div className="w-full flex flex-col gap-2">
         {isAdded ? (
-        <button
-          className="bg-primary/20 text-white rounded-md w-full px-4 py-2 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
-          onClick={() =>
-            handleAddToCart({
-              id: pack.id,
-              title: pack.name,
-              price: pack.price,
-              discount_price: pack.is_discounted
-                ? pack.discount_price
-                : undefined,
-              is_discounted: pack.is_discounted,
-              type: "pack",
-            })
-          }
-        >
-          <div className="flex items-center justify-center gap-2">
-            <p>In Cart</p>
-            <CheckCircleIcon className="w-4 h-4" />
-          </div>
-        </button>
-      ) : (
-        <div className="flex flex-col gap-2">
           <button
-            className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleBuyNow}
-            disabled={isLoading}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <p>{isLoading ? "Processing..." : "Buy Now"}</p>
-              <CreditCardIcon className="w-4 h-4" />
-            </div>
-          </button>
-          <button
-            className="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer hover:scale-102 transition-all duration-300"
+            className="bg-primary/20 text-white rounded-md w-full px-4 py-2 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
             onClick={() =>
               handleAddToCart({
                 id: pack.id,
@@ -307,12 +282,59 @@ function PacksButtons({ pack }: PackButtonsProps) {
             }
           >
             <div className="flex items-center justify-center gap-2">
-              <p>Add to Cart</p>
-              <ShoppingCartIcon className="w-4 h-4" />
+              <p>In Cart</p>
+              <CheckCircleIcon className="w-4 h-4" />
             </div>
           </button>
-        </div>
-      )}
+        ) : (
+          <div className="flex flex-col gap-2">
+            {pack.color === "white" ? (
+              <button
+                className="w-full bg-gray-100 text-black px-4 py-2 rounded-md hover:bg-white/80 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                onClick={handleBuyNow}
+                disabled={isLoading}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <p>{isLoading ? "Processing..." : "Buy Now"}</p>{" "}
+                  <CreditCardIcon className="w-4 h-4" />
+                </div>
+              </button>
+            ) : (
+              <button
+                className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                onClick={handleBuyNow}
+                disabled={isLoading}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <p>{isLoading ? "Processing..." : "Buy Now"}</p>
+                  <CreditCardIcon className="w-4 h-4" />
+                </div>
+              </button>
+            )}
+            {!pack.hideAddToCart && (
+              <button
+                className="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer hover:scale-102 transition-all duration-300"
+                onClick={() =>
+                  handleAddToCart({
+                    id: pack.id,
+                    title: pack.name,
+                    price: pack.price,
+                    discount_price: pack.is_discounted
+                      ? pack.discount_price
+                      : undefined,
+                    is_discounted: pack.is_discounted,
+                    type: "pack",
+                  })
+                }
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <p>Add to Cart</p>
+                  <ShoppingCartIcon className="w-4 h-4" />
+                </div>
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </>
   );

@@ -27,7 +27,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
   { name: "Home", href: "/", current: false },
-  { name: "Midi files", href: "/midis", current: false },
+  { name: "MIDIs", href: "/midis", current: false },
   { name: "Packs", href: "/packs", current: false },
   { name: "FLPs", href: "/flps", current: false },
   { name: "Contact", href: "/contact", current: false },
@@ -40,7 +40,7 @@ function classNames(...classes: string[]) {
 // Custom hook for scroll direction detection
 function useScrollDirection() {
   const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(
-    null
+    null,
   );
   const [prevScrollY, setPrevScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -94,7 +94,6 @@ export default function Navbar() {
   const { user, isAdmin, logout } = useAuth();
   const pathname = usePathname();
   const { isVisible } = useScrollDirection();
-  console.log("Is the user an admin?", isAdmin);
 
   const handleLogout = () => {
     if (typeof window !== "undefined") {
@@ -197,7 +196,7 @@ export default function Navbar() {
                         isCurrent
                           ? "text-white border-primary"
                           : "text-gray-300 hover:border-white border-transparent hover:text-white",
-                        "h-full flex items-center justify-center border-b-2"
+                        "h-full flex items-center justify-center border-b-2",
                       )}
                     >
                       {item.name}
@@ -284,9 +283,9 @@ export default function Navbar() {
                               Number(
                                 item.is_discounted
                                   ? item.discount_price
-                                  : item.price
+                                  : item.price,
                               ),
-                            0
+                            0,
                           )}
                         </span>
                       </div>
@@ -376,7 +375,7 @@ export default function Navbar() {
                     // Save current page for redirect after login
                     sessionStorage.setItem(
                       "redirectAfterLogin",
-                      window.location.pathname + window.location.search
+                      window.location.pathname + window.location.search,
                     );
                   }}
                   className="hover:cursor-pointer"
@@ -410,7 +409,7 @@ export default function Navbar() {
                   isCurrent
                     ? "text-white border-l-2 border-primary"
                     : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                  "block px-3 py-2 text-base font-medium "
+                  "block px-3 py-2 text-base font-medium ",
                 )}
               >
                 {item.name}

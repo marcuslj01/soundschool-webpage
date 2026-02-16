@@ -41,8 +41,8 @@ export default function FLPButton({ flp }: FLPButtonProps) {
         const ownedFiles = await getOwnedFiles(user.uid);
         setIsOwned(
           ownedFiles.some(
-            (ownedFile) => ownedFile.id === flp.id && ownedFile.type === "flp"
-          )
+            (ownedFile) => ownedFile.id === flp.id && ownedFile.type === "flp",
+          ),
         );
       };
       fetchOwnedFiles();
@@ -83,7 +83,7 @@ export default function FLPButton({ flp }: FLPButtonProps) {
 
       const ownedFiles = await getOwnedFiles(user.uid);
       const isItemOwned = ownedFiles.some(
-        (ownedFile) => ownedFile.id === flp.id && ownedFile.type === "flp"
+        (ownedFile) => ownedFile.id === flp.id && ownedFile.type === "flp",
       );
 
       if (isItemOwned) {
@@ -118,14 +118,18 @@ export default function FLPButton({ flp }: FLPButtonProps) {
 
       if (data.url) {
         // Track InitiateCheckout event for Meta Pixel
-        const price = flp.is_discounted ? flp.discount_price || flp.price : flp.price;
+        const price = flp.is_discounted
+          ? flp.discount_price || flp.price
+          : flp.price;
         trackInitiateCheckout(
-          [{
-            id: flp.id,
-            name: flp.name,
-            price: price,
-          }],
-          price
+          [
+            {
+              id: flp.id,
+              name: flp.name,
+              price: price,
+            },
+          ],
+          price,
         );
 
         window.location.href = data.url; // Send user to Stripe Checkout
@@ -237,7 +241,7 @@ export default function FLPButton({ flp }: FLPButtonProps) {
                   // Save current page for redirect after login
                   sessionStorage.setItem(
                     "redirectAfterLogin",
-                    window.location.pathname + window.location.search
+                    window.location.pathname + window.location.search,
                   );
                 }}
               >
@@ -258,40 +262,8 @@ export default function FLPButton({ flp }: FLPButtonProps) {
 
       <div className="w-full flex flex-col gap-2">
         {isAdded ? (
-        <button
-          className="bg-primary/20 text-white rounded-md w-full px-4 py-2 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
-          onClick={() =>
-            handleAddToCart({
-              id: flp.id,
-              title: flp.name,
-              price: flp.price,
-              discount_price: flp.is_discounted
-                ? flp.discount_price
-                : undefined,
-              is_discounted: flp.is_discounted,
-              type: "flp",
-            })
-          }
-        >
-          <div className="flex items-center justify-center gap-2">
-            <p>In Cart</p>
-            <CheckCircleIcon className="w-4 h-4" />
-          </div>
-        </button>
-      ) : (
-        <div className="flex flex-col gap-2">
           <button
-            className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleBuyNow}
-            disabled={isLoading}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <p>{isLoading ? "Processing..." : "Buy Now"}</p>
-              <CreditCardIcon className="w-4 h-4" />
-            </div>
-          </button>
-          <button
-            className="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer hover:scale-102 transition-all duration-300"
+            className="bg-primary/20 text-white rounded-md w-full px-4 py-2 flex items-center justify-center flex-row hover:bg-primary/10 hover:cursor-pointer transition-all duration-300"
             onClick={() =>
               handleAddToCart({
                 id: flp.id,
@@ -306,12 +278,44 @@ export default function FLPButton({ flp }: FLPButtonProps) {
             }
           >
             <div className="flex items-center justify-center gap-2">
-              <p>Get FLP</p>
-              <ShoppingCartIcon className="w-4 h-4" />
+              <p>In Cart</p>
+              <CheckCircleIcon className="w-4 h-4" />
             </div>
           </button>
-        </div>
-      )}
+        ) : (
+          <div className="flex flex-col gap-2">
+            <button
+              className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleBuyNow}
+              disabled={isLoading}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <p>{isLoading ? "Processing..." : "Buy Now"}</p>
+                <CreditCardIcon className="w-4 h-4" />
+              </div>
+            </button>
+            <button
+              className="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 hover:cursor-pointer hover:scale-102 transition-all duration-300"
+              onClick={() =>
+                handleAddToCart({
+                  id: flp.id,
+                  title: flp.name,
+                  price: flp.price,
+                  discount_price: flp.is_discounted
+                    ? flp.discount_price
+                    : undefined,
+                  is_discounted: flp.is_discounted,
+                  type: "flp",
+                })
+              }
+            >
+              <div className="flex items-center justify-center gap-2">
+                <p>Add to Cart</p>
+                <ShoppingCartIcon className="w-4 h-4" />
+              </div>
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

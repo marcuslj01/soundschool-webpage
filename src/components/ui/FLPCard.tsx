@@ -60,7 +60,7 @@ function FLPCard({ flp, isOwned }: FLPCardProps) {
             className="text-gray-200 text-sm font-bold px-4 bg-primary hover:bg-primary/80 transition-all duration-300 rounded-md py-2"
             href={`/flp?id=${flp.id}`}
           >
-            Get FLP
+            Add to Cart
           </Link>
         </div>
       </div>
