@@ -30,6 +30,8 @@ export default async function MidiPage({ searchParams }: MidiPageProps) {
     notFound();
   }
 
+  // jeg heter mons
+
   return (
     <div className="min-h-screen">
       <div className="mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
