@@ -3,6 +3,8 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
+//Alrfred
+
 const features = [
   {
     title: "High-Quality Resources",
