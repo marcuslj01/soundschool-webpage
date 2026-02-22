@@ -71,6 +71,11 @@ export default function FLPButton({ flp }: FLPButtonProps) {
     }
   };
 
+  const getMetaCookies = () => ({
+    fbc: document.cookie.match(/(?:^|;\s*)_fbc=([^;]*)/)?.[1] ?? null,
+    fbp: document.cookie.match(/(?:^|;\s*)_fbp=([^;]*)/)?.[1] ?? null,
+  });
+
   const handleBuyNow = async () => {
     setIsLoading(true);
 
@@ -107,6 +112,7 @@ export default function FLPButton({ flp }: FLPButtonProps) {
           cartItems: [cartItem],
           userId: user?.uid || null,
           email: user?.email || null,
+          ...getMetaCookies(),
         }),
       });
 
@@ -164,6 +170,7 @@ export default function FLPButton({ flp }: FLPButtonProps) {
         body: JSON.stringify({
           cartItems: [cartItem],
           userId: null,
+          ...getMetaCookies(),
         }),
       });
 

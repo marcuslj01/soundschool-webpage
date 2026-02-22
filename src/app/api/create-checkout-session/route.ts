@@ -24,13 +24,23 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(req: NextRequest) {
-  const { cartItems, email, userId } = await req.json();
+  const { cartItems, email, userId, fbc, fbp } = await req.json();
+
+  const clientIpAddress =
+    req.headers.get("x-forwarded-for")?.split(",")[0] ||
+    req.headers.get("x-real-ip") ||
+    null;
+  const clientUserAgent = req.headers.get("user-agent") || null;
 
   // Create a short-lived "checkout intent" in Firestore
   const intentRef = await db.collection("checkout_intents").add({
-    cartItems,           
-    email: email ?? null, 
+    cartItems,
+    email: email ?? null,
     userId: userId ?? null,
+    fbc: fbc ?? null,
+    fbp: fbp ?? null,
+    clientIpAddress,
+    clientUserAgent,
     createdAt: new Date(),
   });
   const intentId = intentRef.id; // short ID we can have in Stripe metadata
