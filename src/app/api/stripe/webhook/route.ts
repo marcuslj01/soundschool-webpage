@@ -9,17 +9,19 @@ import { OwnedFile } from "@/lib/types/ownedFile";
 import crypto from "crypto";
 
 // Meta Conversions API
-async function sendMetaConversionEvent(
-  data: {
-    email: string | null;
-    value: number;
-    currency: string;
-    contentIds: string[];
-    contentNames: string[];
-    orderId: string;
-  },
-  req?: NextRequest
-) {
+async function sendMetaConversionEvent(data: {
+  email: string | null;
+  value: number;
+  currency: string;
+  contentIds: string[];
+  contentNames: string[];
+  orderId: string;
+  fbc?: string | null;
+  fbp?: string | null;
+  externalId?: string | null;
+  clientIpAddress?: string | null;
+  clientUserAgent?: string | null;
+}) {
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
   const accessToken = process.env.META_CONVERSIONS_API_TOKEN;
 
@@ -28,37 +30,13 @@ async function sendMetaConversionEvent(
     return;
   }
 
-  // SHA256 hash email
-  const hashedEmail = data.email
-    ? crypto.createHash("sha256").update(data.email.toLowerCase().trim()).digest("hex")
-    : null;
+  const sha256 = (value: string) =>
+    crypto.createHash("sha256").update(value.toLowerCase().trim()).digest("hex");
 
-  // Get client IP and user agent if available
-  const clientIpAddress = req?.headers.get("x-forwarded-for")?.split(",")[0] || 
-                          req?.headers.get("x-real-ip") || 
-                          null;
-  const userAgent = req?.headers.get("user-agent") || null;
+  const hashedEmail = data.email ? sha256(data.email) : null;
+  const hashedExternalId = data.externalId ? sha256(data.externalId) : null;
 
-  const eventData: {
-    data: Array<{
-      event_name: string;
-      event_time: number;
-      event_id: string;
-      action_source: string;
-      user_data: {
-        em?: string[];
-        client_ip_address?: string;
-        client_user_agent?: string;
-      };
-      custom_data: {
-        currency: string;
-        value: number;
-        content_ids: string[];
-        content_names: string[];
-        content_type: string;
-      };
-    }>;
-  } = {
+  const eventData = {
     data: [
       {
         event_name: "Purchase",
@@ -67,8 +45,11 @@ async function sendMetaConversionEvent(
         action_source: "website",
         user_data: {
           ...(hashedEmail && { em: [hashedEmail] }),
-          ...(clientIpAddress && { client_ip_address: clientIpAddress }),
-          ...(userAgent && { client_user_agent: userAgent }),
+          ...(hashedExternalId && { external_id: [hashedExternalId] }),
+          ...(data.fbc && { fbc: data.fbc }),
+          ...(data.fbp && { fbp: data.fbp }),
+          ...(data.clientIpAddress && { client_ip_address: data.clientIpAddress }),
+          ...(data.clientUserAgent && { client_user_agent: data.clientUserAgent }),
         },
         custom_data: {
           currency: data.currency,
@@ -141,13 +122,21 @@ export async function POST(req: NextRequest) {
     // Fetch cart items via "intentId" (stored in metadata)
     const intentId = session.metadata?.intentId || null;
     let cartItems: CartItem[] = [];
+    let fbc: string | null = null;
+    let fbp: string | null = null;
+    let clientIpAddress: string | null = null;
+    let clientUserAgent: string | null = null;
 
     try {
       if (intentId) {
         const intentSnap = await db.collection("checkout_intents").doc(intentId).get();
         if (intentSnap.exists) {
-          const data = intentSnap.data();
-          cartItems = (data?.cartItems ?? []) as CartItem[];
+          const intentData = intentSnap.data();
+          cartItems = (intentData?.cartItems ?? []) as CartItem[];
+          fbc = intentData?.fbc ?? null;
+          fbp = intentData?.fbp ?? null;
+          clientIpAddress = intentData?.clientIpAddress ?? null;
+          clientUserAgent = intentData?.clientUserAgent ?? null;
         }
       } else if (session.metadata?.cart) {
         // Fallback for old sessions that still had cart JSON in metadata
@@ -363,17 +352,19 @@ export async function POST(req: NextRequest) {
     }
 
     // Send to Meta Conversions API when order complete
-    await sendMetaConversionEvent(
-      {
-        email: email,
-        value: orderData.total_price,
-        currency: "USD",
-        contentIds: orderItems.map((item) => item.id),
-        contentNames: orderItems.map((item) => item.title),
-        orderId: firestoreOrderId,
-      },
-      req
-    );
+    await sendMetaConversionEvent({
+      email: email,
+      value: orderData.total_price,
+      currency: "USD",
+      contentIds: orderItems.map((item) => item.id),
+      contentNames: orderItems.map((item) => item.title),
+      orderId: firestoreOrderId,
+      fbc,
+      fbp,
+      externalId: orderData.userId,
+      clientIpAddress,
+      clientUserAgent,
+    });
 
     // Delete intent when order is complete
     if (intentId) {

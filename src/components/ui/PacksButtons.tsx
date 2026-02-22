@@ -74,6 +74,11 @@ function PacksButtons({ pack }: PackButtonsProps) {
     }
   };
 
+  const getMetaCookies = () => ({
+    fbc: document.cookie.match(/(?:^|;\s*)_fbc=([^;]*)/)?.[1] ?? null,
+    fbp: document.cookie.match(/(?:^|;\s*)_fbp=([^;]*)/)?.[1] ?? null,
+  });
+
   const handleBuyNow = async () => {
     setIsLoading(true);
 
@@ -110,6 +115,7 @@ function PacksButtons({ pack }: PackButtonsProps) {
           cartItems: [cartItem],
           userId: user?.uid || null,
           email: user?.email || null,
+          ...getMetaCookies(),
         }),
       });
 
@@ -167,6 +173,7 @@ function PacksButtons({ pack }: PackButtonsProps) {
         body: JSON.stringify({
           cartItems: [cartItem],
           userId: null,
+          ...getMetaCookies(),
         }),
       });
 

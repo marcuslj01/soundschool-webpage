@@ -47,6 +47,11 @@ export default function Cart() {
     0
   );
 
+  const getMetaCookies = () => ({
+    fbc: document.cookie.match(/(?:^|;\s*)_fbc=([^;]*)/)?.[1] ?? null,
+    fbp: document.cookie.match(/(?:^|;\s*)_fbp=([^;]*)/)?.[1] ?? null,
+  });
+
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -80,6 +85,7 @@ export default function Cart() {
           cartItems,
           userId: user?.uid || null,
           email: user?.email || null,
+          ...getMetaCookies(),
         }),
       });
 
@@ -125,6 +131,7 @@ export default function Cart() {
         body: JSON.stringify({
           cartItems,
           userId: null,
+          ...getMetaCookies(),
         }),
       });
 
