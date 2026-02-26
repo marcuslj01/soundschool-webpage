@@ -11,6 +11,7 @@ import SimilarProducts from "@/components/sections/SimilarProducts";
 import { getYouTubeEmbedUrl } from "@/utils/youtube";
 import { ArrowDown, CheckCircleIcon } from "lucide-react";
 import Link from "next/link";
+import Testimonials from "@/components/sections/Testimonials";
 
 export const revalidate = 360; // Cache for 1 minute
 
@@ -71,7 +72,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
   if (pack.id === "Woj0XGPxSMyXueiBDyoZ") {
     return (
       <>
-        <div className="bg-linear-to-t to-black from-gray-900">
+        <div className="bg-linear-to-t to-black from-gray-950">
           <div className="mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
             <div className="mb-8">
               <BackButton />
@@ -147,7 +148,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               <div className="flex flex-row justify-center">
                 <a
                   href="#video-section"
-                  className="text-white flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg"
+                  className="text-blue-300 flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg"
                 >
                   Read more
                   <ArrowDown className="w-4 h-4" />
@@ -156,47 +157,46 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             </div>
           </div>
         </div>
-
         {/* Video section */}
-        <section id="video-section" className="bg-gray-900 flex justify-center">
+        <section
+          id="video-section"
+          className="bg-gray-950 flex justify-center pb-8"
+        >
           <div className="p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
             <div className="lg:col-span-2 col-span-1">
               <h1 className="text-4xl text-white text-left font-bold">
                 The Megapack
               </h1>
-              <h2 className="text-gray-200 text-2xl mt-4 italic font-bold text-left">
+              <h2 className="text-gray-300 lg:text-2xl text-xl mt-4 mb-4 italic font-bold text-left ">
                 Our biggest pack yet
               </h2>
 
               {/* desktop list */}
               <ul className="list-none flex-1 flex-col gap-2 hidden lg:block text-gray-300 text-xl mt-8 ">
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   250 MIDI files including BPM
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Works with all major DAWs
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Easy to edit and customize
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Designed to boost your creativity
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Perfect for producers of all levels
                 </li>
               </ul>
             </div>
             <div className="lg:col-span-3 col-span-1 flex flex-col justify-center items-center">
               {/* video */}
-              <p className="text-gray-300 text-xl mb-4 text-center italic font-bold mt-8 lg:mt-0">
-                Check out the video below to see the pack in action!
-              </p>
               <div className="relative w-full h-0 pb-[56.25%]">
                 <iframe
                   src={embedUrl}
@@ -210,23 +210,23 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               {/* mobile list */}
               <ul className="list-none check-circle flex flex-col gap-2 lg:hidden text-gray-300 text-xl mt-8">
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   250 MIDI files including BPM
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Works with all major DAWs
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Easy to edit and customize
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Designed to boost your creativity
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   Perfect for producers of all levels
                 </li>
               </ul>
@@ -235,35 +235,48 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         </section>
 
         {/* Preview section */}
-        <section className="flex justify-center bg-gray-800">
-          {/* bg-gradient-to-b from-blue-800 to-blue-900 */}
-          <div className="px-8 py-16 max-w-7xl flex flex-col items-center justify-center">
-            <h1 className="sm:text-4xl text-3xl text-white text-center font-bold">
-              Listen for yourself
-            </h1>
-            <h2 className="text-gray-300 text-xl mt-4 italic font-bold text-center">
-              250 MIDI files ready to use in your next project.
-            </h2>
-            <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
-              {previewFiles.map((file) => (
-                <PlayButton
-                  key={file.name}
-                  previewUrl={file.url}
-                  name={file.name}
-                  type="pack"
-                />
-              ))}
+        <section className="flex justify-center bg-gray-900 flex-col items-center">
+          <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center">
+            <div className="md:w-1/2">
+              <Image
+                src="/images/Piano.png"
+                alt="Megapack Preview"
+                width={1000}
+                height={1000}
+                className="max-h-1/2 object-contain mb-8 sm:mb-0"
+              />
             </div>
-            <p></p>
+            <div className="flex flex-col items-center justify-center md:w-1/2">
+              <h1 className="sm:text-5xl text-3xl text-white text-center font-bold">
+                Listen for yourself
+              </h1>
+              <h2 className="text-blue-300 text-md mt-4 italic font-bold text-center">
+                250 MIDI files ready to use in your next project.
+              </h2>
+              <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
+                {previewFiles.map((file) => (
+                  <PlayButton
+                    key={file.name}
+                    previewUrl={file.url}
+                    name={file.name}
+                    type="pack"
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
+
+        {/* Testimonials section */}
+        <Testimonials />
 
         {/* CTA section */}
         <div className="bg-gray-900">
           <div className="px-6 py-24 sm:py-32 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">
-                Boost your productivity. Start using the Megapack today.
+                Boost your productivity with the{" "}
+                <p className="text-blue-400 inline-block">Megapack</p> today.
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-gray-300">
                 The Megapack is a collection of 250 high-quality MIDI chord
@@ -290,7 +303,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         </div>
 
         {/* FAQ */}
-        <section className="bg-gray-900 flex justify-center">
+        <section className="bg-gray-950 flex justify-center">
           <div className="p-16 max-w-7xl">
             <h1 className="text-4xl text-white text-left font-bold">FAQ</h1>
             <h2 className="text-gray-300 sm:text-xl text-base mt-4 italic font-bold">
@@ -308,7 +321,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   you need any help, please feel free to{" "}
                   <Link
                     href="/contact"
-                    className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                    className="text-blue-500 hover:text-blue-400 transition-colors duration-200"
                   >
                     contact us.
                   </Link>
@@ -351,7 +364,6 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             </p>
           </div>
         </section>
-
         {/* similar products section*/}
         <section className="m-8">
           <SimilarProducts pack={pack} />
