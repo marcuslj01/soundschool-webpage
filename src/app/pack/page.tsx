@@ -72,7 +72,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
   if (pack.id === "Woj0XGPxSMyXueiBDyoZ") {
     return (
       <>
-        <div className="relative overflow-hidden bg-linear-to-t to-black from-gray-950">
+        <div className="relative overflow-hidden bg-linear-to-t to-black from-gray-900">
           {/* Blob background */}
           <div className="pointer-events-none absolute inset-0 z-0">
             {/* big blob */}
