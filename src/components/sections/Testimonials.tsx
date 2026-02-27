@@ -4,26 +4,20 @@ import React from "react";
 
 const testimonials = [
   {
-    id: 2,
-    author: { name: "Giggy Mop" },
-    avatar: "/images/Giggy.png",
-    body: "A must have for any producer wanting to make professional tracks faster!",
-    rating: 5,
-  },
-  {
     id: 1,
     author: { name: "Alex Deeper" },
     avatar:
       "https://lh3.googleusercontent.com/a-/ALV-UjU5oGdha7fxEte20o-ACsx7up8AxwMDnt4F1m6o3-AjaA2Fbex_=s385-p-k-rw-no",
     body: "The megapack allowed me to create professional tracks more quickly and easily! Highly recommend it!",
+    subtitle: "Producer",
     rating: 5,
   },
   {
-    id: 3,
-    author: { name: "Manny West" },
-    avatar:
-      "https://lh3.googleusercontent.com/a-/ALV-UjU5oGdha7fxEte20o-ACsx7up8AxwMDnt4F1m6o3-AjaA2Fbex_=s385-p-k-rw-no",
-    body: "I can finally stop wasting hours on finding the perfect chord progression for my tracks! This pack is a game changer!",
+    id: 2,
+    author: { name: "Giggy Mop" },
+    avatar: "/images/Giggy.png",
+    body: "This pack is really useful. It saves me a lot of time when I'm trying to find chord progressions for my tracks.",
+    subtitle: "Producer",
     rating: 5,
   },
 ];
@@ -67,8 +61,11 @@ export default function Testimonials() {
             See what others are saying
           </p>
         </div>
-        <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">
-          <div className="-mt-8 sm:-mx-4 grid lg:grid-cols-3 grid-cols-1 gap-4">
+        {/* TODO: Use original code when we have more testimonials */}
+        <div className="justify-center items-center mt-16 flex sm:mt-20">
+          {/* Original code: <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">*/}
+          <div className="-mt-8 sm:-mx-4 grid md:grid-cols-2 grid-cols-1 gap-4 max-w-3xl">
+            {/* Original code: <div className="-mt-8 sm:-mx-4 grid lg:grid-cols-3 grid-cols-1 gap-4">*/}
             {testimonials.map((testimonial) => (
               <div
                 key={testimonial.id}
@@ -101,9 +98,12 @@ export default function Testimonials() {
                       height={40}
                       className="size-10 rounded-full bg-gray-50 dark:bg-gray-800"
                     />
-                    <div>
+                    <div className="flex flex-col">
                       <div className="font-semibold text-gray-900 dark:text-white">
                         {testimonial.author.name}
+                      </div>
+                      <div className="text-gray-500 text-sm">
+                        {testimonial.subtitle}
                       </div>
                     </div>
                   </figcaption>

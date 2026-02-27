@@ -243,7 +243,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 alt="Megapack Preview"
                 width={1000}
                 height={1000}
-                className="max-h-1/2 object-contain mb-8 sm:mb-0"
+                className="max-h-1/2 object-contain mb-8 sm:mb-0 rounded-lg"
               />
             </div>
             <div className="flex flex-col items-center justify-center md:w-1/2">
