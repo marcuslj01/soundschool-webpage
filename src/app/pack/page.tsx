@@ -72,8 +72,19 @@ export default async function PackPage({ searchParams }: PackPageProps) {
   if (pack.id === "Woj0XGPxSMyXueiBDyoZ") {
     return (
       <>
-        <div className="bg-linear-to-t to-black from-gray-950">
-          <div className="mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
+        <div className="relative overflow-hidden bg-linear-to-t to-black from-gray-950">
+          {/* Blob background */}
+          <div className="pointer-events-none absolute inset-0 z-0">
+            {/* big blob */}
+            <div className="absolute left-1/2 top-[-220px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/25 blur-3xl" />
+            {/* side blob */}
+            <div className="absolute right-[-350px] top-[120px] h-[520px] w-[520px] rounded-full bg-cyan-400/20 blur-3xl" />
+            {/* subtle bottom glow */}
+            <div className="absolute left-[-180px] bottom-[-220px] h-[520px] w-[520px] rounded-full bg-indigo-500/15 blur-3xl" />
+          </div>
+
+          <div className="relative z-10 mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
+            {/* content */}
             <div className="mb-8">
               <BackButton />
               {/* hero section */}
@@ -90,7 +101,8 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   />
                 </div>
                 {/* right side text */}
-                <div className="flex flex-col p-8 sm:pt-8 lg:pt-12 max-w-sm">
+                <div className="flex flex-col p-6 sm:p-8 sm:pt-8 lg:pt-12 max-w-sm lg:max-w-md">
+                  {" "}
                   <h2 className="text-gray-300 lg:text-xl text-base italic">
                     Soundschool
                   </h2>
@@ -148,7 +160,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               <div className="flex flex-row justify-center">
                 <a
                   href="#video-section"
-                  className="text-blue-300 flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg"
+                  className="text-blue-300 hover:text-blue-200 flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg transition-all transform hover:scale-105 duration-300"
                 >
                   Read more
                   <ArrowDown className="w-4 h-4" />
@@ -157,6 +169,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             </div>
           </div>
         </div>
+
         {/* Video section */}
         <section
           id="video-section"
