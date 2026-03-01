@@ -5,17 +5,24 @@ import React from "react";
 const testimonials = [
   {
     id: 1,
-    author: { name: "Alex Deeper" },
-    avatar:
-      "https://lh3.googleusercontent.com/a-/ALV-UjU5oGdha7fxEte20o-ACsx7up8AxwMDnt4F1m6o3-AjaA2Fbex_=s385-p-k-rw-no",
-    body: "The megapack allowed me to create professional tracks more quickly and easily! Highly recommend it!",
+    author: { name: "Benno Enkels" },
+    avatar: "/images/testimonials/Benno.jpg",
+    body: "The Megapack helped me find chords I couldn't come up with on my own and gave me inspiration for new songs.",
     subtitle: "Producer",
     rating: 5,
   },
   {
     id: 2,
+    author: { name: "Alex Deeper" },
+    avatar: "/images/testimonials/Alex.webp",
+    body: "The megapack allowed me to create professional tracks more quickly and easily. Highly recommend it!",
+    subtitle: "Producer",
+    rating: 5,
+  },
+  {
+    id: 3,
     author: { name: "Giggy Mop" },
-    avatar: "/images/Giggy.png",
+    avatar: "/images/testimonials/Giggy.png",
     body: "This pack is really useful. It saves me a lot of time when I'm trying to find chord progressions for my tracks.",
     subtitle: "Producer",
     rating: 5,
@@ -61,11 +68,9 @@ export default function Testimonials() {
             See what others are saying
           </p>
         </div>
-        {/* TODO: Use original code when we have more testimonials */}
-        <div className="justify-center items-center mt-16 flex sm:mt-20">
-          {/* Original code: <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">*/}
-          <div className="-mt-8 sm:-mx-4 grid md:grid-cols-2 grid-cols-1 gap-4 max-w-3xl">
-            {/* Original code: <div className="-mt-8 sm:-mx-4 grid lg:grid-cols-3 grid-cols-1 gap-4">*/}
+
+        <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">
+          <div className="-mt-8 sm:-mx-4 grid lg:grid-cols-3 grid-cols-1 gap-4">
             {testimonials.map((testimonial) => (
               <div
                 key={testimonial.id}
