@@ -173,19 +173,19 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         {/* Video section */}
         <section
           id="video-section"
-          className="bg-gray-950 flex justify-center pb-8"
+          className="bg-gray-950 flex justify-center pb-8 items-center min-h-[70vh]"
         >
           <div className="p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
             <div className="lg:col-span-2 col-span-1">
-              <h1 className="text-4xl text-white text-left font-bold">
+              <h1 className="text-5xl text-white lg:text-left text-center font-bold">
                 The Megapack
               </h1>
-              <h2 className="text-gray-300 lg:text-2xl text-xl mt-4 mb-4 italic font-bold text-left ">
+              <h2 className="text-gray-400 text-xl mt-4 mb-4 italic font-bold lg:text-left text-center">
                 Our biggest pack yet
               </h2>
 
               {/* desktop list */}
-              <ul className="list-none flex-1 flex-col gap-2 hidden lg:block text-gray-300 text-xl mt-8 ">
+              <ul className="list-none flex-1 flex-col space-y-2 hidden lg:block text-gray-300 text-xl mt-8 ">
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   250 MIDI files including BPM
@@ -221,7 +221,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               </div>
 
               {/* mobile list */}
-              <ul className="list-none check-circle flex flex-col gap-2 lg:hidden text-gray-300 text-xl mt-8">
+              <ul className="list-none check-circle flex flex-col space-y-2 lg:hidden text-gray-300 text-xl mt-8">
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
                   250 MIDI files including BPM
