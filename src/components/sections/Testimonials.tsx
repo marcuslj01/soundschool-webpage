@@ -5,17 +5,17 @@ import React from "react";
 const testimonials = [
   {
     id: 1,
-    author: { name: "Benno Enkels" },
-    avatar: "/images/testimonials/Benno.jpg",
-    body: "The Megapack helped me find chords I couldn't come up with on my own and gave me inspiration for new songs.",
+    author: { name: "Alex Deeper" },
+    avatar: "/images/testimonials/Alex.webp",
+    body: "The megapack allowed me to create professional tracks more quickly and easily. Highly recommend it!",
     subtitle: "Producer",
     rating: 5,
   },
   {
     id: 2,
-    author: { name: "Alex Deeper" },
-    avatar: "/images/testimonials/Alex.webp",
-    body: "The megapack allowed me to create professional tracks more quickly and easily. Highly recommend it!",
+    author: { name: "Benno Enkels" },
+    avatar: "/images/testimonials/Benno.jpg",
+    body: "The Megapack helped me find chords I couldn't come up with on my own and gave me inspiration for new songs.",
     subtitle: "Producer",
     rating: 5,
   },
