@@ -113,10 +113,6 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                     Inspired by artists like <b>Avicii</b>, <b>Martin Garrix</b>
                     , <b>Alan Walker</b>, <b>Kygo</b> and more.
                   </h3>
-                  {/* <div className="flex flex-col items-left gap-2 w-fit rounded-lg mt-8">
-                    <p className="text-gray-300 text-2xl">250</p>
-                    <p className="text-gray-500 text-md">Chord progreesions</p>
-                  </div> */}
                   {pack.is_discounted && (
                     <div className="inline-block mt-4">
                       <Badge text="Limited Time Offer!" style="green" />
@@ -204,7 +200,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 </li>
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
-                  Perfect for producers of all levels
+                  Copyright free
                 </li>
               </ul>
             </div>
@@ -240,7 +236,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 </li>
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
-                  Perfect for producers of all levels
+                  Copyright free
                 </li>
               </ul>
             </div>
