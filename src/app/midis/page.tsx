@@ -9,9 +9,18 @@ export default async function MidiPage() {
 
   return (
     <div className="flex flex-col gap-4 w-full items-center text-white min-h-screen mt-30">
-      <h2 className="text-2xl font-bold text-white sm:text-4xl" id="midis">
-        Our midi files!
-      </h2>
+      <div className="w-full max-w-4xl flex flex-col gap-2 items-center p-4 h-30 justify-center">
+        <h2
+          className="text-4xl font-bold w-full text-center md:text-left text-white sm:text-5xl"
+          id="midis"
+        >
+          MIDI Files
+        </h2>
+        <p className="text-gray-300 text-center md:text-left text-lg sm:text-xl w-full">
+          Professional Chord Progressions For Your Next Track.
+        </p>
+      </div>
+
       <LazyMidigrid initialData={midiFiles} />
     </div>
   );
