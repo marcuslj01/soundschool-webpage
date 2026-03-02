@@ -3,6 +3,7 @@ import React from "react";
 import Badge from "./Badge";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
 
 interface FLPCardProps {
   flp: FLP;
@@ -21,17 +22,18 @@ function FLPCard({ flp, isOwned }: FLPCardProps) {
   const isNew = checkIsNew(flp.created_at.toISOString());
 
   return (
-    <div className="w-full bg-gray-900 rounded-lg hover:scale-105 transition-all duration-300">
-      <div className="mb-2">
-        <Link className="w-full h-fit" href={`/flp?id=${flp.id}`}>
-          <Image
-            src={flp.image_url}
-            alt={flp.name}
-            width={500}
-            height={500}
-            className="w-full h-fit object-contain"
-          />
-        </Link>
+    <Link
+      href={`/flp?id=${flp.id}`}
+      className="w-full rounded-lg hover:scale-105 transition-all duration-300"
+    >
+      <div className="mb-2 bg-gray-700/20 rounded-lg">
+        <Image
+          src={flp.image_url}
+          alt={flp.name}
+          width={500}
+          height={500}
+          className="w-full h-fit object-contain"
+        />
         <div className="flex flex-row justify-between px-3 pt-4 h-[80px]">
           <h3 className="text-gray-200 font-bold line-clamp-2 text-md sm:text-lg">
             {flp.name}
@@ -51,20 +53,17 @@ function FLPCard({ flp, isOwned }: FLPCardProps) {
         <p className="text-sm font-bold px-3 text-gray-400 ">FLP</p>
 
         <div className="flex flex-row justify-between p-3 ">
-          <div className="flex-row gap-2 max-w-3/4 hidden lg:flex">
+          <div className="flex-row gap-2 max-w-3/4 truncate lg:flex">
             {flp.tags?.map((tag) => (
               <Badge key={tag} text={tag} style="blue" />
             ))}
           </div>
-          <Link
-            className="text-gray-200 text-sm font-bold px-4 bg-primary hover:bg-primary/80 transition-all duration-300 rounded-md py-2"
-            href={`/flp?id=${flp.id}`}
-          >
-            Add to Cart
-          </Link>
+          <p className="text-gray-200 text-sm font-bold px-4 hover:text-white transition-all duration-300 rounded-md py-2 min-w-fit">
+            Learn more <ArrowRightIcon className="w-4 h-4 inline-block" />
+          </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
