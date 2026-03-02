@@ -20,7 +20,7 @@ export default async function PacksPage() {
           className="text-4xl font-bold text-white sm:text-5xl px-8 py-4 text-center md:text-left"
           id="packs"
         >
-          Our packs
+          Packs
         </h2>
         {featuredPacks.length > 0 && (
           <>
