@@ -242,23 +242,33 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         </section>
 
         {/* Preview section */}
-        <section className="bg-black border-t border-white/5 py-20 lg:py-32">
-          <div className="mx-auto max-w-3xl px-6 text-center">
-            <h1 className="sm:text-5xl text-3xl text-white font-black">
-              Listen for yourself
-            </h1>
-            <p className="text-gray-400 mt-3 italic">
-              250 MIDI files ready to use in your next project.
-            </p>
-            <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-10 text-white text-2xl font-bold">
-              {previewFiles.map((file) => (
-                <PlayButton
-                  key={file.name}
-                  previewUrl={file.url}
-                  name={file.name}
-                  type="pack"
-                />
-              ))}
+        <section className="flex justify-center bg-zinc-950 border-t border-white/5 flex-col items-center">
+          <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center w-full max-w-7xl">
+            <div className="md:w-1/2">
+              <video
+                src="/videos/EDM_video.mp4"
+                controls
+                playsInline
+                className="w-full rounded-lg object-contain mb-8 sm:mb-0"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center md:w-1/2">
+              <h1 className="sm:text-5xl text-3xl text-white text-center font-bold">
+                Listen for yourself
+              </h1>
+              <h2 className="text-gray-400 text-md mt-4 italic font-bold text-center">
+                250 MIDI files ready to use in your next project.
+              </h2>
+              <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
+                {previewFiles.map((file) => (
+                  <PlayButton
+                    key={file.name}
+                    previewUrl={file.url}
+                    name={file.name}
+                    type="pack"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -271,7 +281,8 @@ export default async function PackPage({ searchParams }: PackPageProps) {
           <div className="px-6 py-24 sm:py-32 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-4xl font-black tracking-tight text-balance text-white sm:text-5xl">
-                Boost your creativity with EDM Essentials today.
+                Boost your creativity with EDM Essentials today
+                <p className="inline-block text-green-400">.</p>
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-gray-300">
                 EDM Essentials is a collection of 250+ high-quality MIDI chord
