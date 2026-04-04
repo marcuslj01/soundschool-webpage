@@ -253,8 +253,8 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         {/* Preview section */}
         <section className="flex justify-center bg-zinc-950 flex-col items-center">
           <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center w-full max-w-7xl">
-            <div className="md:w-1/2">
-              <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden">
+            <div className="w-full md:w-1/2">
+              <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden mb-8 sm:mb-0">
                 <iframe
                   src={embedUrl}
                   title={pack.name}
