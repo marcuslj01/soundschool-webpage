@@ -42,7 +42,7 @@ export default function Testimonials() {
             clipPath:
               "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
           }}
-          className="ml-[max(50%,38rem)] aspect-1313/771 w-328.25 bg-linear-to-tr from-[#22D3EE] to-[#60A5FA]"
+          className="ml-[max(50%,38rem)] aspect-1313/771 w-328.25 bg-linear-to-tr from-[#16A34A] to-[#4ADE80]"
         />
       </div>
       <div
@@ -54,14 +54,14 @@ export default function Testimonials() {
             clipPath:
               "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
           }}
-          className="-ml-88 aspect-1313/771 w-328.25 flex-none origin-top-right rotate-30 bg-linear-to-tr from-[#22D3EE] to-[#60A5FA] xl:mr-[calc(50%-12rem)] xl:ml-0"
+          className="-ml-88 aspect-1313/771 w-328.25 flex-none origin-top-right rotate-30 bg-linear-to-tr from-[#16A34A] to-[#4ADE80] xl:mr-[calc(50%-12rem)] xl:ml-0"
         />
       </div>
 
       {/* Content */}
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-blue-200">
+          <h2 className="text-base/7 font-semibold text-green-400">
             Testimonials
           </h2>
           <p className="mt-2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl dark:text-white">
