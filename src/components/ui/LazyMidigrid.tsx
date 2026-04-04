@@ -20,7 +20,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialData.length >= 10);
   const [lastId, setLastId] = useState<string | null>(
-    initialData.length > 0 ? initialData[initialData.length - 1].id : null
+    initialData.length > 0 ? initialData[initialData.length - 1].id : null,
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -55,7 +55,9 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
         setIsInSearchMode(false);
         setHasMore(initialData.length >= 10);
         setLastId(
-          initialData.length > 0 ? initialData[initialData.length - 1].id : null
+          initialData.length > 0
+            ? initialData[initialData.length - 1].id
+            : null,
         );
         return;
       }
@@ -63,7 +65,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
       try {
         setIsSearching(true);
         const response = await fetch(
-          `/api/midi/search?term=${encodeURIComponent(term)}`
+          `/api/midi/search?term=${encodeURIComponent(term)}`,
         );
 
         if (response.ok) {
@@ -79,7 +81,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
         setIsSearching(false);
       }
     },
-    [initialData]
+    [initialData],
   );
 
   useEffect(() => {
@@ -135,7 +137,7 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
           loadMore();
         }
       },
-      { threshold: 0, rootMargin: "200px" }
+      { threshold: 0, rootMargin: "200px" },
     );
 
     if (loadingRef.current) {
@@ -148,14 +150,14 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
   }, [loadMore, loading, hasMore, isInSearchMode]);
 
   return (
-    <div className="w-full flex flex-col items-center sm:p-4 rounded-lg sm:max-w-4xl mb-8">
+    <div className="w-full flex flex-col items-center p-4 rounded-lg max-w-7xl mb-8">
       {/* TODO: Implement limited time offer */}
       {/* <h1 className="text-lg font-bold text-center bg-indigo-600 text-white p-2 w-full shadow-xl">
         Limited time: Buy 2 get 1 free!
       </h1> */}
 
       {/* Search input */}
-      <div className="w-full p-4">
+      <div className="w-full py-4">
         <div className="relative">
           <input
             type="text"
@@ -229,11 +231,11 @@ function LazyMidigrid({ initialData }: LazyMidigridProps) {
                     onPause={() => setCurrentlyPlaying(null)}
                     isOwned={ownedFiles.some(
                       (ownedFile) =>
-                        ownedFile.id === file.id && ownedFile.type === "midi"
+                        ownedFile.id === file.id && ownedFile.type === "midi",
                     )}
                   />
                 </motion.div>
-              )
+              ),
           )}
         </div>
 

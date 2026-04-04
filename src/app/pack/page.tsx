@@ -68,21 +68,27 @@ export default async function PackPage({ searchParams }: PackPageProps) {
   const youtubeUrl = "https://www.youtube.com/watch?v=VTJpTBKh5HU";
   const embedUrl = getYouTubeEmbedUrl(youtubeUrl);
 
-  // If the pack is Megapack, show a special page
+  // If the pack is EDM Essentials (Megapack), show a special page
   if (pack.id === "Woj0XGPxSMyXueiBDyoZ") {
     return (
       <>
-        <div className="relative overflow-hidden bg-linear-to-t to-black from-gray-900">
-          {/* Blob background */}
+        <div className="relative overflow-hidden bg-black">
+          {/* Grain overlay */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 opacity-[0.15]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+              backgroundRepeat: "repeat",
+              backgroundSize: "128px 128px",
+            }}
+          />
+          {/* Subtle blob background */}
           <div className="pointer-events-none absolute inset-0 z-0">
-            {/* big blob */}
-            <div className="absolute left-1/2 top-[-220px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/25 blur-3xl" />
-            {/* side blob */}
-            <div className="absolute right-[-350px] top-[120px] h-[520px] w-[520px] rounded-full bg-cyan-400/20 blur-3xl" />
-            {/* subtle bottom glow */}
-            <div className="absolute left-[-180px] bottom-[-220px] h-[520px] w-[520px] rounded-full bg-indigo-500/15 blur-3xl" />
+            <div className="absolute left-1/4 top-[-100px] h-[400px] w-[400px] rounded-full bg-green-600/25 blur-3xl" />
+            <div className="absolute right-[-150px] top-[100px] h-[350px] w-[350px] rounded-full bg-green-500/20 blur-3xl" />
+            <div className="absolute left-[-100px] bottom-[-50px] h-[300px] w-[300px] rounded-full bg-emerald-600/20 blur-3xl" />
           </div>
-
           <div className="relative z-10 mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
             {/* content */}
             <div className="mb-8">
@@ -97,19 +103,21 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                     width={600}
                     height={400}
                     sizes="(max-width: 640px) 100vw, 50vw"
-                    className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] lg:max-h-[60vh] object-contain"
+                    className="w-full h-auto max-h-[35vh] lg:max-h-[45vh] xl:max-h-[55vh] object-contain"
                   />
                 </div>
                 {/* right side text */}
                 <div className="flex flex-col p-6 sm:p-8 sm:pt-8 lg:pt-12 max-w-sm lg:max-w-md">
-                  {" "}
-                  <h2 className="text-gray-300 lg:text-xl text-base italic">
+                  <h2 className="text-gray-400 lg:text-sm text-xs tracking-widest uppercase">
                     Soundschool
                   </h2>
-                  <h1 className="text-5xl font-bold tracking-tight text-white lg:text-7xl">
-                    Megapack
+                  <h1 className="text-5xl font-black tracking-tight text-white lg:text-7xl">
+                    EDM Essentials
                   </h1>
-                  <h3 className="text-gray-300 lg:text-3xl text-xl mt-4">
+                  <p className="text-green-500 text-xs mt-1 tracking-widest uppercase">
+                    250+ Chord Progressions
+                  </p>
+                  <h3 className="text-gray-300 lg:text-2xl text-lg mt-4">
                     Inspired by artists like <b>Avicii</b>, <b>Martin Garrix</b>
                     , <b>Alan Walker</b>, <b>Kygo</b> and more.
                   </h3>
@@ -126,7 +134,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                           <p className="text-gray-400 text-xl line-through">
                             ${pack.price}
                           </p>
-                          <p className="text-green-400 text-2xl">
+                          <p className="text-white text-2xl font-bold">
                             ${pack.discount_price}
                           </p>
                         </>
@@ -137,7 +145,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                       )}
                     </div>
                     <div className="w-full">
-                      <PacksButtons // hide the add to cart button for the megapack to avoid confusion
+                      <PacksButtons
                         pack={{
                           id: pack.id,
                           name: pack.name,
@@ -156,7 +164,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               <div className="flex flex-row justify-center">
                 <a
                   href="#video-section"
-                  className="text-blue-300 hover:text-blue-200 flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg transition-all transform hover:scale-105 duration-300"
+                  className="text-green-400 hover:text-green-300 flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg transition-all transform hover:scale-105 duration-300"
                 >
                   Read more
                   <ArrowDown className="w-4 h-4" />
@@ -169,73 +177,72 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         {/* Video section */}
         <section
           id="video-section"
-          className="bg-gray-950 flex justify-center pb-8 items-center min-h-[70vh]"
+          className="bg-zinc-950 flex justify-center pb-8 items-center border-t border-white/5"
         >
-          <div className="p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
+          <div className="p-8 lg:p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
             <div className="lg:col-span-2 col-span-1">
-              <h1 className="text-5xl text-white lg:text-left text-center font-bold">
-                The Megapack
+              <h1 className="text-5xl text-white lg:text-left text-center font-black">
+                EDM Essentials
               </h1>
-              <h2 className="text-gray-400 text-xl mt-4 mb-4 italic font-bold lg:text-left text-center">
-                Our biggest pack yet
+              <h2 className="text-gray-400 text-xl mt-4 mb-4 italic lg:text-left text-center">
+                Our biggest MIDI pack yet
               </h2>
 
               {/* desktop list */}
-              <ul className="list-none flex-1 flex-col space-y-2 hidden lg:block text-gray-300 text-xl mt-8 ">
+              <ul className="list-none flex-1 flex-col space-y-3 hidden lg:block text-gray-300 text-xl mt-8">
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   250 MIDI files including BPM
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Works with all major DAWs
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Easy to edit and customize
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Designed to boost your creativity
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Copyright free
                 </li>
               </ul>
             </div>
             <div className="lg:col-span-3 col-span-1 flex flex-col justify-center items-center">
               {/* video */}
-              <div className="relative w-full h-0 pb-[56.25%]">
-                <iframe
-                  src={embedUrl}
-                  title={pack.name}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute top-0 left-0 w-full h-full rounded-lg"
-                />
-              </div>
+              <video
+                src="/videos/EDM_video3.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full max-h-[400px] rounded-xl shadow-lg shadow-gray-950/20 object-contain"
+              />
 
               {/* mobile list */}
-              <ul className="list-none check-circle flex flex-col space-y-2 lg:hidden text-gray-300 text-xl mt-8">
+              <ul className="list-none check-circle flex flex-col space-y-3 lg:hidden text-gray-300 text-xl mt-8">
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   250 MIDI files including BPM
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Works with all major DAWs
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Easy to edit and customize
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Designed to boost your creativity
                 </li>
                 <li>
-                  <CheckCircleIcon className="w-4 h-4 inline-block text-blue-400" />{" "}
+                  <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
                   Copyright free
                 </li>
               </ul>
@@ -244,22 +251,24 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         </section>
 
         {/* Preview section */}
-        <section className="flex justify-center bg-gray-900 flex-col items-center">
-          <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center">
+        <section className="flex justify-center bg-zinc-950 flex-col items-center">
+          <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center w-full max-w-7xl">
             <div className="md:w-1/2">
-              <Image
-                src="/images/Piano.png"
-                alt="Megapack Preview"
-                width={1000}
-                height={1000}
-                className="max-h-1/2 object-contain mb-8 sm:mb-0 rounded-lg"
-              />
+              <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden">
+                <iframe
+                  src={embedUrl}
+                  title={pack.name}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg"
+                />
+              </div>
             </div>
             <div className="flex flex-col items-center justify-center md:w-1/2">
               <h1 className="sm:text-5xl text-3xl text-white text-center font-bold">
                 Listen for yourself
               </h1>
-              <h2 className="text-blue-300 text-md mt-4 italic font-bold text-center">
+              <h2 className="text-gray-400 text-md mt-4 italic font-bold text-center">
                 250 MIDI files ready to use in your next project.
               </h2>
               <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
@@ -280,21 +289,21 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         <Testimonials />
 
         {/* CTA section */}
-        <div className="bg-gray-900">
+        <div className="bg-zinc-950">
           <div className="px-6 py-24 sm:py-32 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">
-                Boost your productivity with the{" "}
-                <p className="text-blue-400 inline-block">Megapack</p> today.
+              <h2 className="text-4xl font-black tracking-tight text-balance text-white sm:text-5xl">
+                Boost your creativity with EDM Essentials today
+                <p className="inline-block text-green-400">.</p>
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-gray-300">
-                The Megapack is a collection of 250 high-quality MIDI chord
-                progressions made for a variety of genres. The pack is designed
-                to help producers work faster and stay creative, with clean,
+                EDM Essentials is a collection of 250+ high-quality MIDI chord
+                progressions crafted for EDM and electronic music producers.
+                Designed to help you work faster and stay creative, with clean,
                 ready-to-use MIDI progressions that fit any project.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <PacksButtons // hide the add to cart button for the megapack to avoid confusion
+                <PacksButtons
                   pack={{
                     id: pack.id,
                     name: pack.name,
@@ -312,11 +321,11 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         </div>
 
         {/* FAQ */}
-        <section className="bg-gray-950 flex justify-center">
+        <section className="bg-zinc-950 flex justify-center">
           <div className="p-16 max-w-7xl">
-            <h1 className="text-4xl text-white text-left font-bold">FAQ</h1>
-            <h2 className="text-gray-300 sm:text-xl text-base mt-4 italic font-bold">
-              Frequently asked questions about the Megapack
+            <h1 className="text-4xl text-white text-left font-black">FAQ</h1>
+            <h2 className="text-gray-400 sm:text-xl text-base mt-4 italic">
+              Frequently asked questions about EDM Essentials
             </h2>
             <div className="grid lg:grid-cols-3 grid-cols-1 gap-x-16 gap-y-8 mt-8 text-white text-2xl">
               <div>
@@ -330,9 +339,9 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   you need any help, please feel free to{" "}
                   <Link
                     href="/contact"
-                    className="text-blue-500 hover:text-blue-400 transition-colors duration-200"
+                    className="text-green-400 hover:text-green-300 transition-colors duration-200"
                   >
-                    contact us.
+                    contact us
                   </Link>
                   .
                 </p>
@@ -357,7 +366,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   change the instrument, tempo, key, and arrangement to match
                   your track. This makes it easier to make the idea your own,
                   experiment with different sounds, and adapt the progression to
-                  any genre or style.{" "}
+                  any genre or style.
                 </p>
               </div>
             </div>
@@ -365,7 +374,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               Other questions? Contact us{" "}
               <Link
                 href="/contact"
-                className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                className="text-green-400 hover:text-green-300 transition-colors duration-200"
               >
                 here
               </Link>

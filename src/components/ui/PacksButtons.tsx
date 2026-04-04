@@ -308,7 +308,7 @@ function PacksButtons({ pack }: PackButtonsProps) {
               </button>
             ) : (
               <button
-                className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500 hover:cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-md hover:from-green-500 hover:to-green-400 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 shadow-lg shadow-green-600/60 hover:shadow-green-500/70 transition-all duration-300"
                 onClick={handleBuyNow}
                 disabled={isLoading}
               >

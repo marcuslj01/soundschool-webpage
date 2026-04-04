@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Badge from "./Badge";
+
 interface PackCardProps {
   product: Pack;
   isOwned: boolean;
@@ -16,30 +17,29 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
     const dateObj = new Date(date);
     const diffTime = Math.abs(today.getTime() - dateObj.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays < 3; // If pack is less than 3 days old, it's new
+    return diffDays < 3;
   }
 
   const isNew = checkIsNew(product.created_at.toISOString());
 
   return (
-    <div
-      key={product.id}
-      className="group relative overflow-hidden rounded-lg bg-gray-700/10 w-full border border-black/10 hover:scale-102 opacity-95 hover:opacity-100 transition-all duration-300"
-    >
+    <div className="group overflow-hidden rounded-xl bg-zinc-900 hover:bg-zinc-800 transition-all duration-300 hover:scale-[1.02] w-full">
       <Link href={`/pack?id=${product.id}`}>
-        <div className="relative">
+        {/* Image — white background to make pack art pop */}
+        <div className="overflow-hidden bg-gray-300">
           <Image
             alt={product.name}
             src={product.image_url}
             width={500}
             height={500}
-            className="w-full h-64 sm:h-80 bg-gray-900 object-contain"
+            className="w-full h-60 sm:h-72 object-contain p-3 transition-transform duration-500 group-hover:scale-105"
           />
         </div>
-        <div className="p-4">
-          <div className="flex flex-row justify-between relative">
-            <h3 className="text-md font-medium text-white max-w-3/4 truncate">
-              <span aria-hidden="true" className="absolute inset-0" />
+
+        {/* Info */}
+        <div className="px-4 py-3">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-white font-semibold truncate">
               {product.name}
             </h3>
             {isOwned ? (
@@ -50,29 +50,33 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
               isNew && <Badge text="NEW!" style="yellow" />
             )}
           </div>
-          <p className="text-sm text-gray-500 font-bold mb-2">
+
+          <p className="text-xs text-zinc-500 mt-0.5 mb-3">
             {product.file_count} high quality {product.type}s
           </p>
-          <div className="flex flex-row justify-between">
+
+          <div className="flex items-center justify-between">
             {!product.is_discounted ? (
-              <p className="text-gray-200 text-lg font-bold">
-                ${product.price}
-              </p>
+              <p className="text-white font-bold">${product.price}</p>
             ) : (
-              <p className="text-gray-200 text-lg font-bold flex flex-row gap-2">
-                <span className="text-gray-400 line-through">
+              <div className="flex items-center gap-2">
+                <p className="text-zinc-500 line-through text-sm">
                   ${product.price}
-                </span>
-                <span className="text-green-400">
+                </p>
+                <p className="text-green-400 font-bold">
                   ${product.discount_price}
-                </span>
-              </p>
+                </p>
+              </div>
             )}
-          </div>
-          <div className="space-y-2 flex flex-row justify-between mt-2 ">
-            <div className="flex-row gap-2 flex-wrap h-fit hidden lg:flex max-w-full truncate">
-              {product.tags.map((tag) => (
-                <Badge key={tag} text={tag} style="blue" />
+
+            <div className="hidden lg:flex flex-row gap-1.5 flex-wrap justify-end max-w-[55%]">
+              {product.tags.slice(0, 2).map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs text-zinc-400 bg-zinc-700 rounded-full px-2 py-0.5"
+                >
+                  {tag}
+                </span>
               ))}
             </div>
           </div>
