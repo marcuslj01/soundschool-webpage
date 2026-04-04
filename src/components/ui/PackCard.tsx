@@ -33,10 +33,10 @@ export default function PackCard({ product, isOwned }: PackCardProps) {
             src={product.image_url}
             width={500}
             height={500}
-            className="w-full h-64 sm:h-80 bg-gray-900 object-contain"
+            className="w-full h-72 sm:h-96 bg-gray-900 object-contain p-2"
           />
         </div>
-        <div className="p-4">
+        <div className="p-5">
           <div className="flex flex-row justify-between relative">
             <h3 className="text-md font-medium text-white max-w-3/4 truncate">
               <span aria-hidden="true" className="absolute inset-0" />

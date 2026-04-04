@@ -7,7 +7,7 @@ const testimonials = [
     id: 1,
     author: { name: "Alex Deeper" },
     avatar: "/images/testimonials/Alex.webp",
-    body: "The megapack allowed me to create professional tracks more quickly and easily. Highly recommend it!",
+    body: "The EDM Essentials pack allowed me to create professional tracks more quickly and easily. Highly recommend it!",
     subtitle: "Producer",
     rating: 5,
   },
@@ -15,7 +15,7 @@ const testimonials = [
     id: 2,
     author: { name: "Benno Enkels" },
     avatar: "/images/testimonials/Benno.jpg",
-    body: "The Megapack helped me find chords I couldn't come up with on my own and gave me inspiration for new songs.",
+    body: "This pack helped me find chords I couldn't come up with on my own and gave me inspiration for new songs.",
     subtitle: "Producer",
     rating: 5,
   },
@@ -31,11 +31,11 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="relative isolate pt-24 pb-32 sm:pt-32 bg-gray-950">
+    <section className="relative isolate pt-14 pb-20 sm:pt-20 bg-zinc-950">
       {/* Background gradient */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-1/2 -z-10 -translate-y-1/2 transform-gpu overflow-hidden opacity-30 blur-3xl"
+        className="absolute inset-x-0 top-1/2 -z-10 -translate-y-1/2 transform-gpu overflow-hidden opacity-20 blur-3xl"
       >
         <div
           style={{
@@ -47,7 +47,7 @@ export default function Testimonials() {
       </div>
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 -z-10 flex transform-gpu overflow-hidden pt-32 opacity-25 blur-3xl sm:pt-40 xl:justify-end"
+        className="absolute inset-x-0 top-0 -z-10 flex transform-gpu overflow-hidden pt-32 opacity-15 blur-3xl sm:pt-40 xl:justify-end"
       >
         <div
           style={{

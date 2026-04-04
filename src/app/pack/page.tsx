@@ -167,10 +167,8 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         {/* Video section */}
         <section
           id="video-section"
-          className="bg-zinc-950 flex justify-center pb-8 items-center min-h-[70vh]"
+          className="bg-zinc-950 flex justify-center pb-8 items-center min-h-[70vh] border-t border-white/5"
         >
-          {/* subtle green border top */}
-          <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-500/40 to-transparent" />
           <div className="p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
             <div className="lg:col-span-2 col-span-1">
               <h1 className="text-5xl text-white lg:text-left text-center font-black">
@@ -244,34 +242,23 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         </section>
 
         {/* Preview section */}
-        <section className="flex justify-center bg-black flex-col items-center">
-          <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center">
-            <div className="md:w-1/2">
-              <Image
-                src="/images/Piano.png"
-                alt="EDM Essentials Preview"
-                width={1000}
-                height={1000}
-                className="max-h-1/2 object-contain mb-8 sm:mb-0 rounded-lg"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center md:w-1/2">
-              <h1 className="sm:text-5xl text-3xl text-white text-center font-black">
-                Listen for yourself
-              </h1>
-              <h2 className="text-gray-400 text-md mt-4 italic text-center">
-                250 MIDI files ready to use in your next project.
-              </h2>
-              <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
-                {previewFiles.map((file) => (
-                  <PlayButton
-                    key={file.name}
-                    previewUrl={file.url}
-                    name={file.name}
-                    type="pack"
-                  />
-                ))}
-              </div>
+        <section className="bg-black border-t border-white/5 py-20 lg:py-32">
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <h1 className="sm:text-5xl text-3xl text-white font-black">
+              Listen for yourself
+            </h1>
+            <p className="text-gray-400 mt-3 italic">
+              250 MIDI files ready to use in your next project.
+            </p>
+            <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-10 text-white text-2xl font-bold">
+              {previewFiles.map((file) => (
+                <PlayButton
+                  key={file.name}
+                  previewUrl={file.url}
+                  name={file.name}
+                  type="pack"
+                />
+              ))}
             </div>
           </div>
         </section>
