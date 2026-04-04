@@ -103,7 +103,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                     width={600}
                     height={400}
                     sizes="(max-width: 640px) 100vw, 50vw"
-                    className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] lg:max-h-[60vh] object-contain"
+                    className="w-full h-auto max-h-[35vh] lg:max-h-[45vh] xl:max-h-[55vh] object-contain"
                   />
                 </div>
                 {/* right side text */}
@@ -177,9 +177,9 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         {/* Video section */}
         <section
           id="video-section"
-          className="bg-zinc-950 flex justify-center pb-8 items-center min-h-[70vh] border-t border-white/5"
+          className="bg-zinc-950 flex justify-center pb-8 items-center border-t border-white/5"
         >
-          <div className="p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
+          <div className="p-8 lg:p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
             <div className="lg:col-span-2 col-span-1">
               <h1 className="text-5xl text-white lg:text-left text-center font-black">
                 EDM Essentials
@@ -251,7 +251,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         </section>
 
         {/* Preview section */}
-        <section className="flex justify-center bg-zinc-950 border-t border-white/5 flex-col items-center">
+        <section className="flex justify-center bg-zinc-950 flex-col items-center">
           <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center w-full max-w-7xl">
             <div className="md:w-1/2">
               <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden">
