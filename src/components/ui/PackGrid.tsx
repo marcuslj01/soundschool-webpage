@@ -31,7 +31,7 @@ function PackGrid({ products }: PackGridProps) {
   return (
     <div
       ref={ref}
-      className="mx-auto max-w-2xl px-4 sm:px-6 sm:max-w-7xl lg:px-8 grid  gap-4 grid-cols-1 md:grid-cols-3"
+      className="mx-auto max-w-2xl px-4 sm:px-6 sm:max-w-7xl lg:px-8 grid  gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
     >
       {products.map(
         (product, index) =>

@@ -15,16 +15,16 @@ export default async function PacksPage() {
 
   return (
     <div className="flex flex-col gap-4 w-full items-center text-white min-h-screen mt-30 mb-20">
-      <div className="max-w-5xl">
+      <div className="max-w-7xl w-full">
         <h2
-          className="text-4xl font-bold text-white sm:text-5xl px-8 py-4 text-center md:text-left"
+          className="text-4xl font-bold text-white sm:text-5xl px-4 py-4 text-left"
           id="packs"
         >
           Packs
         </h2>
         {featuredPacks.length > 0 && (
           <>
-            <h2 className="text-3xl text-gray-200 font-bold px-8 py-4 text-center md:text-left">
+            <h2 className="text-3xl text-gray-200 px-4 py-4 text-left">
               Most popular
             </h2>
             <PackGrid products={featuredPacks} />
@@ -32,12 +32,11 @@ export default async function PacksPage() {
         )}
         {midiPacks.length > 0 && (
           <>
-            <h2 className="text-3xl font-bold px-8 py-4 text-gray-200 text-center md:text-left">
+            <h2 className="text-3xl px-8 py-4 text-gray-200 text-left mt-8">
               Other midi packs
             </h2>
-            <div className="max-w-5xl xl:max-w-7xl">
-              <PackGrid products={midiPacks} />
-            </div>
+
+            <PackGrid products={midiPacks} />
           </>
         )}
         {samplePacks.length > 0 && (
