@@ -181,7 +181,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         >
           <div className="p-8 lg:p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
             <div className="lg:col-span-2 col-span-1">
-              <h1 className="text-5xl text-white lg:text-left text-center font-black">
+              <h1 className="sm:text-5xl text-3xl text-white lg:text-left text-center font-black">
                 EDM Essentials
               </h1>
               <h2 className="text-gray-400 text-xl mt-4 mb-4 italic lg:text-left text-center">
