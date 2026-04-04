@@ -75,9 +75,9 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         <div className="relative overflow-hidden bg-black">
           {/* Subtle blob background */}
           <div className="pointer-events-none absolute inset-0 z-0">
-            <div className="absolute left-1/4 top-[-100px] h-[400px] w-[400px] rounded-full bg-green-600/10 blur-3xl" />
-            <div className="absolute right-[-150px] top-[100px] h-[350px] w-[350px] rounded-full bg-green-500/8 blur-3xl" />
-            <div className="absolute left-[-100px] bottom-[-50px] h-[300px] w-[300px] rounded-full bg-emerald-600/8 blur-3xl" />
+            <div className="absolute left-1/4 top-[-100px] h-[400px] w-[400px] rounded-full bg-green-600/25 blur-3xl" />
+            <div className="absolute right-[-150px] top-[100px] h-[350px] w-[350px] rounded-full bg-green-500/20 blur-3xl" />
+            <div className="absolute left-[-100px] bottom-[-50px] h-[300px] w-[300px] rounded-full bg-emerald-600/20 blur-3xl" />
           </div>
           <div className="relative z-10 mx-auto px-4 pt-20 sm:px-6 sm:pt-24 lg:max-w-7xl lg:px-8 pb-6">
             {/* content */}
@@ -205,7 +205,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             <div className="lg:col-span-3 col-span-1 flex flex-col justify-center items-center">
               {/* video */}
               <video
-                src="/videos/EDM_video2.mp4"
+                src="/videos/EDM_video3.mp4"
                 autoPlay
                 muted
                 loop
