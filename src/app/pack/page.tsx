@@ -175,7 +175,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 EDM Essentials
               </h1>
               <h2 className="text-gray-400 text-xl mt-4 mb-4 italic lg:text-left text-center">
-                Our biggest pack yet
+                Our biggest MIDI pack yet
               </h2>
 
               {/* desktop list */}
@@ -204,15 +204,14 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             </div>
             <div className="lg:col-span-3 col-span-1 flex flex-col justify-center items-center">
               {/* video */}
-              <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden">
-                <iframe
-                  src={embedUrl}
-                  title={pack.name}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute top-0 left-0 w-full h-full rounded-lg"
-                />
-              </div>
+              <video
+                src="/videos/EDM_video2.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-[400px] rounded-xl shadow-lg shadow-gray-950/20 object-cover mb-8 sm:mb-0"
+              />
 
               {/* mobile list */}
               <ul className="list-none check-circle flex flex-col space-y-3 lg:hidden text-gray-300 text-xl mt-8">
@@ -245,12 +244,15 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         <section className="flex justify-center bg-zinc-950 border-t border-white/5 flex-col items-center">
           <div className="px-8 py-16 lg:py-32 flex lg:flex-row flex-col lg:gap-8 sm:gap-8 items-center justify-center w-full max-w-7xl">
             <div className="md:w-1/2">
-              <video
-                src="/videos/EDM_video.mp4"
-                controls
-                playsInline
-                className="w-full rounded-lg object-contain mb-8 sm:mb-0"
-              />
+              <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden">
+                <iframe
+                  src={embedUrl}
+                  title={pack.name}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full rounded-lg"
+                />
+              </div>
             </div>
             <div className="flex flex-col items-center justify-center md:w-1/2">
               <h1 className="sm:text-5xl text-3xl text-white text-center font-bold">
