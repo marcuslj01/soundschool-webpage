@@ -181,18 +181,18 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         >
           <div className="p-8 lg:p-16 max-w-7xl lg:grid lg:grid-cols-5 flex flex-col justify-center items-center lg:items-start lg:gap-16">
             <div className="lg:col-span-2 col-span-1">
-              <h1 className="sm:text-5xl text-3xl text-white lg:text-left text-center font-black">
-                EDM Essentials
+              <h1 className="mt-2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl dark:text-white text-center lg:text-left">
+                250+ MIDI Files
               </h1>
               <h2 className="text-gray-400 text-xl mt-4 mb-4 italic lg:text-left text-center">
-                Our biggest MIDI pack yet
+                Ready to use in your next project
               </h2>
 
               {/* desktop list */}
               <ul className="list-none flex-1 flex-col space-y-3 hidden lg:block text-gray-300 text-xl mt-8">
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
-                  250 MIDI files including BPM
+                  Including BPM
                 </li>
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
@@ -227,7 +227,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               <ul className="list-none check-circle flex flex-col space-y-3 lg:hidden text-gray-300 text-xl mt-8">
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
-                  250 MIDI files including BPM
+                  Including BPM
                 </li>
                 <li>
                   <CheckCircleIcon className="w-4 h-4 inline-block text-green-400" />{" "}
@@ -265,11 +265,11 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center md:w-1/2">
-              <h1 className="sm:text-5xl text-3xl text-white text-center font-bold">
+              <h1 className="mt-2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl dark:text-white text-center lg:text-left">
                 Listen for yourself
               </h1>
               <h2 className="text-gray-400 text-md mt-4 italic font-bold text-center">
-                250 MIDI files ready to use in your next project.
+                Get a taste of the quality
               </h2>
               <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
                 {previewFiles.map((file) => (
@@ -292,7 +292,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
         <div className="bg-zinc-950">
           <div className="px-6 py-24 sm:py-32 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-4xl font-black tracking-tight text-balance text-white sm:text-5xl">
+              <h2 className="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">
                 Boost your creativity with EDM Essentials today
                 <p className="inline-block text-green-400">.</p>
               </h2>
