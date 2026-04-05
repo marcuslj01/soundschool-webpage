@@ -8,7 +8,6 @@ import {
   ArrowRightIcon,
   CheckCircleIcon,
   ShoppingCartIcon,
-  CreditCardIcon,
   XMarkIcon,
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
@@ -301,20 +300,20 @@ function PacksButtons({ pack }: PackButtonsProps) {
                 onClick={handleBuyNow}
                 disabled={isLoading}
               >
-                <div className="flex items-center justify-center gap-2">
-                  <p>{isLoading ? "Processing..." : "Buy Now"}</p>{" "}
-                  <CreditCardIcon className="w-4 h-4" />
+                <div className="flex items-center justify-center gap-2 font-bold">
+                  <p>{isLoading ? "Processing..." : "Get it now"}</p>{" "}
+                  <ArrowRightIcon className="w-4 h-4" />
                 </div>
               </button>
             ) : (
               <button
-                className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-md hover:from-green-500 hover:to-green-400 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 shadow-lg shadow-green-600/60 hover:shadow-green-500/70 transition-all duration-300"
+                className="w-full bg-linear-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-md hover:from-green-500 hover:to-green-400 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 shadow-lg shadow-green-600/60 hover:shadow-green-500/70 transition-all duration-300"
                 onClick={handleBuyNow}
                 disabled={isLoading}
               >
-                <div className="flex items-center justify-center gap-2">
-                  <p>{isLoading ? "Processing..." : "Buy Now"}</p>
-                  <CreditCardIcon className="w-4 h-4" />
+                <div className="flex items-center justify-center gap-2 font-bold">
+                  <p>{isLoading ? "Processing..." : "Get it now"}</p>
+                  <ArrowRightIcon className="w-4 h-4" />
                 </div>
               </button>
             )}
