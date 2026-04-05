@@ -65,7 +65,7 @@ export default function Testimonials() {
             Testimonials
           </h2>
           <p className="mt-2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl dark:text-white">
-            See what others are saying
+            What people are saying
           </p>
         </div>
 
