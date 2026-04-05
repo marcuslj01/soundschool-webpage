@@ -268,7 +268,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               <h1 className="mt-2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl dark:text-white text-center lg:text-left">
                 Listen for yourself
               </h1>
-              <h2 className="text-gray-400 text-md mt-4 italic font-bold text-center">
+              <h2 className="text-gray-400 text-xl mt-4 mb-4 italic lg:text-left text-center">
                 Get a taste of the quality
               </h2>
               <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 mt-8 text-white text-2xl font-bold">
