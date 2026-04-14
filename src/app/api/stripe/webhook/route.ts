@@ -11,6 +11,8 @@ import crypto from "crypto";
 // Meta Conversions API
 async function sendMetaConversionEvent(data: {
   email: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
   value: number;
   currency: string;
   contentIds: string[];
@@ -35,6 +37,8 @@ async function sendMetaConversionEvent(data: {
 
   const hashedEmail = data.email ? sha256(data.email) : null;
   const hashedExternalId = data.externalId ? sha256(data.externalId) : null;
+  const hashedFirstName = data.firstName ? sha256(data.firstName) : null;
+  const hashedLastName = data.lastName ? sha256(data.lastName) : null;
 
   const eventData = {
     data: [
@@ -46,6 +50,8 @@ async function sendMetaConversionEvent(data: {
         user_data: {
           ...(hashedEmail && { em: [hashedEmail] }),
           ...(hashedExternalId && { external_id: [hashedExternalId] }),
+          ...(hashedFirstName && { fn: [hashedFirstName] }),
+          ...(hashedLastName && { ln: [hashedLastName] }),
           ...(data.fbc && { fbc: data.fbc }),
           ...(data.fbp && { fbp: data.fbp }),
           ...(data.clientIpAddress && { client_ip_address: data.clientIpAddress }),
@@ -352,8 +358,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Send to Meta Conversions API when order complete
+    const fullName = session.customer_details?.name ?? "";
+    const nameParts = fullName.trim().split(/\s+/);
+    const firstName = nameParts[0] ?? null;
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
+
     await sendMetaConversionEvent({
       email: email,
+      firstName,
+      lastName,
       value: orderData.total_price,
       currency: "USD",
       contentIds: orderItems.map((item) => item.id),

@@ -5,7 +5,8 @@ declare global {
     fbq?: (
       action: string,
       eventName?: string,
-      params?: Record<string, unknown>
+      params?: Record<string, unknown>,
+      options?: { eventID?: string }
     ) => void;
   }
 }
@@ -103,8 +104,7 @@ export function trackPurchase(
       value: total,
       currency: currency || "USD",
       num_items: totalQuantity,
-      eventID: transactionId,
-    });
+    }, { eventID: transactionId });
   } catch (error) {
     console.error("Meta Pixel Purchase error:", error);
   }

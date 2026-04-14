@@ -54,7 +54,12 @@ export default async function SuccessPage({
 
   let order;
   try {
-    order = await getOrderServer(session.payment_intent as string);
+    // Retry up to 5 times with 1s delay to account for webhook processing lag
+    for (let attempt = 0; attempt < 5; attempt++) {
+      order = await getOrderServer(session.payment_intent as string);
+      if (order) break;
+      if (attempt < 4) await new Promise((r) => setTimeout(r, 1000));
+    }
   } catch (error) {
     console.error("Error fetching order:", error);
     return (
