@@ -104,6 +104,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                     height={400}
                     sizes="(max-width: 640px) 100vw, 50vw"
                     className="w-full h-auto max-h-[35vh] lg:max-h-[45vh] xl:max-h-[55vh] object-contain"
+                    priority
                   />
                 </div>
                 {/* right side text */}
@@ -220,6 +221,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                 muted
                 loop
                 playsInline
+                preload="none"
                 className="w-full max-h-[400px] rounded-xl shadow-lg shadow-gray-950/20 object-contain"
               />
 
@@ -260,6 +262,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
                   title={pack.name}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  loading="lazy"
                   className="absolute top-0 left-0 w-full h-full rounded-lg"
                 />
               </div>
@@ -405,11 +408,11 @@ export default async function PackPage({ searchParams }: PackPageProps) {
             <Image
               alt={`Image of ${pack.name}`}
               src={pack.image_url}
-              width={0}
-              height={0}
-              sizes="100vw"
-              style={{ width: "100%", height: "100%" }}
-              className="sm:max-h-[50vh] max-h-[40vh] md:max-w-full object-contain bg-gray-900 rounded-lg"
+              width={800}
+              height={600}
+              sizes="(max-width: 1024px) 100vw, 57vw"
+              className="w-full sm:max-h-[50vh] max-h-[40vh] object-contain bg-gray-900 rounded-lg"
+              priority
             />
           </div>
 
