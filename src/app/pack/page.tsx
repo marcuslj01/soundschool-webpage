@@ -165,7 +165,7 @@ export default async function PackPage({ searchParams }: PackPageProps) {
               <div className="flex flex-row justify-center">
                 <a
                   href="#video-section"
-                  className="text-green-400 hover:text-green-300 flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg transition-all transform hover:scale-105 duration-300"
+                  className="text-green-400 hover:text-green-300 flex flex-row items-center gap-2 mt-8 sm:text-xl text-lg transition-all transform hover:scale-105 duration-300 animate-bounce"
                 >
                   Read more
                   <ArrowDown className="w-4 h-4" />
