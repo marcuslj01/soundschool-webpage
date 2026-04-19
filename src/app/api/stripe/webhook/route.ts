@@ -239,6 +239,7 @@ export async function POST(req: NextRequest) {
       orderItems,
       userId: session.metadata?.userId || null,
       orderId: session.id || "",
+      country: session.customer_details?.address?.country || null,
     };
 
     const orderRef = await db.collection("orders").add(orderData);
@@ -345,6 +346,7 @@ export async function POST(req: NextRequest) {
               <ul style="list-style: none; padding: 0; margin: 0 0 24px 0;">
                 <li><strong>Customer name:</strong> ${orderData.customer_name}</li>
                 <li><strong>Customer email:</strong> ${orderData.customer_email}</li>
+                <li><strong>Country:</strong> ${session.customer_details?.address?.country || "Unknown"}</li>
                 <li><strong>Order ID:</strong> ${firestoreOrderId}</li>
                 <li><strong>Status:</strong> ${orderData.status}</li>
                 <li><strong>Total:</strong> $${orderData.total_price}</li>
