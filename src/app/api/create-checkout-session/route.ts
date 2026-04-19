@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
       quantity: 1,
     })),
     mode: "payment",
+    billing_address_collection: "auto",
     customer_email: email || undefined,
     success_url: `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.BASE_URL}/cart`,
