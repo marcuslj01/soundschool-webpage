@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getStorage } from 'firebase-admin/storage';
 import { addFLPServer } from '@/lib/firestore/flp.server';
-
-// Function to sanitize filename for safe storage
-function sanitizeFilename(filename: string): string {
-  return filename
-    .replace(/[#%&{}\\<>*?/$!'":@+`|=]/g, '_') // Replace problematic characters with underscore
-    .replace(/\s+/g, '_') // Replace spaces with underscore
-    .replace(/__+/g, '_') // Replace multiple underscores with single
-    .replace(/^_+|_+$/g, ''); // Remove leading/trailing underscores
-}
 
 // Function to extract YouTube video ID from various URL formats
 function extractYouTubeVideoId(url: string): string | null {
@@ -80,53 +70,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
     }
 
-    // Parse form data
-    const formData = await request.formData();
-    
-    // Validate files (server-side)
-    const file = formData.get('file') as File;
-    
-    if (!file) {
-      return NextResponse.json({ error: 'Missing required file' }, { status: 400 });
+    // Parse JSON body. The ZIP itself was already uploaded directly to
+    // Firebase Storage by the client via a signed URL (see
+    // /api/admin/flp/upload-url) - this route only persists metadata.
+    const body = await request.json();
+    const file_url = body.file_url as string;
+
+    if (!file_url) {
+      return NextResponse.json({ error: 'Missing required file_url' }, { status: 400 });
     }
-
-    // Validate file types and sizes
-    const maxFileSize = 400 * 1024 * 1024; // 400MB for ZIP
-    
-    if (file.size > maxFileSize) {
-      return NextResponse.json({ error: 'ZIP file too large (max 100MB)' }, { status: 400 });
-    }
-
-    // Validate ZIP file type
-    const validZipExtensions = ['.zip'];
-    const isValidZipExtension = validZipExtensions.some(ext => 
-      file.name.toLowerCase().endsWith(ext)
-    );
-    
-    if (!isValidZipExtension) {
-      return NextResponse.json({ error: 'Invalid ZIP file type' }, { status: 400 });
-    }
-
-    // Upload to Firebase Storage (server-side)
-    const storage = getStorage();
-    const bucket = storage.bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!);
-
-    // Upload ZIP file
-    const sanitizedZipName = sanitizeFilename(file.name);
-    const zipFileName = `flps/${Date.now()}_${sanitizedZipName}`;
-    console.log('Uploading ZIP file:', zipFileName);
-    
-    const zipFileBuffer = Buffer.from(await file.arrayBuffer());
-    await bucket.file(zipFileName).save(zipFileBuffer, {
-      metadata: { contentType: 'application/zip' }
-    });
-
-    const file_url = `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/${encodeURIComponent(zipFileName)}?alt=media`;
 
     // Extract YouTube video ID and get video info
-    const videoUrl = formData.get('video_url') as string;
+    const videoUrl = body.video_url as string;
     let image_url = '';
-    let videoTitle = formData.get('name') as string; // Use provided name as fallback
+    let videoTitle = body.name as string; // Use provided name as fallback
     
     if (videoUrl) {
       const videoId = extractYouTubeVideoId(videoUrl);
@@ -148,20 +105,20 @@ export async function POST(request: NextRequest) {
     // Save to Firestore
     const flpData = {
       name: videoTitle,
-      description: formData.get('description') as string,
-      price: Number(formData.get('price')),
-      root: formData.get('root') as string,
-      scale: formData.get('scale') as string,
-      bpm: Number(formData.get('bpm')),
-      genre: formData.get('genre') as string,
-      video_url: formData.get('video_url') as string,
+      description: body.description as string,
+      price: Number(body.price),
+      root: body.root as string,
+      scale: body.scale as string,
+      bpm: Number(body.bpm),
+      genre: body.genre as string,
+      video_url: body.video_url as string,
       file_url,
       image_url,
-      tags: JSON.parse(formData.get('tags') as string),
-      hidden: formData.get('hidden') === 'true',
-      is_featured: formData.get('is_featured') === 'true',
-      is_discounted: formData.get('is_discounted') === 'true',
-      discount_price: Number(formData.get('discount_price')),
+      tags: body.tags as string[],
+      hidden: body.hidden === true,
+      is_featured: body.is_featured === true,
+      is_discounted: body.is_discounted === true,
+      discount_price: Number(body.discount_price),
       sales: 0,
     };
 

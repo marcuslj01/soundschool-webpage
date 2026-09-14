@@ -115,32 +115,61 @@ function FLPUploadForm({ onClose, onBack }: FLPUploadFormProps) {
         return;
       }
 
-      // use FormData for secure server-side upload
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("description", form.description);
-      formData.append("price", form.price.toString());
-      formData.append("root", form.root);
-      formData.append("scale", form.scale);
-      formData.append("bpm", form.bpm.toString());
-      formData.append("genre", form.genre);
-      formData.append("video_url", form.video_url);
-      formData.append("tags", JSON.stringify(tags));
-      formData.append("hidden", form.hidden.toString());
-      formData.append("is_featured", (form.is_featured || false).toString());
-      formData.append(
-        "is_discounted",
-        (form.is_discounted || false).toString()
-      );
-      formData.append("discount_price", (form.discount_price || 0).toString());
-      formData.append("file", file);
+      // 1. Ask the server for a short-lived signed URL for this file
+      const urlResponse = await fetch("/api/admin/flp/upload-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ fileName: file.name, fileSize: file.size }),
+      });
 
+      if (!urlResponse.ok) {
+        const errorData = await urlResponse.json();
+        alert(`Upload failed: ${errorData.error || "Unknown error"}`);
+        return;
+      }
+
+      const { uploadUrl, contentType, file_url } = await urlResponse.json();
+
+      // 2. Upload the ZIP directly to Firebase Storage, bypassing our
+      // own server entirely (avoids the platform's request size limit
+      // and the extra hop through our API).
+      const uploadResult = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": contentType },
+        body: file,
+      });
+
+      if (!uploadResult.ok) {
+        alert("Upload failed: could not upload file to storage");
+        return;
+      }
+
+      // 3. Persist the metadata, referencing the now-uploaded file
       const response = await fetch("/api/admin/flp/upload", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
+        body: JSON.stringify({
+          name: form.name,
+          description: form.description,
+          price: form.price,
+          root: form.root,
+          scale: form.scale,
+          bpm: form.bpm,
+          genre: form.genre,
+          video_url: form.video_url,
+          tags,
+          hidden: form.hidden,
+          is_featured: form.is_featured || false,
+          is_discounted: form.is_discounted || false,
+          discount_price: form.discount_price || 0,
+          file_url,
+        }),
       });
 
       if (response.ok) {
