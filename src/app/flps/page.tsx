@@ -4,6 +4,8 @@ import { getFLPs } from "@/lib/firestore/flp";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
+export const revalidate = 60;
+
 export default async function Tutorials() {
   const flps = await getFLPs();
   const visibleFlps = flps.filter((flp) => !flp.hidden);
