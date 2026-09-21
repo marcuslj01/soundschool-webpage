@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { deletePackServer, getPacksServer } from '@/lib/firestore/pack.server';
-import { deleteMidiServer, getAllMidisServer } from '@/lib/firestore/midifiles.server';
-import { deleteFLPServer, getFLPsServer } from '@/lib/firestore/flp.server';
+import { deletePackServer, getPacksServer, updatePackServer } from '@/lib/firestore/pack.server';
+import { deleteMidiServer, getAllMidisServer, updateMidiServer } from '@/lib/firestore/midifiles.server';
+import { deleteFLPServer, getFLPsServer, updateFLPServer } from '@/lib/firestore/flp.server';
+import { revalidatePath } from 'next/cache';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -146,7 +147,145 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    // TODO: Implement product update logic
+    const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
+    const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+    const bool = (v: unknown) => (typeof v === 'boolean' ? v : undefined);
+    const tagList = (v: unknown) =>
+      Array.isArray(v)
+        ? v.filter((t: unknown): t is string => typeof t === 'string').slice(0, 3)
+        : undefined;
+    const definedOnly = (o: Record<string, unknown>) =>
+      Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
+
+    const bucketUrl = `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/`;
+    // Only accept URLs that point into the expected folder of our own bucket
+    const storageUrl = (v: unknown, folder: string) =>
+      typeof v === 'string' && v.startsWith(`${bucketUrl}${folder}%2F`) ? v : undefined;
+    const badUrl = (v: unknown, folder: string) =>
+      v !== undefined && storageUrl(v, folder) === undefined;
+
+    if (type === 'packs') {
+      if (
+        badUrl(productData.download_url, 'packs') ||
+        badUrl(productData.preview_url, 'previews') ||
+        badUrl(productData.image_url, 'images')
+      ) {
+        return NextResponse.json({ error: 'Invalid file URL' }, { status: 400 });
+      }
+      const name = str(productData.name)?.trim();
+      if (name === '') {
+        return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+      }
+      const packType = str(productData.type);
+      if (packType !== undefined && !['midi', 'sample', 'preset'].includes(packType)) {
+        return NextResponse.json({ error: 'Invalid pack type' }, { status: 400 });
+      }
+      await updatePackServer(
+        productId,
+        definedOnly({
+          name,
+          type: packType,
+          description: str(productData.description),
+          price: num(productData.price),
+          discount_price: num(productData.discount_price),
+          genre: str(productData.genre),
+          file_count: num(productData.file_count),
+          download_url: storageUrl(productData.download_url, 'packs'),
+          preview_url: storageUrl(productData.preview_url, 'previews'),
+          image_url: storageUrl(productData.image_url, 'images'),
+          tags: tagList(productData.tags),
+          hidden: bool(productData.hidden),
+          is_featured: bool(productData.is_featured),
+          is_discounted: bool(productData.is_discounted),
+        })
+      );
+      revalidatePath('/packs');
+      revalidatePath('/pack');
+    } else if (type === 'midis') {
+      if (
+        badUrl(productData.file_url, 'midifiles') ||
+        badUrl(productData.preview_url, 'previews')
+      ) {
+        return NextResponse.json({ error: 'Invalid file URL' }, { status: 400 });
+      }
+      const name = str(productData.name)?.trim();
+      if (name === '') {
+        return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+      }
+      await updateMidiServer(
+        productId,
+        definedOnly({
+          name,
+          price: num(productData.price),
+          discount_price: num(productData.discount_price),
+          root: str(productData.root),
+          scale: str(productData.scale),
+          bpm: num(productData.bpm),
+          genre: str(productData.genre),
+          vst: str(productData.vst),
+          preset: str(productData.preset),
+          file_url: storageUrl(productData.file_url, 'midifiles'),
+          preview_url: storageUrl(productData.preview_url, 'previews'),
+          tags: tagList(productData.tags),
+          hidden: bool(productData.hidden),
+          is_featured: bool(productData.is_featured),
+          is_discounted: bool(productData.is_discounted),
+        })
+      );
+      revalidatePath('/midis');
+      revalidatePath('/midi');
+    } else if (type === 'flps') {
+      const candidate = {
+        name: str(productData.name)?.trim(),
+        description: str(productData.description),
+        price: num(productData.price),
+        root: str(productData.root),
+        scale: str(productData.scale),
+        bpm: num(productData.bpm),
+        genre: str(productData.genre),
+        video_url: str(productData.video_url),
+        tags: Array.isArray(productData.tags)
+          ? productData.tags.filter((t: unknown): t is string => typeof t === 'string').slice(0, 3)
+          : undefined,
+        hidden: bool(productData.hidden),
+        is_featured: bool(productData.is_featured),
+        is_discounted: bool(productData.is_discounted),
+        discount_price: num(productData.discount_price),
+        file_url: str(productData.file_url),
+      };
+
+      if (
+        candidate.file_url !== undefined &&
+        !candidate.file_url.startsWith(
+          `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/flps%2F`
+        )
+      ) {
+        return NextResponse.json({ error: 'Invalid file_url' }, { status: 400 });
+      }
+
+      const updates = Object.fromEntries(
+        Object.entries(candidate).filter(([, v]) => v !== undefined)
+      );
+
+      if (candidate.name !== undefined && candidate.name === '') {
+        return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+      }
+
+      if (candidate.video_url) {
+        const match = candidate.video_url.match(
+          /(?:youtube\.com\/watch\?.*v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/
+        );
+        if (match) {
+          (updates as Record<string, unknown>).image_url = `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+        }
+      }
+
+      await updateFLPServer(productId, updates);
+      revalidatePath('/flps');
+      revalidatePath('/flp');
+    } else {
+      return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
+    }
 
     return NextResponse.json({ 
       success: true, 

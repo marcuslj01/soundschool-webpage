@@ -38,6 +38,11 @@ export async function getPacksServer() {
   });
 }
 
+export async function updatePackServer(packId: string, updates: Partial<PackInput>) {
+  const db = getFirestore();
+  await db.collection("packs").doc(packId).update(updates);
+}
+
 export async function deletePackServer(packId: string) {
   const db = getFirestore();
   const packRef = db.collection("packs").doc(packId);

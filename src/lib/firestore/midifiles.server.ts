@@ -38,6 +38,11 @@ export async function getAllMidisServer() {
   });
 }
 
+export async function updateMidiServer(midiId: string, updates: Partial<MidiInput>) {
+  const db = getFirestore();
+  await db.collection("midifiles").doc(midiId).update(updates);
+}
+
 export async function deleteMidiServer(midiId: string) {
   const db = getFirestore();
   const midiRef = db.collection("midifiles").doc(midiId);
