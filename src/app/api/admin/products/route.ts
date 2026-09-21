@@ -3,7 +3,8 @@ import { auth } from 'firebase-admin';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { deletePackServer, getPacksServer } from '@/lib/firestore/pack.server';
 import { deleteMidiServer, getAllMidisServer } from '@/lib/firestore/midifiles.server';
-import { deleteFLPServer, getFLPsServer } from '@/lib/firestore/flp.server';
+import { deleteFLPServer, getFLPsServer, updateFLPServer } from '@/lib/firestore/flp.server';
+import { revalidatePath } from 'next/cache';
 
 // Initialize Firebase Admin
 if (!getApps().length) {
@@ -146,7 +147,62 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    // TODO: Implement product update logic
+    if (type === 'flps') {
+      const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
+      const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+      const bool = (v: unknown) => (typeof v === 'boolean' ? v : undefined);
+
+      const candidate = {
+        name: str(productData.name)?.trim(),
+        description: str(productData.description),
+        price: num(productData.price),
+        root: str(productData.root),
+        scale: str(productData.scale),
+        bpm: num(productData.bpm),
+        genre: str(productData.genre),
+        video_url: str(productData.video_url),
+        tags: Array.isArray(productData.tags)
+          ? productData.tags.filter((t: unknown): t is string => typeof t === 'string').slice(0, 3)
+          : undefined,
+        hidden: bool(productData.hidden),
+        is_featured: bool(productData.is_featured),
+        is_discounted: bool(productData.is_discounted),
+        discount_price: num(productData.discount_price),
+        file_url: str(productData.file_url),
+      };
+
+      if (
+        candidate.file_url !== undefined &&
+        !candidate.file_url.startsWith(
+          `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/flps%2F`
+        )
+      ) {
+        return NextResponse.json({ error: 'Invalid file_url' }, { status: 400 });
+      }
+
+      const updates = Object.fromEntries(
+        Object.entries(candidate).filter(([, v]) => v !== undefined)
+      );
+
+      if (candidate.name !== undefined && candidate.name === '') {
+        return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+      }
+
+      if (candidate.video_url) {
+        const match = candidate.video_url.match(
+          /(?:youtube\.com\/watch\?.*v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/
+        );
+        if (match) {
+          (updates as Record<string, unknown>).image_url = `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+        }
+      }
+
+      await updateFLPServer(productId, updates);
+      revalidatePath('/flps');
+      revalidatePath('/flp');
+    } else {
+      return NextResponse.json({ error: 'Updating this product type is not supported yet' }, { status: 400 });
+    }
 
     return NextResponse.json({ 
       success: true, 

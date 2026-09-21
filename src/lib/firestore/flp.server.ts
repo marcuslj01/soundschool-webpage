@@ -38,6 +38,11 @@ export async function getFLPsServer() {
   });
 }
 
+export async function updateFLPServer(flpId: string, updates: Partial<FLPInput>) {
+  const db = getFirestore();
+  await db.collection("flps").doc(flpId).update(updates);
+}
+
 export async function deleteFLPServer(flpId: string) {
   const db = getFirestore();
   const flpRef = db.collection("flps").doc(flpId);
