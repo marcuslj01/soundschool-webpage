@@ -5,6 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
 import UploadModal from "@/components/ui/UploadModal";
 import FLPEditModal from "@/components/ui/FLPEditModal";
+import PackEditModal from "@/components/ui/PackEditModal";
+import MidiEditModal from "@/components/ui/MidiEditModal";
 import { Pack } from "@/lib/types/pack";
 import { Midi } from "@/lib/types/midi";
 import { FLP } from "@/lib/types/FLP";
@@ -21,6 +23,8 @@ export default function Products() {
   );
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingFlp, setEditingFlp] = useState<FLP | null>(null);
+  const [editingPack, setEditingPack] = useState<Pack | null>(null);
+  const [editingMidi, setEditingMidi] = useState<Midi | null>(null);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -325,7 +329,10 @@ export default function Products() {
                         {formatDate(pack.created_at)}
                       </td>
                       <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-4">
+                        <button
+                          className="text-indigo-600 hover:text-indigo-900 mr-4 hover:cursor-pointer"
+                          onClick={() => setEditingPack(pack)}
+                        >
                           Edit
                         </button>
                         <button
@@ -453,7 +460,10 @@ export default function Products() {
                         {formatDate(midi.created_at)}
                       </td>
                       <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-4 hover:cursor-pointer">
+                        <button
+                          className="text-indigo-600 hover:text-indigo-900 mr-4 hover:cursor-pointer"
+                          onClick={() => setEditingMidi(midi)}
+                        >
                           Edit
                         </button>
                         <button
@@ -618,6 +628,24 @@ export default function Products() {
       )}
 
       {isOpen && <UploadModal onClose={() => setIsOpen(false)} />}
+      {editingPack && (
+        <PackEditModal
+          pack={editingPack}
+          onClose={() => setEditingPack(null)}
+          onSaved={(updated) =>
+            setPacks((prev) => prev.map((p) => (p.id === updated.id ? updated : p)))
+          }
+        />
+      )}
+      {editingMidi && (
+        <MidiEditModal
+          midi={editingMidi}
+          onClose={() => setEditingMidi(null)}
+          onSaved={(updated) =>
+            setMidis((prev) => prev.map((m) => (m.id === updated.id ? updated : m)))
+          }
+        />
+      )}
       {editingFlp && (
         <FLPEditModal
           flp={editingFlp}
