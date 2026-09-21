@@ -18,7 +18,7 @@ export async function getFLPs() {
         throw new Error("Firebase Firestore is not initialized");
     }
     const flpsCollection = collection(db, "flps");
-    const snapshot = await getDocs(flpsCollection);
+    const snapshot = await getDocs(query(flpsCollection, orderBy("created_at", "desc")));
     return snapshot.docs.map((doc) => {
         const data = doc.data();
         return {
